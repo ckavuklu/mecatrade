@@ -7,6 +7,7 @@ public class NullTradeData extends TradeData {
 		// this creates Null Data
 		// Null trade Data
 		// new comment added - CK
+		// new comment added - MA
 	}
 	
 
