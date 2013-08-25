@@ -29,7 +29,7 @@ public class SubInComponent extends Component {
 	@Override
 	protected void execute() {
 		int no = inportNameArray.length;
-		int out = outportArray.length;
+		
 		
 		pNameArray = new Packet[no];
 		inportArray = new InputPort[no];
@@ -57,7 +57,7 @@ public class SubInComponent extends Component {
 				 pOutArray[i] = inportArray[i].receive();
 		     }
 			
-			for (int i = 0; i < out; i++) {
+			for (int i = 0; i < no; i++) {
 				if (pOutArray[i] != null) {
 					if (outportArray[i].isConnected()) 
 						outportArray[i].send(create(pOutArray[i]));				
