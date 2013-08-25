@@ -6,6 +6,7 @@ public class NullTradeData extends TradeData {
 		super(new SchedulingParameter(0, ""));
 		// this creates Null Data
 		// Null trade Data
+		// new comment added
 	}
 	
 
