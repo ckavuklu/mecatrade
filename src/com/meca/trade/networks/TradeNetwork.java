@@ -10,7 +10,7 @@ public class TradeNetwork extends Network {
 	    //component("_Write_text_to_pane", com.jpmorrsn.fbp.components.ShowText.class);
 	    
 		// Trade Data Components
-		component("_DataSource", com.meca.trade.components.DataSource.class);
+		component("_DataSource", com.meca.trade.components.TestDataSource.class);
 	    component("_DataFeeder", com.meca.trade.components.DataFeeder.class);
 	    
 	    component("_QuotePrice_O", com.meca.trade.components.QuotePrice.class);
@@ -23,15 +23,22 @@ public class TradeNetwork extends Network {
 	    initialize("C", component("_QuotePrice_C"), port("PRICETYPE"));
 	    initialize("H", component("_QuotePrice_H"), port("PRICETYPE"));
 	    initialize("L", component("_QuotePrice_L"), port("PRICETYPE"));
-	    initialize("Minute", component("_DataFeeder"), port("SCHEDULETYPE"));
+	   
+	    initialize("ALL", component("_DataFeeder"), port("SCHEDULETYPE"));
+	    //initialize("Minute", component("_DataFeeder"), port("SCHEDULETYPE"));
 	    initialize(Integer.valueOf(2), component("_DataFeeder"), port("SCHEDULEPERIOD"));
-	    initialize("EURUSD.txt", component("_DataSource"), port("FILENAME"));
+	    initialize("TESTDATA.txt", component("_DataSource"), port("FILENAME"));
 
 	    
 	    // Indicator Components
 	    component("_SimpleMovingAverage", com.meca.trade.components.SimpleMovingAverage.class);
+	    component("_ExponentialMovingAverage", com.meca.trade.components.ExponentialMovingAverage.class);
+	    
+	    
 	    
 	    initialize(Integer.valueOf(10), component("_SimpleMovingAverage"), port("WINDOW"));
+	    initialize(Integer.valueOf(10), component("_ExponentialMovingAverage"), port("WINDOW"));
+	    
 
 	    
 	    // Stragety
@@ -50,7 +57,10 @@ public class TradeNetwork extends Network {
 	    connect(component("_QuotePrice_L"), port("OUT",0), component("_TradeMultiplexer"), port("IN",3));
 	  
 	    connect(component("_SimpleMovingAverage"), port("OUT"), component("_TradeMultiplexer"), port("IN",4));
+	    connect(component("_ExponentialMovingAverage"), port("OUT"), component("_TradeMultiplexer"), port("IN",5));
 	    connect(component("_QuotePrice_C"), port("OUT",1), component("_SimpleMovingAverage"), port("DATA"));
+	    
+	    connect(component("_QuotePrice_C"), port("OUT",2), component("_ExponentialMovingAverage"), port("DATA"));
 	    
 	    
 	    //connect(component("_DataFeeder"), port("OUT"), component("_Write_text_to_pane"), port("IN"));

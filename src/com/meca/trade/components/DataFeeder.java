@@ -49,13 +49,13 @@ public class DataFeeder extends Component {
 		if (schedulePeriod == null) {
 			schedulePer = schedulePeriodPort.receive();
 			scheduleType = scheduleTypePort.receive();
-			this.schedulePeriod = this.timeDecrement = new Integer((Integer) schedulePer
-					.getContent());
-			this.schedule = new String ((String) scheduleType.getContent());
-			
+			this.schedulePeriod = this.timeDecrement = new Integer(
+					(Integer) schedulePer.getContent());
+			this.schedule = new String((String) scheduleType.getContent());
+
 			drop(schedulePer);
 			drop(scheduleType);
-			
+
 			schedulePeriodPort.close();
 			scheduleTypePort.close();
 		}
@@ -77,70 +77,75 @@ public class DataFeeder extends Component {
 
 			TradeData result = new NullTradeData();
 
-			if (schedule.equalsIgnoreCase("Minute")) {
-				placetoLook = data.getTime().substring(2, 4);
-				timeDividor = 60;
+			if (!schedule.equalsIgnoreCase("ALL")) {
 
-			} else if (schedule.equalsIgnoreCase("Hour")) {
-				placetoLook = data.getTime().substring(0, 2);
-				timeDividor = 24;
+				if (schedule.equalsIgnoreCase("Minute")) {
+					placetoLook = data.getTime().substring(2, 4);
+					timeDividor = 60;
 
-			} else if (schedule.equalsIgnoreCase("Day")) {
-				placetoLook = data.getDate().substring(6, 8);
+				} else if (schedule.equalsIgnoreCase("Hour")) {
+					placetoLook = data.getTime().substring(0, 2);
+					timeDividor = 24;
 
-				if (data.getTime().equalsIgnoreCase("030000")) {
-					timeDecrement--;
+				} else if (schedule.equalsIgnoreCase("Day")) {
+					placetoLook = data.getDate().substring(6, 8);
+
+					if (data.getTime().equalsIgnoreCase("030000")) {
+						timeDecrement--;
+					}
+
+				} else if (schedule.equalsIgnoreCase("Month")) {
+					placetoLook = data.getDate().substring(4, 6);
+					timeDividor = 12;
+
+				} else if (schedule.equalsIgnoreCase("Year")) {
+					placetoLook = data.getDate().substring(0, 4);
+					timeDividor = 9999;
 				}
 
-			} else if (schedule.equalsIgnoreCase("Month")) {
-				placetoLook = data.getDate().substring(4, 6);
-				timeDividor = 12;
+				Integer time = Integer.valueOf(placetoLook);
 
-			} else if (schedule.equalsIgnoreCase("Year")) {
-				placetoLook = data.getDate().substring(0, 4);
-				timeDividor = 9999;
-			}
-
-			Integer time = Integer.valueOf(placetoLook);
-
-			if (previousTime == null) {
-				previousTime = time;
-			}
-
-			if (timeDividor != null) {
-				if (((previousTime + schedulePeriod) % timeDividor) == time) {
+				if (previousTime == null) {
 					previousTime = time;
-					
-					data.setParam(new SchedulingParameter(
-							schedulePeriod, schedule));
-					
-					result = data;
-					
+				}
+
+				if (timeDividor != null) {
+					if (((previousTime + schedulePeriod) % timeDividor) == time) {
+						previousTime = time;
+
+						data.setParam(new SchedulingParameter(schedulePeriod,
+								schedule));
+
+						result = data;
+
+					}
+				} else {
+					if (timeDecrement == 0) {
+						data.setParam(new SchedulingParameter(schedulePeriod,
+								schedule));
+
+						result = data;
+						this.timeDecrement = schedulePeriod;
+					}
 				}
 			} else {
-				if (timeDecrement == 0) {
-					data.setParam(new SchedulingParameter(
-							schedulePeriod, schedule));
-					
-					result = data;
-					this.timeDecrement = schedulePeriod;
-				}
+				result = data;
 			}
 
 			try {
 
 				if (!(result instanceof NullTradeData)) {
-					
-					for(int i=0;i<outportArray.length;i++){
-					
+
+					for (int i = 0; i < outportArray.length; i++) {
+
 						if (outportArray[i].isConnected()) {
 							outportArray[i].send(create(result));
-							//System.out.println("DataFeeder sent " + result.toString());
-						} 
+							// System.out.println("DataFeeder sent " +
+							// result.toString());
+						}
 					}
-				} 
-				
-				
+				}
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -149,7 +154,7 @@ public class DataFeeder extends Component {
 			}
 
 		}
-		
+
 		tradeDataPort.close();
 
 	}
