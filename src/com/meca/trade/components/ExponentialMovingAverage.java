@@ -52,8 +52,6 @@ public class ExponentialMovingAverage extends Indicator {
 			drop(windowPacket);
 		}
 		
-		
-
 		while ((dataPacket = dataPort.receive()) != null) {
 
 			Double dat = (Double) dataPacket.getContent();

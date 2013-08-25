@@ -8,7 +8,7 @@ import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
 
 @OutPort(value = "OUT", arrayPort = true)
-@InPort(value = "IN", arrayPort = true)
+@InPort(value = "NAME", arrayPort = true)
 public class SubInComponent extends Component {
 
 	static final String copyright = "Copyright 2007, 2012, J. Paul Morrison.  At your option, you may copy, "
@@ -29,6 +29,8 @@ public class SubInComponent extends Component {
 	@Override
 	protected void execute() {
 		int no = inportNameArray.length;
+		int out = outportArray.length;
+		
 		pNameArray = new Packet[no];
 		inportArray = new InputPort[no];
 		pOutArray = new Packet[no];
@@ -55,7 +57,7 @@ public class SubInComponent extends Component {
 				 pOutArray[i] = inportArray[i].receive();
 		     }
 			
-			for (int i = 0; i < no; i++) {
+			for (int i = 0; i < out; i++) {
 				if (pOutArray[i] != null) {
 					if (outportArray[i].isConnected()) 
 						outportArray[i].send(create(pOutArray[i]));				
@@ -69,7 +71,7 @@ public class SubInComponent extends Component {
 
 	@Override
 	protected void openPorts() {
-		inportNameArray = openInputArray("IN");
+		inportNameArray = openInputArray("NAME");
 		outportArray = openOutputArray("OUT");
 
 	}
