@@ -38,6 +38,7 @@ public class QuotePrice extends Component {
 
 		Packet p = null;
 		Packet pricePacket = null;
+		
 
 		if (priceType == null) {
 			pricePacket = priceTypePort.receive();
