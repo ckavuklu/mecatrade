@@ -37,8 +37,8 @@ public class TradeNetwork extends Network {
 	    
 	    
 	    
-	    initialize(Integer.valueOf(10), component("_SimpleMovingAverage"), port("WINDOW"));
-	    initialize(Integer.valueOf(10), component("_ExponentialMovingAverage"), port("WINDOW"));
+	    initialize(Integer.valueOf(5), component("_SimpleMovingAverage"), port("WINDOW"));
+	    initialize(Integer.valueOf(5), component("_ExponentialMovingAverage"), port("WINDOW"));
 	    
 
 	    

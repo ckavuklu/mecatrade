@@ -32,7 +32,6 @@ public class SubOutComponent extends Component {
 
 			outportArray = new OutputPort[no];
 			pNameArray = new Packet[no];
-			inportArray = new InputPort[no];
 			pOutArray = new Packet[no];
 
 			for (int i = 0; i < no; i++) {
@@ -44,12 +43,15 @@ public class SubOutComponent extends Component {
 					String name = (String) pNameArray[i].getContent();
 					// HashMap<String, OutputPort> hash = ;
 					outportArray[i] = mother.getOutports().get(name);
+
+					// mother.traceFuncs(getName() + ": Accessing output port: "
+					// + outportArray[i].getName());
+
 					outportArray[i].setSender(this);
 
-					 p = create(Packet.OPEN, "");
-					 outportArray[i].send(p);
+					// p = create(Packet.OPEN, "");
+					//outportArray[i].send(create(Double.NaN));
 
-					 System.out.println("SubOutComponent Input Port " + name);
 
 					drop(pNameArray[i]);
 				}
@@ -65,26 +67,21 @@ public class SubOutComponent extends Component {
 
 			// pOutArray[0].setOwner(this);
 
-			System.out.println("SubOutComponent output "
-					+ (Double) pOutArray[0].getContent());
-
 			for (int i = 1; i < no; i++) {
 				pOutArray[i] = inportArray[i].receive();
 			}
 
 			for (int i = 0; i < no; i++) {
 				if (pOutArray[i] != null) {
-					Double d = (Double) pOutArray[i].getContent();
-					if (outportArray[i].isConnected() && d != null)
-						outportArray[i].send(create(d));
+					outportArray[i].send(pOutArray[i]);
 				}
-
 			}
 		}
 
 		for (int i = 0; i < no; i++) {
-			p = create(Packet.CLOSE, "");
-			outportArray[i].send(p);
+			/*
+			 * p = create(Packet.CLOSE, ""); outportArray[i].send(p);
+			 */
 			outportArray[i] = null;
 		}
 

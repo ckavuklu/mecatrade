@@ -54,10 +54,13 @@ public class ExponentialMovingAverage extends Indicator {
 
 			Double dat = (Double) dataPacket.getContent();
 
-			window.add(window.size(), dat);
+			if (dat.isNaN()) {
+				result = Double.NaN;
+			} else {
+				window.add(window.size(), dat);
 
-			result = average();
-
+				result = average();
+			}
 			try {
 				if (result != null) {
 

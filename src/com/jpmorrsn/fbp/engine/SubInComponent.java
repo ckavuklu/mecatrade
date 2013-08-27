@@ -46,27 +46,25 @@ public class SubInComponent extends Component {
 
 				if (pNameArray[i] != null) {
 
-					// System.out.println("SubInComponent 1" + (String)
-					// pNameArray[i].getContent());
-					
-					if(outportArray[i].isClosed){ return; }
-					
+					if (outportArray[i].isClosed) {
+						return;
+					}
+
 					inportArray[i] = mother.getInports().get(
 							(String) pNameArray[i].getContent());
-					// System.out.println("SubInComponent 2" + (String)
-					// pNameArray[i].getContent());
-
+		
 					oldReceivers[i] = inportArray[i].getReceiver();
-					
+
 					if (inportArray[i] instanceof InitializationConnection) {
 						System.out.println("NOT Supported");
-					      FlowError.complain("SubinSS cannot support IIP - use Subin");
-					    }
+						FlowError
+								.complain("SubinSS cannot support IIP - use Subin");
+					}
 
 					inportArray[i].setReceiver(this);
 					drop(pNameArray[i]);
 				}
-				
+
 				inportNameArray[i].close();
 
 			}
@@ -86,22 +84,19 @@ public class SubInComponent extends Component {
 			for (int i = 0; i < no; i++) {
 
 				if (pOutArray[i] != null) {
-					Double d = (Double) pOutArray[i].getContent();
-					if (outportArray[i].isConnected() && d != null)
-						outportArray[i].send(create(d));
-
-					drop(pOutArray[i]);
+					outportArray[i].send(pOutArray[i]);
 				}
+
 			}
 		}
 
-		
 		for (int i = 0; i < no; i++) {
-		    mother.traceFuncs(getName() + ": Releasing input port: " + inportArray[i].getName());
+			mother.traceFuncs(getName() + ": Releasing input port: "
+					+ inportArray[i].getName());
 			inportArray[i].setReceiver(oldReceivers[i]);
-			inportArray[i]=null;
+			inportArray[i] = null;
 		}
-		
+
 	}
 
 	@Override
