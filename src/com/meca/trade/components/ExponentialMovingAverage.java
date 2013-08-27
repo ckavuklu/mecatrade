@@ -1,4 +1,5 @@
 package com.meca.trade.components;
+
 import com.jpmorrsn.fbp.engine.ComponentDescription;
 import com.jpmorrsn.fbp.engine.InPort;
 import com.jpmorrsn.fbp.engine.InPorts;
@@ -7,13 +8,11 @@ import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
 
-
 /* Indicator source: http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:moving_averages */
-
 
 /** Sort a stream of Packets to an output stream **/
 @ComponentDescription("Exponential Moving Average")
-@OutPort(value = "OUT", description = "Output port", type = Double.class)
+@OutPort(value = "OUT", arrayPort = true)
 @InPorts({
 		@InPort(value = "WINDOW", description = "Window", type = String.class),
 		@InPort(value = "DATA", description = "Data", type = Double.class) })
@@ -27,16 +26,15 @@ public class ExponentialMovingAverage extends Indicator {
 
 	InputPort windowPort, dataPort;
 
-	OutputPort outport;
+	OutputPort[] outportArray;
 
 	private Integer windowSize = null;
 	private Double result = null;
 	private Double previousResult = null;
-	
+
 	/* Multiplier: (2 / (Time periods + 1) ) = (2 / (10 + 1) ) = 0.1818 (18.18%) */
 	Double multiplier = 0d;
 
-	
 	@Override
 	protected void execute() {
 
@@ -45,38 +43,44 @@ public class ExponentialMovingAverage extends Indicator {
 
 		if (windowSize == null) {
 			windowPacket = windowPort.receive();
-			windowSize = new Integer ((Integer)windowPacket.getContent());
+			windowSize = new Integer((Integer) windowPacket.getContent());
 			multiplier = 2d / (windowSize + 1);
-			
+
 			windowPort.close();
 			drop(windowPacket);
 		}
-		
+
 		while ((dataPacket = dataPort.receive()) != null) {
 
 			Double dat = (Double) dataPacket.getContent();
 
-			window.add(window.size(),dat);
-			
+			window.add(window.size(), dat);
+
 			result = average();
-			
-			
+
 			try {
-				
-				if(result != null && outport.isConnected()){
-					outport.send(create(result));
-					//System.out.println("QuotePrice("+priceType+"): " + result + " ");
+				if (result != null) {
+
+					for (int i = 0; i < outportArray.length; i++) {
+
+						if (outportArray[i].isConnected()) {
+							outportArray[i].send(create(result));
+						}
+					}
+
+					// System.out.println("QuotePrice("+priceType+"): " + result
+					// + " ");
+
 				}
-				
 				drop(dataPacket);
 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		dataPort.close();
-		//outport.close();
+		// outport.close();
 	}
 
 	@Override
@@ -85,15 +89,15 @@ public class ExponentialMovingAverage extends Indicator {
 		windowPort = openInput("WINDOW");
 		dataPort = openInput("DATA");
 
-		outport = openOutput("OUT");
+		outportArray = openOutputArray("OUT");
 
 	}
-	
+
 	private Double average() {
 		Double result = 0d;
-		
+
 		if (previousResult == null) {
-			/*This is SMA evaluation*/
+			/* This is SMA evaluation */
 			if (window.size() >= windowSize) {
 
 				for (Double data : window) {
@@ -107,10 +111,14 @@ public class ExponentialMovingAverage extends Indicator {
 			} else
 				result = Double.NaN;
 		} else {
-			/* EMA: {Close - EMA(previous day)} x multiplier + EMA(previous day). */
-			
-			result = ((window.get(0) - previousResult) * multiplier) + previousResult;
-			
+			/*
+			 * EMA: {Close - EMA(previous day)} x multiplier + EMA(previous
+			 * day).
+			 */
+
+			result = ((window.get(0) - previousResult) * multiplier)
+					+ previousResult;
+
 			previousResult = result;
 			window.clear();
 		}
