@@ -35,14 +35,11 @@ public class TradeNetwork extends Network {
 	    component("_ExponentialMovingAverage", com.meca.trade.components.ExponentialMovingAverage.class);
 	    component("_MACD", com.meca.trade.networks.subnets.MACDSubNetwork.class);
 	    
-	    
 	    initialize(Double.valueOf(5), component("_SimpleMovingAverage"), port("WINDOW"));
 	    initialize(Double.valueOf(5), component("_ExponentialMovingAverage"), port("WINDOW"));
 	    initialize(Double.valueOf(12), component("_MACD"), port("SHORTEMAPERIOD"));
 	    initialize(Double.valueOf(26), component("_MACD"), port("LONGEMAPERIOD"));
 	    initialize(Double.valueOf(9), component("_MACD"), port("SIGNALPERIOD"));
-	 
-	    
 	    
 	    // Stragety
 	    component("_TradeMultiplexer", com.meca.trade.components.TradeMultiplexer.class);
