@@ -11,7 +11,7 @@ import com.jpmorrsn.fbp.engine.Packet;
 @ComponentDescription("Simple Moving Average")
 @OutPort(value = "OUT", description = "Output port", type = Double.class)
 @InPorts({
-		@InPort(value = "WINDOW", description = "Window", type = String.class),
+		@InPort(value = "WINDOW", description = "Window", type = Double.class),
 		@InPort(value = "DATA", description = "Data", type = Double.class) })
 public class SimpleMovingAverage extends Indicator {
 
@@ -36,8 +36,8 @@ public class SimpleMovingAverage extends Indicator {
 
 		if (windowSize == null) {
 			windowPacket = windowPort.receive();
-			windowSize = new Integer ((Integer)windowPacket.getContent());
-			
+			Double doubleValue = (Double) windowPacket.getContent();
+			windowSize = new Integer(doubleValue.intValue());
 			windowPort.close();
 			drop(windowPacket);
 		}

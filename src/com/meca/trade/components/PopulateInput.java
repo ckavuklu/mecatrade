@@ -53,6 +53,7 @@ public class PopulateInput extends Component {
 				drop(p);
 
 			} catch (Exception e) {
+				System.out.println("PopulateInput.terminated()");
 				e.printStackTrace();
 			}
 		}

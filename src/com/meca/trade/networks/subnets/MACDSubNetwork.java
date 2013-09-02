@@ -11,7 +11,15 @@ import com.meca.trade.to.TradeData;
 		@OutPort(value = "MACDLINE", description = "MACD Line", type = Double.class),
 		@OutPort(value = "SIGNALLINE", description = "Signal Line", type = Double.class),
 		@OutPort(value = "HISTOGRAM", description = "MACD Histogram Line", type = Double.class) })
-@InPort(value = "INPUT", description = "Trade Input", type = Double.class)
+
+@InPorts({
+	@InPort(value = "INPUT", description = "Trade Input", type = Double.class),
+	@InPort(value = "SHORTEMAPERIOD", description = "Windows Size", type = Double.class),
+	@InPort(value = "LONGEMAPERIOD", description = "Windows Size", type = Double.class),
+	@InPort(value = "SIGNALPERIOD", description = "Windows Size", type = Double.class)
+})
+
+
 public class MACDSubNetwork extends SubNet {
 
 	@Override
@@ -25,6 +33,9 @@ public class MACDSubNetwork extends SubNet {
 				com.meca.trade.components.Calculator.class);
 
 		initialize("INPUT", component("SUBIN"), port("NAME", 0));
+		initialize("SHORTEMAPERIOD", component("SUBIN"), port("NAME", 1));
+		initialize("LONGEMAPERIOD", component("SUBIN"), port("NAME", 2));
+		initialize("SIGNALPERIOD", component("SUBIN"), port("NAME", 3));
 
 		
  		initialize("-", component("SUBTRACT"), port("OPERATIONTYPE"));
@@ -36,16 +47,17 @@ public class MACDSubNetwork extends SubNet {
 		// Indicator Components
 		component("Short_EMA",
 				com.meca.trade.components.ExponentialMovingAverage.class);
-		initialize(Integer.valueOf(12), component("Short_EMA"), port("WINDOW"));
+		connect(component("SUBIN"), port("OUT", 1), component("Short_EMA"), port("WINDOW"));
 
 		component("Long_EMA",
 				com.meca.trade.components.ExponentialMovingAverage.class);
-		initialize(Integer.valueOf(26), component("Long_EMA"), port("WINDOW"));
-
+		connect(component("SUBIN"), port("OUT", 2), component("Long_EMA"), port("WINDOW"));
+		
+		
 		component("9DAY_EMA",
 				com.meca.trade.components.ExponentialMovingAverage.class);
-		initialize(Integer.valueOf(9), component("9DAY_EMA"), port("WINDOW"));
-
+		connect(component("SUBIN"), port("OUT", 3), component("9DAY_EMA"),
+				port("WINDOW"));
 		
 		connect(component("POPULATE"), port("OUT", 0), component("Short_EMA"),
 				port("DATA"));

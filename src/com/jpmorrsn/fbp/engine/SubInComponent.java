@@ -1,11 +1,7 @@
 package com.jpmorrsn.fbp.engine;
 
-import com.jpmorrsn.fbp.engine.Component;
-import com.jpmorrsn.fbp.engine.InPort;
-import com.jpmorrsn.fbp.engine.InputPort;
-import com.jpmorrsn.fbp.engine.OutPort;
-import com.jpmorrsn.fbp.engine.OutputPort;
-import com.jpmorrsn.fbp.engine.Packet;
+import java.util.ArrayList;
+import java.util.List;
 
 @OutPort(value = "OUT", arrayPort = true)
 @InPort(value = "NAME", arrayPort = true)
@@ -27,6 +23,7 @@ public class SubInComponent extends Component {
 	Packet pOutArray[];
 	Boolean initiliazed = false;
 
+	List<Integer> nonInitializationList = null;
 	OutputPort[] outportArray;
 
 	@Override
@@ -36,6 +33,7 @@ public class SubInComponent extends Component {
 
 		if (!initiliazed) {
 
+			nonInitializationList = new ArrayList<Integer>();
 			inportArray = new InputPort[no];
 			pNameArray = new Packet[no];
 			pOutArray = new Packet[no];
@@ -52,16 +50,12 @@ public class SubInComponent extends Component {
 
 					inportArray[i] = mother.getInports().get(
 							(String) pNameArray[i].getContent());
-		
+
 					oldReceivers[i] = inportArray[i].getReceiver();
 
-					if (inportArray[i] instanceof InitializationConnection) {
-						System.out.println("NOT Supported");
-						FlowError
-								.complain("SubinSS cannot support IIP - use Subin");
-					}
+					if (!(inportArray[i] instanceof InitializationConnection))
+						inportArray[i].setReceiver(this);
 
-					inportArray[i].setReceiver(this);
 					drop(pNameArray[i]);
 				}
 
@@ -72,31 +66,58 @@ public class SubInComponent extends Component {
 
 		}
 
-		while (((pOutArray[0] = inportArray[0].receive()) != null)) {
+		for (int i = 0; i < no; i++) {
 
-			pOutArray[0].setOwner(this);
+			if (inportArray[i] instanceof InitializationConnection) {
 
-			for (int i = 1; i < no; i++) {
-				pOutArray[i] = inportArray[i].receive();
+				InitializationConnection iico = (InitializationConnection) inportArray[i];
+				InitializationConnection iic = new InitializationConnection(
+						iico.content, this);
+				iic.name = iico.name;
+
+				pOutArray[i] = iic.receive();
 				pOutArray[i].setOwner(this);
-			}
+				outportArray[i].send(pOutArray[i]);
+				iic.close();
+//				iic = null;
+			} else
+				nonInitializationList.add(i);
 
-			for (int i = 0; i < no; i++) {
+		}
 
-				if (pOutArray[i] != null) {
-					outportArray[i].send(pOutArray[i]);
+		if (nonInitializationList.size() > 0) {
+
+			while (((pOutArray[nonInitializationList.get(0)] = inportArray[nonInitializationList
+					.get(0)].receive()) != null)) {
+
+				pOutArray[nonInitializationList.get(0)].setOwner(this);
+
+				for (int i = 1; i < nonInitializationList.size(); i++) {
+					pOutArray[nonInitializationList.get(i)] = inportArray[nonInitializationList
+							.get(i)].receive();
+					pOutArray[nonInitializationList.get(i)].setOwner(this);
 				}
 
+				for (int i = 0; i < nonInitializationList.size(); i++) {
+
+					if (pOutArray[nonInitializationList.get(i)] != null) {
+						outportArray[nonInitializationList.get(i)]
+								.send(pOutArray[nonInitializationList.get(i)]);
+					}
+
+				}
 			}
 		}
+		for (int i = 0; i < nonInitializationList.size(); i++) {
 
-		for (int i = 0; i < no; i++) {
-			mother.traceFuncs(getName() + ": Releasing input port: "
-					+ inportArray[i].getName());
-			inportArray[i].setReceiver(oldReceivers[i]);
-			inportArray[i] = null;
+			inportArray[nonInitializationList.get(i)]
+					.setReceiver(oldReceivers[nonInitializationList.get(i)]);
+			
 		}
-
+		
+		
+		for (int i = 0; i < no; i++)
+			inportArray[i] = null;
 	}
 
 	@Override

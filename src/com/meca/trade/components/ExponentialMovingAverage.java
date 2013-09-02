@@ -14,7 +14,7 @@ import com.jpmorrsn.fbp.engine.Packet;
 @ComponentDescription("Exponential Moving Average")
 @OutPort(value = "OUT", arrayPort = true)
 @InPorts({
-		@InPort(value = "WINDOW", description = "Window", type = String.class),
+		@InPort(value = "WINDOW", description = "Window", type = Double.class),
 		@InPort(value = "DATA", description = "Data", type = Double.class) })
 public class ExponentialMovingAverage extends Indicator {
 
@@ -43,7 +43,8 @@ public class ExponentialMovingAverage extends Indicator {
 
 		if (windowSize == null) {
 			windowPacket = windowPort.receive();
-			windowSize = new Integer((Integer) windowPacket.getContent());
+			Double doubleValue = (Double) windowPacket.getContent();
+			windowSize = new Integer(doubleValue.intValue());
 			multiplier = 2d / (windowSize + 1);
 
 			windowPort.close();

@@ -35,10 +35,13 @@ public class TRIXNetwork extends Network {
 	    component("_ExponentialMovingAverage", com.meca.trade.components.ExponentialMovingAverage.class);
 	    component("_TRIX", com.meca.trade.networks.subnets.TRIXSubNetwork.class);
 	    
+
+	    initialize(Double.valueOf(5), component("_TRIX"), port("PERIOD"));
+	    initialize(Double.valueOf(9), component("_TRIX"), port("SIGNALPERIOD"));
+
 	    
-	    
-	    initialize(Integer.valueOf(5), component("_SimpleMovingAverage"), port("WINDOW"));
-	    initialize(Integer.valueOf(5), component("_ExponentialMovingAverage"), port("WINDOW"));
+	    initialize(Double.valueOf(5), component("_SimpleMovingAverage"), port("WINDOW"));
+	    initialize(Double.valueOf(5), component("_ExponentialMovingAverage"), port("WINDOW"));
 	    
 
 	    
