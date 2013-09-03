@@ -8,14 +8,15 @@ import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
 import com.meca.trade.to.DecisionType;
+import com.meca.trade.to.Order;
 import com.meca.trade.to.QuoteType;
 import com.meca.trade.to.StrategyDecision;
 
 /** Sort a stream of Packets to an output stream **/
-@ComponentDescription("Filters Messages")
-@OutPort(value = "OUT", description = "Output port", type = StrategyDecision.class)
+@ComponentDescription("Messages")
+@OutPort(value = "OUT", description = "Output port", type = Order.class)
 @InPort(value = "IN", arrayPort = true)
-public class TradeMultiplexer extends Component {
+public class PortolioManager extends Component {
 
 	static final String copyright = "Copyright 2007, 2012, J. Paul Morrison.  At your option, you may copy, "
 			+ "distribute, or make derivative works under the terms of the Clarified Artistic License, "
@@ -40,7 +41,7 @@ public class TradeMultiplexer extends Component {
 	    
 	    while((pArray[0] = inportArray[0].receive()) != null){
 	 
-	    	System.out.print("TradeMultData: ");
+	    	//System.out.print("Portfolio Data: ");
 	    	
 		    for (int i = 1; i < no; i++) {
 		    	pArray[i] = inportArray[i].receive();
@@ -49,8 +50,8 @@ public class TradeMultiplexer extends Component {
 		    
 		    for (int i = 0; i < no; i++) {
 	    	if (pArray[i] != null) {
-		    	  Double value = (Double) pArray[i].getContent();
-		    	  System.out.print(value + " ");
+	    		  StrategyDecision value = (StrategyDecision) pArray[i].getContent();
+		    	  //System.out.print(value + " ");
 		    	  drop(pArray[i]);
 		    	  
 		    	  
@@ -59,12 +60,10 @@ public class TradeMultiplexer extends Component {
 	    	  
 		    }
 		    
-		    System.out.println("");
-		    
-		    
+		    //System.out.println("");
 		    
 			
-		    Packet p = create(makeTradeDecision());
+		    Packet p = create(setOrder());
 			outport.send(p);
 	    }
 	    
@@ -73,8 +72,8 @@ public class TradeMultiplexer extends Component {
 		
 	}
 	
-	private StrategyDecision makeTradeDecision(){
-		return new StrategyDecision(DecisionType.LONG,QuoteType.EURUSD);
+	private Order setOrder(){
+		return new Order(DecisionType.LONG,QuoteType.EURUSD,1d);
 		
 	}
 

@@ -5,6 +5,7 @@ import com.jpmorrsn.fbp.engine.ComponentDescription;
 import com.jpmorrsn.fbp.engine.InPort;
 import com.jpmorrsn.fbp.engine.InPorts;
 import com.jpmorrsn.fbp.engine.InputPort;
+import com.jpmorrsn.fbp.engine.MustRun;
 import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
@@ -14,9 +15,9 @@ import com.meca.trade.to.TradeData;
 @ComponentDescription("Filters Messages")
 
 @OutPort(value = "OUT", arrayPort = true)
-
 @InPorts({
 		@InPort(value = "PRICETYPE", description = "type", type = String.class),
+		@InPort(value = "CLOCKTICK", description = "type", type = Double.class),
 		@InPort(value = "TRADEDATA", description = "trade data", type = TradeData.class) })
 public class QuotePrice extends Component {
 
@@ -26,7 +27,7 @@ public class QuotePrice extends Component {
 			+ "this License may be found at http://www.jpaulmorrison.com/fbp/artistic2.htm. "
 			+ "THERE IS NO WARRANTY; USE THIS PRODUCT AT YOUR OWN RISK.";
 
-	InputPort priceTypePort, tradeDataPort;
+	InputPort priceTypePort, tradeDataPort, clockTickPort;
 
     OutputPort[] outportArray;
 
@@ -37,6 +38,7 @@ public class QuotePrice extends Component {
 	protected void execute() {
 
 		Packet p = null;
+		Packet c = null;
 		Packet pricePacket = null;
 		
 
@@ -51,8 +53,9 @@ public class QuotePrice extends Component {
 		
 		
 
-		while ((p = tradeDataPort.receive()) != null) {
+		while ((p = tradeDataPort.receive()) != null ) {
 
+			//&& (c = clockTickPort.receive())!=null
 			TradeData dat = (TradeData) p.getContent();
 						
 			if(priceType.equalsIgnoreCase("O")){
@@ -82,6 +85,7 @@ public class QuotePrice extends Component {
 				}
 				
 				drop(p);
+				//drop(c);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -97,6 +101,7 @@ public class QuotePrice extends Component {
 
 		priceTypePort = openInput("PRICETYPE");
 		tradeDataPort = openInput("TRADEDATA");
+		clockTickPort = openInput("CLOCKTICK");
 
 		outportArray = openOutputArray("OUT");
 

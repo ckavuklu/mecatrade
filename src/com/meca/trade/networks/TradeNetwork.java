@@ -43,6 +43,8 @@ public class TradeNetwork extends Network {
 	    
 	    // Stragety
 	    component("_TradeMultiplexer", com.meca.trade.components.TradeMultiplexer.class);
+	    component("_PortolioManager", com.meca.trade.components.PortolioManager.class);
+	    component("_ActionManager", com.meca.trade.components.ActionManager.class);
 	    
 	    connect(component("_DataSource"), port("OUT"), component("_DataFeeder"), port("TRADEDATA"));
 	    
@@ -50,6 +52,11 @@ public class TradeNetwork extends Network {
 	    connect(component("_DataFeeder"), port("OUT",1), component("_QuotePrice_C"), port("TRADEDATA"));
 	    connect(component("_DataFeeder"), port("OUT",2), component("_QuotePrice_H"), port("TRADEDATA"));
 	    connect(component("_DataFeeder"), port("OUT",3), component("_QuotePrice_L"), port("TRADEDATA"));
+	    
+	    connect(component("_ActionManager"), port("CLOCKTICK",0), component("_QuotePrice_O"), port("CLOCKTICK"));
+	    connect(component("_ActionManager"), port("CLOCKTICK",1), component("_QuotePrice_C"), port("CLOCKTICK"));
+	    connect(component("_ActionManager"), port("CLOCKTICK",2), component("_QuotePrice_H"), port("CLOCKTICK"));
+	    connect(component("_ActionManager"), port("CLOCKTICK",3), component("_QuotePrice_L"), port("CLOCKTICK"));
 	    
 	    connect(component("_QuotePrice_C"), port("OUT",1), component("_SimpleMovingAverage"), port("DATA"));
 	    connect(component("_QuotePrice_C"), port("OUT",2), component("_ExponentialMovingAverage"), port("DATA"));
@@ -66,7 +73,11 @@ public class TradeNetwork extends Network {
 	    connect(component("_MACD"), port("MACDLINE"), component("_TradeMultiplexer"), port("IN",6));
 	    connect(component("_MACD"), port("SIGNALLINE"), component("_TradeMultiplexer"), port("IN",7));
 	    connect(component("_MACD"), port("HISTOGRAM"), component("_TradeMultiplexer"), port("IN",8));
-	   
+	    
+	    
+	    
+	    connect(component("_TradeMultiplexer"), port("OUT"), component("_PortolioManager"), port("IN",0));
+	    connect(component("_PortolioManager"), port("OUT"), component("_ActionManager"), port("IN"));
 	    
 	    //connect(component("_DataFeeder"), port("OUT"), component("_Write_text_to_pane"), port("IN"));
 	  }
