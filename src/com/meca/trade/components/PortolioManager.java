@@ -1,5 +1,7 @@
 package com.meca.trade.components;
 
+import java.util.Random;
+
 import com.jpmorrsn.fbp.engine.Component;
 import com.jpmorrsn.fbp.engine.ComponentDescription;
 import com.jpmorrsn.fbp.engine.InPort;
@@ -72,8 +74,8 @@ public class PortolioManager extends Component {
 		
 	}
 	
-	private Order setOrder(){
-		return new Order(DecisionType.LONG,QuoteType.EURUSD,1d);
+	private Order setOrder(){	
+		return new Order((new Random().nextInt(2)>0)?DecisionType.LONG:DecisionType.SHORT,QuoteType.EURUSD,1d);
 		
 	}
 

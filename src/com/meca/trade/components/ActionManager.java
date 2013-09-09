@@ -14,7 +14,7 @@ import com.meca.trade.to.StrategyDecision;
 /** Sort a stream of Packets to an output stream **/
 @ComponentDescription("ActionManager")
 @InPort(value = "IN", description = "Input port", type = Order.class)
-//@OutPort(value = "CLOCKTICK", arrayPort = true)
+@OutPort(value = "CLOCKTICK", arrayPort = true)
 public class ActionManager extends Component {
 
 	static final String copyright = "Copyright 2007, 2012, J. Paul Morrison.  At your option, you may copy, "
@@ -47,10 +47,20 @@ public class ActionManager extends Component {
 	    	//TODO: Fill in execute order
 	    	//executeOrder();
 	    	
-	    /*	for (int i = 0; i < outport.length; i++) {
+	    	for (int i = 0; i < outport.length; i++) {
+	    		
+	    		//This is to slow down the network
+	    		/*
+	    		try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				*/
+	    		
 	    		Packet clock = create(Double.NaN);
 				outport[i].send(clock);
-			}*/
+			}
 	    	
 	    }
 
@@ -62,6 +72,6 @@ public class ActionManager extends Component {
 	protected void openPorts() {
 
 		 inport = openInput("IN");
-		// outport = openOutputArray("CLOCKTICK");
+		 outport = openOutputArray("CLOCKTICK");
 	}
 }

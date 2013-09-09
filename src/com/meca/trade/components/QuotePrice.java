@@ -18,7 +18,7 @@ import com.meca.trade.to.TradeData;
 @InPorts({
 		@InPort(value = "PRICETYPE", description = "type", type = String.class),
 		@InPort(value = "KICKOFF", description = "type", type = Double.class),
-	//	@InPort(value = "CLOCKTICK", description = "type", type = Double.class),
+		@InPort(value = "CLOCKTICK", description = "type", type = Double.class),
 		@InPort(value = "TRADEDATA", description = "trade data", type = TradeData.class) })
 public class QuotePrice extends Component {
 
@@ -28,7 +28,7 @@ public class QuotePrice extends Component {
 			+ "this License may be found at http://www.jpaulmorrison.com/fbp/artistic2.htm. "
 			+ "THERE IS NO WARRANTY; USE THIS PRODUCT AT YOUR OWN RISK.";
 
-	InputPort priceTypePort, tradeDataPort, kickoffPort;
+	InputPort priceTypePort, tradeDataPort, kickoffPort, clockTickPort;
 
     OutputPort[] outportArray;
 
@@ -55,7 +55,6 @@ public class QuotePrice extends Component {
 		
 		if (kickoffPacket == null) {
 			kickoffPacket = kickoffPort.receive();
-			System.out.println("KICKOFF Packet received");
 			kickOff = true;
 			kickoffPort.close();
 			drop(kickoffPacket);
@@ -64,9 +63,6 @@ public class QuotePrice extends Component {
 
 		while ((p = tradeDataPort.receive()) != null && kickOff) {
 
-			kickOff = false;
-			
-			//&& (c = clockTickPort.receive())!=null
 			TradeData dat = (TradeData) p.getContent();
 						
 			if(priceType.equalsIgnoreCase("O")){
@@ -96,15 +92,20 @@ public class QuotePrice extends Component {
 				}
 				
 				drop(p);
-				//drop(c);
 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+
+			//This is to wait for the clock tick
+			c = clockTickPort.receive();
+			
+			drop(c);
+
 		}
 		
 		tradeDataPort.close();
-		//outport.close();
+		clockTickPort.close();
 	}
 
 	@Override
@@ -112,7 +113,7 @@ public class QuotePrice extends Component {
 
 		priceTypePort = openInput("PRICETYPE");
 		tradeDataPort = openInput("TRADEDATA");
-//		clockTickPort = openInput("CLOCKTICK");
+		clockTickPort = openInput("CLOCKTICK");
 		kickoffPort = openInput("KICKOFF");
 
 		outportArray = openOutputArray("OUT");
