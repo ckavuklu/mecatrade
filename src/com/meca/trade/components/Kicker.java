@@ -3,19 +3,20 @@ package com.meca.trade.components;
 import com.jpmorrsn.fbp.engine.Component;
 import com.jpmorrsn.fbp.engine.ComponentDescription;
 import com.jpmorrsn.fbp.engine.InPort;
+import com.jpmorrsn.fbp.engine.InPorts;
 import com.jpmorrsn.fbp.engine.InputPort;
+import com.jpmorrsn.fbp.engine.MustRun;
 import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
-import com.meca.trade.to.Action;
-import com.meca.trade.to.Order;
-import com.meca.trade.to.StrategyDecision;
+import com.meca.trade.to.TradeData;
 
 /** Sort a stream of Packets to an output stream **/
-@ComponentDescription("ActionManager")
-@InPort(value = "IN", description = "Input port", type = Order.class)
-//@OutPort(value = "CLOCKTICK", arrayPort = true)
-public class ActionManager extends Component {
+@ComponentDescription("Filters Messages")
+
+@OutPort(value = "OUT", arrayPort = true)
+
+public class Kicker extends Component {
 
 	static final String copyright = "Copyright 2007, 2012, J. Paul Morrison.  At your option, you may copy, "
 			+ "distribute, or make derivative works under the terms of the Clarified Artistic License, "
@@ -23,45 +24,43 @@ public class ActionManager extends Component {
 			+ "this License may be found at http://www.jpaulmorrison.com/fbp/artistic2.htm. "
 			+ "THERE IS NO WARRANTY; USE THIS PRODUCT AT YOUR OWN RISK.";
 
-	InputPort inport;
-	
-	Packet p;
+    OutputPort[] outportArray;
 
-	OutputPort[] outport;
-
+	private Double result = null;
 	
 	@Override
 	protected void execute() {
- 
-	    while((p = inport.receive()) != null){
-	 
-	    	Order value = (Order) p.getContent();
-	    	drop(p);
-	    	
-	    	for(Action act:value.getActionList()){
-	    		System.out.print("ActionManager Data: " + act + " ");
-	    	}
-	    	
-	    	System.out.println("");
-	    	
-	    	//TODO: Fill in execute order
-	    	//executeOrder();
-	    	
-	    /*	for (int i = 0; i < outport.length; i++) {
-	    		Packet clock = create(Double.NaN);
-				outport[i].send(clock);
-			}*/
-	    	
-	    }
 
-	}
+		Packet p = null;
+		Packet c = null;
+		Packet pricePacket = null;
+		result = new Double(Double.NaN);
 
+			try {
+				
+					for(int i=0;i<outportArray.length;i++){
+					
+						if (outportArray[i].isConnected()) {
+							outportArray[i].send(create(result));
+						} 
+					}
+					
+					//System.out.println("QuotePrice("+priceType+"): " + result + " ");
+				
+				}
+	
+
+		   catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 	
 
 	@Override
 	protected void openPorts() {
 
-		 inport = openInput("IN");
-		// outport = openOutputArray("CLOCKTICK");
+		outportArray = openOutputArray("OUT");
+
 	}
 }

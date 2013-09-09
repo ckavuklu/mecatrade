@@ -17,7 +17,8 @@ import com.meca.trade.to.TradeData;
 @OutPort(value = "OUT", arrayPort = true)
 @InPorts({
 		@InPort(value = "PRICETYPE", description = "type", type = String.class),
-		@InPort(value = "CLOCKTICK", description = "type", type = Double.class),
+		@InPort(value = "KICKOFF", description = "type", type = Double.class),
+	//	@InPort(value = "CLOCKTICK", description = "type", type = Double.class),
 		@InPort(value = "TRADEDATA", description = "trade data", type = TradeData.class) })
 public class QuotePrice extends Component {
 
@@ -27,7 +28,7 @@ public class QuotePrice extends Component {
 			+ "this License may be found at http://www.jpaulmorrison.com/fbp/artistic2.htm. "
 			+ "THERE IS NO WARRANTY; USE THIS PRODUCT AT YOUR OWN RISK.";
 
-	InputPort priceTypePort, tradeDataPort, clockTickPort;
+	InputPort priceTypePort, tradeDataPort, kickoffPort;
 
     OutputPort[] outportArray;
 
@@ -40,7 +41,8 @@ public class QuotePrice extends Component {
 		Packet p = null;
 		Packet c = null;
 		Packet pricePacket = null;
-		
+		Packet kickoffPacket = null;
+		boolean kickOff = false;
 
 		if (priceType == null) {
 			pricePacket = priceTypePort.receive();
@@ -51,10 +53,19 @@ public class QuotePrice extends Component {
 			drop(pricePacket);
 		}
 		
+		if (kickoffPacket == null) {
+			kickoffPacket = kickoffPort.receive();
+			System.out.println("KICKOFF Packet received");
+			kickOff = true;
+			kickoffPort.close();
+			drop(kickoffPacket);
+		}
 		
 
-		while ((p = tradeDataPort.receive()) != null ) {
+		while ((p = tradeDataPort.receive()) != null && kickOff) {
 
+			kickOff = false;
+			
 			//&& (c = clockTickPort.receive())!=null
 			TradeData dat = (TradeData) p.getContent();
 						
@@ -101,7 +112,8 @@ public class QuotePrice extends Component {
 
 		priceTypePort = openInput("PRICETYPE");
 		tradeDataPort = openInput("TRADEDATA");
-		clockTickPort = openInput("CLOCKTICK");
+//		clockTickPort = openInput("CLOCKTICK");
+		kickoffPort = openInput("KICKOFF");
 
 		outportArray = openOutputArray("OUT");
 
