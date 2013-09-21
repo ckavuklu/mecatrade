@@ -2,16 +2,14 @@ package com.meca.trade.to;
 
 import java.io.Serializable;
 
-public enum DecisionType implements Serializable{
-	
-	LONG(1d),
-	SHORT(2d),
-	KEEP(0d);
+public enum TradeStatusType implements Serializable{
+	OPEN(1d),
+	CLOSE(0d);
 	
 	
 	private final Double value;
 
-    private DecisionType(Double value) {
+    private TradeStatusType(Double value) {
         this.value = value;
     }
     public Double getValue() {

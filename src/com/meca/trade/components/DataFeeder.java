@@ -10,7 +10,7 @@ import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
 import com.meca.trade.to.NullTradeData;
 import com.meca.trade.to.SchedulingParameter;
-import com.meca.trade.to.TradeData;
+import com.meca.trade.to.MarketData;
 
 /** Sort a stream of Packets to an output stream **/
 @ComponentDescription("Filters Messages")
@@ -63,7 +63,7 @@ public class DataFeeder extends Component {
 		while ((p = tradeDataPort.receive()) != null) {
 			String[] trade = ((String) p.getContent()).split(",");
 
-			TradeData data = new TradeData(
+			MarketData data = new MarketData(
 					new SchedulingParameter(1, "Minutes"));
 
 			data.setQuote(trade[0]);
@@ -75,7 +75,7 @@ public class DataFeeder extends Component {
 			data.setClose(trade[6]);
 			data.setVolume(trade[7]);
 
-			TradeData result = new NullTradeData();
+			MarketData result = new NullTradeData();
 
 			if (!schedule.equalsIgnoreCase("ALL")) {
 

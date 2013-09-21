@@ -2,16 +2,16 @@ package com.meca.trade.to;
 
 import java.io.Serializable;
 
-public enum DecisionType implements Serializable{
-	
-	LONG(1d),
-	SHORT(2d),
-	KEEP(0d);
-	
+public enum MarketType implements Serializable{
+	EURUSD(1d),
+	USDJPY(3d),
+	USDTRY(0d),
+	GBPUSD(2d),
+	BIST(3d);
 	
 	private final Double value;
 
-    private DecisionType(Double value) {
+    private MarketType(Double value) {
         this.value = value;
     }
     public Double getValue() {

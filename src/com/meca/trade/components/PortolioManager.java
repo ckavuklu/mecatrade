@@ -11,7 +11,7 @@ import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
 import com.meca.trade.to.DecisionType;
 import com.meca.trade.to.Order;
-import com.meca.trade.to.QuoteType;
+import com.meca.trade.to.MarketType;
 import com.meca.trade.to.StrategyDecision;
 
 /** Sort a stream of Packets to an output stream **/
@@ -75,7 +75,7 @@ public class PortolioManager extends Component {
 	}
 	
 	private Order setOrder(){	
-		return new Order((new Random().nextInt(2)>0)?DecisionType.LONG:DecisionType.SHORT,QuoteType.EURUSD,1d);
+		return new Order((new Random().nextInt(2)>0)?DecisionType.LONG:DecisionType.SHORT,MarketType.EURUSD,1d);
 		
 	}
 

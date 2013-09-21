@@ -17,7 +17,7 @@ public class Order extends MecaObject{
 		actionList = new ArrayList<Action>();
 	}
 	
-	public Order(DecisionType decision, QuoteType quote, Double lot) {
+	public Order(DecisionType decision, MarketType quote, Double lot) {
 		actionList = new ArrayList<Action>();
 		actionList.add(new Action(decision, quote, lot));
 	}

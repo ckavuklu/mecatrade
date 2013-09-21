@@ -8,9 +8,9 @@ public class StrategyDecision extends MecaObject{
 	}
 
 	private DecisionType decision;
-	private QuoteType quote;
+	private MarketType quote;
 
-	public StrategyDecision(DecisionType decision, QuoteType quote) {
+	public StrategyDecision(DecisionType decision, MarketType quote) {
 		super();
 		this.decision = decision;
 		this.quote = quote;
@@ -24,11 +24,11 @@ public class StrategyDecision extends MecaObject{
 		this.decision = decision;
 	}
 
-	public QuoteType getQuote() {
+	public MarketType getQuote() {
 		return quote;
 	}
 
-	public void setQuote(QuoteType quote) {
+	public void setQuote(MarketType quote) {
 		this.quote = quote;
 	}
 

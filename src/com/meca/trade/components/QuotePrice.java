@@ -9,7 +9,7 @@ import com.jpmorrsn.fbp.engine.MustRun;
 import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
-import com.meca.trade.to.TradeData;
+import com.meca.trade.to.MarketData;
 
 /** Sort a stream of Packets to an output stream **/
 @ComponentDescription("Filters Messages")
@@ -19,7 +19,7 @@ import com.meca.trade.to.TradeData;
 		@InPort(value = "PRICETYPE", description = "type", type = String.class),
 		@InPort(value = "KICKOFF", description = "type", type = Double.class),
 		@InPort(value = "CLOCKTICK", description = "type", type = Double.class),
-		@InPort(value = "TRADEDATA", description = "trade data", type = TradeData.class) })
+		@InPort(value = "TRADEDATA", description = "trade data", type = MarketData.class) })
 public class QuotePrice extends Component {
 
 	static final String copyright = "Copyright 2007, 2012, J. Paul Morrison.  At your option, you may copy, "
@@ -63,7 +63,7 @@ public class QuotePrice extends Component {
 
 		while ((p = tradeDataPort.receive()) != null && kickOff) {
 
-			TradeData dat = (TradeData) p.getContent();
+			MarketData dat = (MarketData) p.getContent();
 						
 			if(priceType.equalsIgnoreCase("O")){
 				result = Double.valueOf(dat.getOpen());

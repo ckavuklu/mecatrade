@@ -8,7 +8,7 @@ import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
 import com.meca.trade.to.DecisionType;
-import com.meca.trade.to.QuoteType;
+import com.meca.trade.to.MarketType;
 import com.meca.trade.to.StrategyDecision;
 
 /** Sort a stream of Packets to an output stream **/
@@ -74,7 +74,7 @@ public class TradeMultiplexer extends Component {
 	}
 	
 	private StrategyDecision makeTradeDecision(){
-		return new StrategyDecision(DecisionType.LONG,QuoteType.EURUSD);
+		return new StrategyDecision(DecisionType.LONG,MarketType.EURUSD);
 		
 	}
 

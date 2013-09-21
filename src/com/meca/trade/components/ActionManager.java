@@ -45,7 +45,7 @@ public class ActionManager extends Component {
 	    	System.out.println("");
 	    	
 	    	//TODO: Fill in execute order
-	    	//executeOrder();
+	    	executeOrder();
 	    	
 	    	for (int i = 0; i < outport.length; i++) {
 	    		
@@ -66,6 +66,9 @@ public class ActionManager extends Component {
 
 	}
 
+	private void executeOrder(){
+		
+	}
 	
 
 	@Override
