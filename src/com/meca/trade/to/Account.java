@@ -1,17 +1,32 @@
 package com.meca.trade.to;
 
-import java.util.Random;
-
-public class Account {
+public class Account implements IAccount {
 	private CurrencyType currency = null;
 	private String accountNo = null;
 	private Double balance = null;
+	private AccountStatusType status = null;
+	private boolean tradable = false;
 	
+	
+	public Account(CurrencyType currency, String accountNo, Double balance,
+			AccountStatusType status, boolean tradable) {
+		super();
+		this.currency = currency;
+		this.accountNo = accountNo;
+		this.balance = balance;
+		this.status = status;
+		this.tradable = tradable;
+	}
+
+	private void setStatus(AccountStatusType status) {
+		this.status = status;
+	}
+
 	public CurrencyType getCurrency() {
 		return currency;
 	}
 
-	public void setCurrency(CurrencyType currency) {
+	private void setCurrency(CurrencyType currency) {
 		this.currency = currency;
 	}
 
@@ -19,7 +34,7 @@ public class Account {
 		return accountNo;
 	}
 
-	public void setAccountNo(String accountNo) {
+	private void setAccountNo(String accountNo) {
 		this.accountNo = accountNo;
 	}
 
@@ -27,29 +42,40 @@ public class Account {
 		return balance;
 	}
 
-	public void setBalance(Double balance) {
+	private void setBalance(Double balance) {
 		this.balance = balance;
 	}
 
-	public Account(CurrencyType currency, String accountNo, Double balance) {
-		super();
-		this.currency = currency;
-		this.accountNo = accountNo;
-		this.balance = balance;
+
+	@Override
+	public IAccount withdraw(Double amount) {
+		
+		if(getBalance() >= amount && amount > 0 && getStatus() == AccountStatusType.OPEN)
+			setBalance(getBalance() - amount);
+		
+		return this;
 	}
-	
-	public Account(CurrencyType currency, Double balance) {
-		super();
-		this.currency = currency;
-		this.balance = balance;
-		this.accountNo = String.valueOf(new Random().nextDouble());
+
+	@Override
+	public IAccount deposit(Double amount) {
+		if(amount > 0 && getStatus() == AccountStatusType.OPEN)
+			setBalance(getBalance() + amount);
+		
+		return this;
 	}
-	
-	public Account(CurrencyType currency) {
-		super();
-		this.currency = currency;
-		this.balance = 1000d;
-		this.accountNo = String.valueOf(new Random().nextDouble());
+
+	private void setTradable(boolean tradable) {
+		this.tradable = tradable;
+	}
+
+	@Override
+	public boolean isTradable() {
+		return tradable;
+	}
+
+	@Override
+	public AccountStatusType getStatus() {
+		return status;
 	}
 
 }

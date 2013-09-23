@@ -2,7 +2,7 @@ package com.meca.trade.to;
 
 import java.io.Serializable;
 
-public class SchedulingParameter implements Serializable{
+public class SchedulingParameter extends MecaObject{
 	private Integer period;
 	private String periodType;
 

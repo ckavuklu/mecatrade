@@ -8,7 +8,7 @@ import com.jpmorrsn.fbp.engine.InputPort;
 import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
-import com.meca.trade.to.NullTradeData;
+import com.meca.trade.to.NullMarketData;
 import com.meca.trade.to.SchedulingParameter;
 import com.meca.trade.to.MarketData;
 
@@ -75,7 +75,7 @@ public class DataFeeder extends Component {
 			data.setClose(trade[6]);
 			data.setVolume(trade[7]);
 
-			MarketData result = new NullTradeData();
+			MarketData result = new NullMarketData();
 
 			if (!schedule.equalsIgnoreCase("ALL")) {
 
@@ -134,7 +134,7 @@ public class DataFeeder extends Component {
 
 			try {
 
-				if (!(result instanceof NullTradeData)) {
+				if (!(result instanceof NullMarketData)) {
 
 					for (int i = 0; i < outportArray.length; i++) {
 

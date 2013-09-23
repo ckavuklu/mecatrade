@@ -2,7 +2,7 @@ package com.meca.trade.to;
 
 import java.io.Serializable;
 
-public class MarketData implements Serializable{
+public class MarketData extends MecaObject{
 
 	private SchedulingParameter param;
 	private String open;

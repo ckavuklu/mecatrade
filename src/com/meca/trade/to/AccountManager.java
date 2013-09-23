@@ -2,9 +2,35 @@ package com.meca.trade.to;
 
 import java.util.List;
 
-public class AccountManager {
+public class AccountManager extends MecaObject implements IAccountManager{
 
-	private List<Position> positionList;
-	private List<Account> accountList;
+	private List<IAccount> accountList;
+
+	public AccountManager(List<IAccount> accountList) {
+		super();
+		this.accountList = accountList;
+	}
+	
+	@Override
+	public Double getBalance(CurrencyType currency) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IAccount withdraw(CurrencyType currency, Double amount) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IAccount deposit(CurrencyType currency, Double amount) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+	
 	
 }

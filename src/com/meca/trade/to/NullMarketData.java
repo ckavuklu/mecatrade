@@ -1,8 +1,8 @@
 package com.meca.trade.to;
 
-public class NullTradeData extends MarketData {
+public class NullMarketData extends MarketData {
 
-	public NullTradeData() {
+	public NullMarketData() {
 		super(new SchedulingParameter(0, ""));
 		// this creates Null Data
 		// Null trade Data
