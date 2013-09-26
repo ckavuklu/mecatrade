@@ -4,10 +4,7 @@ import java.io.Serializable;
 
 public enum MarketType implements Serializable{
 	EURUSD(1d),
-	USDJPY(3d),
-	USDTRY(0d),
-	GBPUSD(2d),
-	BIST(3d);
+	USDTRY(0d);
 	
 	private final Double value;
 
@@ -16,5 +13,47 @@ public enum MarketType implements Serializable{
     }
     public Double getValue() {
         return value;
+    }
+    
+    public CurrencyType getBaseCurrency(){
+    	CurrencyType result = null;
+    	switch(this){
+	    	case EURUSD : {
+	    		result = CurrencyType.EUR;
+	    		break;
+	    	}
+	    	
+	    	case USDTRY : {
+	    		result = CurrencyType.USD;
+	    		break;
+	    	}
+	    	default:{
+	    		break;
+	    	}
+    	}
+    	
+    	return result;
+    	
+    }
+    
+    public CurrencyType getQuoteCurrency(){
+    	CurrencyType result = null;
+    	switch(this){
+	    	case EURUSD : {
+	    		result = CurrencyType.USD;
+	    		break;
+	    	}
+	    	
+	    	case USDTRY : {
+	    		result = CurrencyType.TRY;
+	    		break;
+	    	}
+	    	default:{
+	    		break;
+	    	}
+    	}
+    	
+    	return result;
+    	
     }
 }

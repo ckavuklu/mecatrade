@@ -20,8 +20,8 @@ public class Trade extends MecaObject {
 	private Date openDate;
 	private Date realizedDate;
 	private Double profitLoss;
-	private Long tradeNo;
-	private Long positionNo;
+	private Integer tradeNo;
+	private Integer positionNo;
 	private TradeStatusType status;
 	
 	
@@ -39,7 +39,7 @@ public class Trade extends MecaObject {
 	
 	
 	public Trade(TradeType tradeType, SignalType signal, Double lot,
-			Double openPrice, Date openDate, TradeStatusType status, Long positionNo) {
+			Double openPrice, Date openDate, TradeStatusType status, Integer positionNo) {
 		super();
 		
 		this.tradeType = tradeType;
@@ -51,12 +51,12 @@ public class Trade extends MecaObject {
 		this.positionNo = positionNo;
 	}
 	
-	public Long getPositionNo() {
+	public Integer getPositionNo() {
 		return positionNo;
 	}
 
 
-	public void setPositionNo(Long positionNo) {
+	public void setPositionNo(Integer positionNo) {
 		this.positionNo = positionNo;
 	}
 
@@ -135,10 +135,10 @@ public class Trade extends MecaObject {
 	public void setPrice(Double price) {
 		this.openPrice = price;
 	}
-	public Long getTradeNo() {
+	public Integer getTradeNo() {
 		return tradeNo;
 	}
-	public void setTradeNo(Long tradeNo) {
+	public void setTradeNo(Integer tradeNo) {
 		this.tradeNo = tradeNo;
 	}
 }

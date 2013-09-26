@@ -4,6 +4,7 @@ public class Account implements IAccount {
 	private CurrencyType currency = null;
 	private String accountNo = null;
 	private Double balance = null;
+	private Double blocked = null;
 	private AccountStatusType status = null;
 	private boolean tradable = false;
 	
@@ -16,6 +17,7 @@ public class Account implements IAccount {
 		this.balance = balance;
 		this.status = status;
 		this.tradable = tradable;
+		this.blocked = 0d;
 	}
 
 	private void setStatus(AccountStatusType status) {
