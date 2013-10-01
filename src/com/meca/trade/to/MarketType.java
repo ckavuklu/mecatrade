@@ -33,7 +33,12 @@ public enum MarketType implements Serializable{
     	}
     	
     	return result;
-    	
+
+    }
+    
+    public Integer getLotSize(){
+    	return 100000;
+
     }
     
     public CurrencyType getQuoteCurrency(){

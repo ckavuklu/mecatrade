@@ -1,6 +1,10 @@
 package com.meca.trade.networks;
 
 import com.jpmorrsn.fbp.engine.Network;
+import com.meca.trade.to.AccountManager;
+import com.meca.trade.to.MarketManager;
+import com.meca.trade.to.MarketType;
+import com.meca.trade.to.PositionManager;
 
 public class TradeNetwork extends Network {
 
@@ -8,6 +12,8 @@ public class TradeNetwork extends Network {
 	  protected void define() {
 	    //component("_Discard", com.jpmorrsn.fbp.components.Discard.class);
 	    //component("_Write_text_to_pane", com.jpmorrsn.fbp.components.ShowText.class);
+		
+		MarketManager manager = new MarketManager(new PositionManager(null), new AccountManager(null), MarketType.EURUSD);
 	    
 		// Trade Data Components
 		component("_DataSource", com.meca.trade.components.TestDataSource.class);
@@ -43,10 +49,15 @@ public class TradeNetwork extends Network {
 	    initialize(Double.valueOf(26), component("_MACD"), port("LONGEMAPERIOD"));
 	    initialize(Double.valueOf(9), component("_MACD"), port("SIGNALPERIOD"));
 	    
+	    
+	    
 	    // Stragety
 	    component("_TradeMultiplexer", com.meca.trade.components.TradeMultiplexer.class);
 	    component("_PortolioManager", com.meca.trade.components.PortolioManager.class);
 	    component("_ActionManager", com.meca.trade.components.ActionManager.class);
+	    
+	    initialize(manager, component("_PortolioManager"), port("MARKETMANAGER"));
+	    initialize(manager, component("_ActionManager"), port("MARKETMANAGER"));
 	    
 	    connect(component("_DataSource"), port("OUT"), component("_DataFeeder"), port("TRADEDATA"));
 	    

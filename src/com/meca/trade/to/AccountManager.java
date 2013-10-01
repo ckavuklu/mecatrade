@@ -11,14 +11,27 @@ public class AccountManager extends MecaObject implements IAccountManager{
 		this.accountList = accountList;
 	}
 	
+	/**
+	 * TODO: We assumed that only one account exist with the same currency type in the same account manager
+	 * 
+	 * 
+	 * 
+	 */
 	@Override
 	public Double getBalance(CurrencyType currency) {
-		// TODO Auto-generated method stub
+		Double balance = 0d;
+		
+		for (IAccount account : accountList) {
+			if (account.getCurrency() == currency && account.isTradable()) {
+				balance += account.getBalance();
+			}
+		}
+		
 		return null;
 	}
 
 	@Override
-	public IAccount withdraw(CurrencyType currency, Double amount) {
+	public IAccount withdraw(CurrencyType currency, Double amount, AccountActionType type,) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -72,7 +72,7 @@ public class Account implements IAccount {
 
 	@Override
 	public boolean isTradable() {
-		return tradable;
+		return tradable && getStatus() == AccountStatusType.OPEN;
 	}
 
 	@Override

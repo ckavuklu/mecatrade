@@ -7,31 +7,33 @@ public class Order extends MecaObject{
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return super.toString();
 	}
 
-	private List<Action> actionList = null;
+	private List<Trade> tradeList = null;
 	
-	public Order() {
-		actionList = new ArrayList<Action>();
-	}
-	
-	public Order(DecisionType decision, MarketType quote, Double lot) {
-		actionList = new ArrayList<Action>();
-		actionList.add(new Action(decision, quote, lot));
-	}
-	
-	public void addAction(Action act){
-		actionList.add(act);
-	}
-	
-	public int getActionCount(){
-		return actionList.size();
+	private void setTradeList(List<Trade> tradeList) {
+		this.tradeList = tradeList;
 	}
 
-	public List<Action> getActionList() {
-		return actionList;
+	public Order(List<Trade> tradeList) {
+		this.tradeList = tradeList;
+	}
+	
+	public Order() {
+		tradeList = new ArrayList<Trade>();
+	}
+	
+	public void addTrade(Trade act){
+		tradeList.add(act);
+	}
+	
+	public int getTradeCount(){
+		return tradeList.size();
+	}
+
+	public List<Trade> getTradeList() {
+		return tradeList;
 	}
 
 

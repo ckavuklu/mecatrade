@@ -10,6 +10,7 @@ import java.util.Date;
  *
  */
 public class Trade extends MecaObject {
+
 	
 	private String signalName;
 	private TradeType tradeType;
@@ -49,6 +50,51 @@ public class Trade extends MecaObject {
 		this.openDate = openDate;
 		this.status = status;
 		this.positionNo = positionNo;
+	}
+	
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append("signalName=");
+		builder.append(signalName);
+		builder.append(" ");
+		builder.append("tradeType=");
+		builder.append(tradeType);
+		builder.append(" ");
+		builder.append("signal=");
+		builder.append(signal);
+		builder.append(" ");
+		builder.append("lot=");
+		builder.append(lot);
+		builder.append(" ");
+		builder.append("openPrice=");
+		builder.append(openPrice);
+		builder.append(" ");
+		builder.append("realizedPrice=");
+		builder.append(realizedPrice);
+		builder.append(" ");
+		builder.append("openDate=");
+		builder.append(openDate);
+		builder.append(" ");
+		builder.append("realizedDate=");
+		builder.append(realizedDate);
+		builder.append(" ");
+		builder.append("profitLoss=");
+		builder.append(profitLoss);
+		builder.append(" ");
+		builder.append("tradeNo=");
+		builder.append(tradeNo);
+		builder.append(" ");
+		builder.append("positionNo=");
+		builder.append(positionNo);
+		builder.append(" ");
+		builder.append("status=");
+		builder.append(status);
+		builder.append(" ");
+		
+		return builder.toString();
 	}
 	
 	public Integer getPositionNo() {

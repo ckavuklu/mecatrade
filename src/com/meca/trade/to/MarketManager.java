@@ -18,14 +18,54 @@ public class MarketManager extends MecaObject implements IMarketManager{
 		this.type = type;
 	}
 	
-	public void executeTrade(){
+	public Trade executeTrade(Trade trade){
 		
-		//TODO:Fill in Here
+		System.out.println("MarketManager.executeTrade() : " + trade.toString());
 		
+		CurrencyType currency = null;
+		Double amount = trade.getLot() * type.getLotSize() * trade.getPrice();
+		
+		
+		switch(trade.getTradeType()){
+	    	case Buy : {
+	    		currency = type.getQuoteCurrency();
+	    		Double balance = accountManager.getBalance(currency);
+	    		
+	    		if(balance >= amount){
+	    			accountManager.withdraw(currency, amount);
+	    		}
+	    		
+	    		break;
+	    	}
+	    	
+	    	case Sell : {
+	    		currency = type.getBaseCurrency();
+	    		break;
+	    	}
+	    	default:{
+	    		break;
+	    	}
+		}
+		
+		
+		
+		
+		
+		return trade;
 	}
 	
-    public void realizeTrade(){
+    public Trade realizeTrade(Trade trade){
 		
+    	System.out.println("MarketManager.realizeTrade() : " + trade.toString());
+		
+    	return trade;
+	}
+    
+    public Trade cancelTrade(Trade trade){
+		
+    	System.out.println("MarketManager.cancelTrade() : " + trade.toString());
+		
+    	return trade;
 	}
 
 }

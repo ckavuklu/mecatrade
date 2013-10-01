@@ -1,19 +1,27 @@
 package com.meca.trade.components;
 
+import java.util.Date;
+
 import com.jpmorrsn.fbp.engine.Component;
 import com.jpmorrsn.fbp.engine.ComponentDescription;
 import com.jpmorrsn.fbp.engine.InPort;
+import com.jpmorrsn.fbp.engine.InPorts;
 import com.jpmorrsn.fbp.engine.InputPort;
 import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
-import com.meca.trade.to.Action;
+import com.meca.trade.to.IMarketManager;
 import com.meca.trade.to.Order;
-import com.meca.trade.to.StrategyDecision;
+import com.meca.trade.to.Trade;
 
 /** Sort a stream of Packets to an output stream **/
 @ComponentDescription("ActionManager")
-@InPort(value = "IN", description = "Input port", type = Order.class)
+
+
+@InPorts({
+	@InPort(value = "MARKETMANAGER", description = "market manafer interface", type = IMarketManager.class),
+	@InPort(value = "IN", description = "Input port", type = Order.class) })
+
 @OutPort(value = "CLOCKTICK", arrayPort = true)
 public class ActionManager extends Component {
 
@@ -28,46 +36,75 @@ public class ActionManager extends Component {
 	Packet p;
 
 	OutputPort[] outport;
+	
+	InputPort marketManagerPort;
+	
+	IMarketManager manager = null;
 
 	
 	@Override
 	protected void execute() {
+		
+		Packet managerPer = null;
+	    
+	    if(manager == null){
+	    	managerPer = marketManagerPort.receive();
+			
+			manager = (IMarketManager) managerPer.getContent();
+			
+			drop(managerPer);
+			marketManagerPort.close();
+	    }
  
 	    while((p = inport.receive()) != null){
 	 
 	    	Order value = (Order) p.getContent();
 	    	drop(p);
 	    	
-	    	for(Action act:value.getActionList()){
+	    	/*
+	    	for(Trade act:value.getTradeList()){
 	    		System.out.print("ActionManager Data: " + act + " ");
 	    	}
 	    	
 	    	System.out.println("");
+	    	*/
+	    	
+	    	//This is to slow down the network
+	    	try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 	    	
 	    	//TODO: Fill in execute order
-	    	executeOrder();
+	    	placeMarketOrder(value);
+			
 	    	
 	    	for (int i = 0; i < outport.length; i++) {
 	    		
-	    		//This is to slow down the network
-	    		/*
-	    		try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				*/
+	    		
+	    		
+	    		
+	    		
+	    		
 	    		
 	    		Packet clock = create(Double.NaN);
 				outport[i].send(clock);
 			}
 	    	
+	    	
 	    }
-
 	}
 
-	private void executeOrder(){
+	private void placeMarketOrder(Order order){
 		
+		//TODO: Market Interface Implementation for Order
+		
+		for(Trade trade : order.getTradeList()){
+			trade.setRealizedDate(new Date());
+			trade.setRealizedPrice(trade.getPrice() + 1d);
+			manager.realizeTrade(trade);
+		}
 	}
 	
 
@@ -75,6 +112,7 @@ public class ActionManager extends Component {
 	protected void openPorts() {
 
 		 inport = openInput("IN");
+		 marketManagerPort = openInput("MARKETMANAGER");
 		 outport = openOutputArray("CLOCKTICK");
 	}
 }
