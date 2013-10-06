@@ -1,13 +1,43 @@
 package com.meca.trade.to;
 
 public class Account implements IAccount {
+	
 	private CurrencyType currency = null;
 	private String accountNo = null;
 	private Double balance = null;
 	private Double blocked = null;
+	
+	
 	private AccountStatusType status = null;
 	private boolean tradable = false;
 	
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append("currency=");
+		builder.append(currency);
+		builder.append(" ");
+		builder.append("accountNo=");
+		builder.append(accountNo);
+		builder.append(" ");
+		builder.append("balance=");
+		builder.append(balance);
+		builder.append(" ");
+		builder.append("blocked=");
+		builder.append(blocked);
+		builder.append(" ");
+		builder.append("status=");
+		builder.append(status);
+		builder.append(" ");
+		builder.append("tradable=");
+		builder.append(tradable);
+		
+		
+		return builder.toString();
+	}
+
 	
 	public Account(CurrencyType currency, String accountNo, Double balance,
 			AccountStatusType status, boolean tradable) {
@@ -48,22 +78,78 @@ public class Account implements IAccount {
 		this.balance = balance;
 	}
 
+	private Double getBlocked() {
+		return blocked;
+	}
+
+	private void setBlocked(Double blocked) {
+		this.blocked = blocked;
+	}
+
 
 	@Override
-	public IAccount withdraw(Double amount) {
+	public boolean withdrawBlocked(Double amount) {
 		
-		if(getBalance() >= amount && amount > 0 && getStatus() == AccountStatusType.OPEN)
+		boolean result = false;
+		
+		if(getBalance() >= amount && amount > 0 && getStatus() == AccountStatusType.OPEN) {
+
 			setBalance(getBalance() - amount);
+			setBlocked(getBlocked() + amount); 
+			result=true;
+		}
+			
+		return result;
+	}
+	
+	
+	
+
+	@Override
+	public boolean withdrawRealized(Double blockedAmount, Double realizedAmount) {
+		boolean result = false;
 		
-		return this;
+		if((getBlocked() - blockedAmount >= 0) && getStatus() == AccountStatusType.OPEN) {
+			setBlocked(getBlocked() - blockedAmount); 
+			setBalance(getBalance() + blockedAmount);
+			setBalance(getBalance() - realizedAmount);
+			
+			result=true;
+		}
+			
+		return result;
 	}
 
 	@Override
-	public IAccount deposit(Double amount) {
-		if(amount > 0 && getStatus() == AccountStatusType.OPEN)
-			setBalance(getBalance() + amount);
+	public boolean deposit(Double amount) {
 		
-		return this;
+		boolean result = false;
+
+		if(amount > 0 && getStatus() == AccountStatusType.OPEN)
+		{
+			setBalance(getBalance() + amount);
+			// setBlocked(getBlocked() + amount); 
+			result=true;
+		}
+		
+		return result;
+	}
+
+	
+	
+	
+	@Override
+	public boolean releaseBlock(Double amount) {
+		boolean result = false;
+
+		if (getBlocked() >= amount && amount > 0 && getStatus() == AccountStatusType.OPEN) {
+			
+			setBlocked(getBlocked()-amount);
+			setBalance(getBalance()+amount);
+			result = true;
+		}
+		
+		return result;
 	}
 
 	private void setTradable(boolean tradable) {

@@ -3,8 +3,13 @@ package com.meca.trade.to;
 public interface IAccountManager {
 	public Double getBalance(CurrencyType currency);
 
-	public IAccount withdraw(CurrencyType currency, Double amount, AccountActionType type, Integer tradeNo, Integer positionNo);
+	public boolean withdraw(Trade trade);
 	
-	public IAccount deposit(CurrencyType currency, Double amount, AccountActionType type, Integer tradeNo, Integer positionNo) ;
+	public boolean deposit(Trade trade) ;
+	
+	public boolean cancel(Trade trade) ;
+	
+	public String toString();
+	
 
 }

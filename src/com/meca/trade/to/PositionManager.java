@@ -6,6 +6,19 @@ import java.util.List;
 public class PositionManager extends MecaObject implements IPositionManager{
 
 	private List<IPosition> positionList;
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		
+		for(IPosition pos:positionList){
+			builder.append("\t\tposition=");
+			builder.append(pos.toString());
+			builder.append("\r\n");
+		}
+		
+		return builder.toString();
+	}
 
 	public PositionManager(List<IPosition> positionList) {
 		super();
@@ -21,6 +34,7 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		if(positionNo == null){
 			Integer posNo = this.positionList.size();
 			result = new Position(posNo,TradeStatusType.OPEN);
+			positionList.add(result);
 		}else{
 			result = positionList.get(positionNo);
 		}
@@ -37,6 +51,8 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		return getPosition(data.getPositionNo()).addTrade(data);
 	}
 
+	
+	
 	@Override
 	public List<IPosition> getPositions() {
 		

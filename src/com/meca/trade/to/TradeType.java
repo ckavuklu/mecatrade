@@ -3,10 +3,10 @@ package com.meca.trade.to;
 import java.io.Serializable;
 
 public enum TradeType implements Serializable{
-	Sell(0d),
-	SExit(1d),
-	Buy(2d),
-	Lexit(3d);
+	SELL(0d),
+	SEXIT(1d),
+	BUY(2d),
+	LEXIT(3d);
 	
 	private final Double value;
 

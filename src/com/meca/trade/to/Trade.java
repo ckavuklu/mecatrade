@@ -24,10 +24,11 @@ public class Trade extends MecaObject {
 	private Integer tradeNo;
 	private Integer positionNo;
 	private TradeStatusType status;
+	private MarketType marketType;
 	
 	
 	public Trade(TradeType tradeType, SignalType signal, Double lot,
-			Double openPrice, Date openDate, TradeStatusType status) {
+			Double openPrice, Date openDate, TradeStatusType status, MarketType type) {
 		super();
 		
 		this.tradeType = tradeType;
@@ -36,11 +37,12 @@ public class Trade extends MecaObject {
 		this.openPrice = openPrice;
 		this.openDate = openDate;
 		this.status = status;
+		this.marketType = type;
 	}
 	
 	
 	public Trade(TradeType tradeType, SignalType signal, Double lot,
-			Double openPrice, Date openDate, TradeStatusType status, Integer positionNo) {
+			Double openPrice, Date openDate, TradeStatusType status, Integer positionNo, MarketType type) {
 		super();
 		
 		this.tradeType = tradeType;
@@ -50,6 +52,7 @@ public class Trade extends MecaObject {
 		this.openDate = openDate;
 		this.status = status;
 		this.positionNo = positionNo;
+		this.marketType = type;
 	}
 	
 	
@@ -89,6 +92,9 @@ public class Trade extends MecaObject {
 		builder.append(" ");
 		builder.append("positionNo=");
 		builder.append(positionNo);
+		builder.append(" ");
+		builder.append("type=");
+		builder.append(marketType);
 		builder.append(" ");
 		builder.append("status=");
 		builder.append(status);
@@ -175,16 +181,21 @@ public class Trade extends MecaObject {
 	public void setLot(Double lot) {
 		this.lot = lot;
 	}
-	public Double getPrice() {
-		return openPrice;
-	}
-	public void setPrice(Double price) {
-		this.openPrice = price;
-	}
+	
 	public Integer getTradeNo() {
 		return tradeNo;
 	}
 	public void setTradeNo(Integer tradeNo) {
 		this.tradeNo = tradeNo;
 	}
+
+	public MarketType getMarketType() {
+		return marketType;
+	}
+
+	public void setMarketType(MarketType type) {
+		this.marketType = type;
+	}
+
+
 }

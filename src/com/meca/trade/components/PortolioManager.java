@@ -103,7 +103,7 @@ public class PortolioManager extends Component {
 	}
 	
 	private List<Trade> evaluateDecisions(final List<StrategyDecision> decisionList){
-		Trade trade = new Trade(TradeType.Buy,SignalType.En,10d,12d,new Date(),TradeStatusType.OPEN);
+		Trade trade = new Trade(TradeType.BUY,SignalType.En,1d,0.12d,new Date(),TradeStatusType.OPEN,manager.getMarketType());
 		
 		List<Trade> tradeList = new ArrayList<Trade>();
 		

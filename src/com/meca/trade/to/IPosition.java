@@ -7,4 +7,6 @@ public interface IPosition {
 	public Double getCurrentProfitLoss();
 	
 	public Trade addTrade(Trade trade);
+	
+	public String toString();
 }

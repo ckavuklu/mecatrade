@@ -1,6 +1,5 @@
 package com.meca.trade.to;
 
-import java.util.List;
 
 public class MarketManager extends MecaObject implements IMarketManager{
 
@@ -8,63 +7,121 @@ public class MarketManager extends MecaObject implements IMarketManager{
 
 	private IAccountManager accountManager;
 	
-	private MarketType type;
+	private MarketType marketType;
 
 	public MarketManager(IPositionManager positionManager,
 			IAccountManager accountManager, MarketType type) {
 		super();
 		this.positionManager = positionManager;
 		this.accountManager = accountManager;
-		this.type = type;
+		this.marketType = type;
 	}
 	
+	@Override
+	public MarketType getMarketType() {
+		return this.marketType;
+	}
+
 	public Trade executeTrade(Trade trade){
 		
-		System.out.println("MarketManager.executeTrade() : " + trade.toString());
-		
-		CurrencyType currency = null;
-		Double amount = trade.getLot() * type.getLotSize() * trade.getPrice();
-		
+		System.out.println("MarketManager.executeTrade()");
 		
 		switch(trade.getTradeType()){
-	    	case Buy : {
-	    		currency = type.getQuoteCurrency();
-	    		Double balance = accountManager.getBalance(currency);
+	    	case BUY : {
 	    		
-	    		if(balance >= amount){
-	    			accountManager.withdraw(currency, amount);
-	    		}
+	    		accountManager.withdraw(positionManager.addTrade(trade));
 	    		
 	    		break;
 	    	}
+
+	    	case LEXIT : {
+	    		
+	    		positionManager.addTrade(trade);
+
+	    		break;
+	    	}
+
 	    	
-	    	case Sell : {
-	    		currency = type.getBaseCurrency();
+	    	case SELL : {
+	    		
+	    		accountManager.withdraw(positionManager.addTrade(trade));
+	    		
 	    		break;
 	    	}
+
+	    	case SEXIT : {
+	    		
+	    		positionManager.addTrade(trade);
+	    		
+	    		break;
+	    	}
+
 	    	default:{
 	    		break;
 	    	}
 		}
 		
-		
-		
-		
+		System.out.println("PositionManager:\r\n" + positionManager.toString());
+		System.out.println("AccountManager:\r\n" + accountManager.toString());
 		
 		return trade;
 	}
 	
     public Trade realizeTrade(Trade trade){
 		
-    	System.out.println("MarketManager.realizeTrade() : " + trade.toString());
+    	System.out.println("MarketManager.realizeTrade()");
+    	
+    	switch(trade.getTradeType()){
+	    	case BUY : {
+	    		
+	    		accountManager.withdraw(positionManager.addTrade(trade));
+	
+	    		break;
+	    	}
+	    	
+	    	case LEXIT : {
+	    		
+	    		accountManager.deposit(positionManager.addTrade(trade));
+
+	    		break;
+	    	}
+
+	    	case SELL : {
+	    		
+	    		accountManager.withdraw(positionManager.addTrade(trade));
+	    		
+	    		break;
+	    	}
+
+	    	case SEXIT : {
+	    		
+	    		accountManager.deposit(positionManager.addTrade(trade));
+	    		
+	    		break;
+	    	}
+
+	    	default:{
+	    		break;
+	    	}
+		}
 		
+    	System.out.println("PositionManager:\r\n" + positionManager.toString());
+		System.out.println("AccountManager:\r\n" + accountManager.toString());
+    	
     	return trade;
 	}
     
+    
+    
     public Trade cancelTrade(Trade trade){
 		
-    	System.out.println("MarketManager.cancelTrade() : " + trade.toString());
+    	System.out.println("MarketManager.cancelTrade()");
+		accountManager.cancel(trade);
+		positionManager.addTrade(trade);
 		
+		System.out.println("PositionManager:\r\n" + positionManager.toString());
+		System.out.println("AccountManager:\r\n" + accountManager.toString());
+	    	
     	return trade;
 	}
 

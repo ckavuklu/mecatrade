@@ -13,6 +13,7 @@ import com.jpmorrsn.fbp.engine.Packet;
 import com.meca.trade.to.IMarketManager;
 import com.meca.trade.to.Order;
 import com.meca.trade.to.Trade;
+import com.meca.trade.to.TradeStatusType;
 
 /** Sort a stream of Packets to an output stream **/
 @ComponentDescription("ActionManager")
@@ -83,11 +84,6 @@ public class ActionManager extends Component {
 	    	for (int i = 0; i < outport.length; i++) {
 	    		
 	    		
-	    		
-	    		
-	    		
-	    		
-	    		
 	    		Packet clock = create(Double.NaN);
 				outport[i].send(clock);
 			}
@@ -102,7 +98,8 @@ public class ActionManager extends Component {
 		
 		for(Trade trade : order.getTradeList()){
 			trade.setRealizedDate(new Date());
-			trade.setRealizedPrice(trade.getPrice() + 1d);
+			trade.setRealizedPrice(trade.getOpenPrice() + 0.5d);
+			trade.setStatus(TradeStatusType.CLOSE);
 			manager.realizeTrade(trade);
 		}
 	}

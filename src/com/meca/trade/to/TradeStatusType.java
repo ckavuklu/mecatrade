@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public enum TradeStatusType implements Serializable{
 	OPEN(1d),
+	CANCEL(1d),
 	CLOSE(0d);
 	
 	

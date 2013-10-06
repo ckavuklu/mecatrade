@@ -1,7 +1,13 @@
 package com.meca.trade.networks;
 
+import java.util.ArrayList;
+
 import com.jpmorrsn.fbp.engine.Network;
+import com.meca.trade.to.Account;
 import com.meca.trade.to.AccountManager;
+import com.meca.trade.to.AccountStatusType;
+import com.meca.trade.to.CurrencyType;
+import com.meca.trade.to.IAccount;
 import com.meca.trade.to.MarketManager;
 import com.meca.trade.to.MarketType;
 import com.meca.trade.to.PositionManager;
@@ -13,7 +19,11 @@ public class TradeNetwork extends Network {
 	    //component("_Discard", com.jpmorrsn.fbp.components.Discard.class);
 	    //component("_Write_text_to_pane", com.jpmorrsn.fbp.components.ShowText.class);
 		
-		MarketManager manager = new MarketManager(new PositionManager(null), new AccountManager(null), MarketType.EURUSD);
+		ArrayList accList = new ArrayList<IAccount>();
+		accList.add(new Account(CurrencyType.EUR,"1234",10000000d,AccountStatusType.OPEN,true));
+		accList.add(new Account(CurrencyType.USD,"5678",50000000d,AccountStatusType.OPEN,true));
+			
+		MarketManager manager = new MarketManager(new PositionManager(null), new AccountManager(accList), MarketType.EURUSD);
 	    
 		// Trade Data Components
 		component("_DataSource", com.meca.trade.components.TestDataSource.class);
