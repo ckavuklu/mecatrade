@@ -47,15 +47,21 @@ public class AccountManager extends MecaObject implements IAccountManager{
 	public boolean withdraw(Trade trade) {
 		boolean result=false;
 		CurrencyType currency=null;
+		Double blockAmount = null;
 		
 		
-		if(trade.getTradeType() == TradeType.BUY)
+		if(trade.getTradeType() == TradeType.BUY){
 			 currency = trade.getMarketType().getQuoteCurrency();
+			 blockAmount = trade.getLot() * trade.getMarketType().getLotSize() * trade.getOpenPrice();
+			 
+		}
 		
-		else if(trade.getTradeType() == TradeType.SELL)
+		else if(trade.getTradeType() == TradeType.SELL){
 			 currency = trade.getMarketType().getBaseCurrency();
+			 blockAmount = trade.getLot() * trade.getMarketType().getLotSize();
+		}
 			
-		Double blockAmount = trade.getLot() * trade.getMarketType().getLotSize() * trade.getOpenPrice();
+		
 		IAccount account = getAccount(currency);
 		
 		
@@ -67,7 +73,7 @@ public class AccountManager extends MecaObject implements IAccountManager{
 	
 			else if (trade.getStatus() == TradeStatusType.CLOSE){
 			
-				Double realAmount = trade.getLot() * trade.getMarketType().getLotSize() * trade.getRealizedPrice();
+				Double realAmount = trade.getLot() * trade.getMarketType().getLotSize() * (trade.getTradeType() == TradeType.BUY?trade.getRealizedPrice():1d);
 				result = account.withdrawRealized(blockAmount, realAmount);
 	
 			}
@@ -81,24 +87,27 @@ public class AccountManager extends MecaObject implements IAccountManager{
 	public boolean deposit(Trade trade) {
 		
 		boolean result=false;
-		CurrencyType currency=null;
+		
+		IAccount baseAccount = getAccount(trade.getMarketType().getBaseCurrency());
+		IAccount quoteAccount = getAccount(trade.getMarketType().getQuoteCurrency());
 		
 		
-		if(trade.getTradeType() == TradeType.LEXIT)
-			 currency = trade.getMarketType().getQuoteCurrency();
-		
-		else if(trade.getTradeType() == TradeType.SEXIT)
-			 currency = trade.getMarketType().getBaseCurrency();
-			
-		IAccount account = getAccount(currency);
-		
-		
-		if(account!=null){
+		if(baseAccount!=null && quoteAccount!=null){
 			
 			if (trade.getStatus() == TradeStatusType.CLOSE){
-			
-				Double realAmount = trade.getLot() * trade.getMarketType().getLotSize() * trade.getRealizedPrice();
-				result = account.deposit(realAmount);
+				
+				
+				
+				if(trade.getTradeType() == TradeType.SEXIT){
+				
+					Double realAmount = trade.getLot() * trade.getMarketType().getLotSize() * 1d;
+					result = baseAccount.deposit(realAmount);
+					quoteAccount.deposit(trade.getProfitLoss());
+				}else{
+					Double realAmount = trade.getLot() * trade.getMarketType().getLotSize() * trade.getRealizedPrice();
+					result = quoteAccount.deposit(realAmount);
+					//quoteAccount.deposit(trade.getProfitLoss());
+				}
 	
 			}
 		}

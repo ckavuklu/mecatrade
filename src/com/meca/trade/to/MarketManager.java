@@ -3,19 +3,31 @@ package com.meca.trade.to;
 
 public class MarketManager extends MecaObject implements IMarketManager{
 
+
 	private IPositionManager positionManager;
 
 	private IAccountManager accountManager;
 	
 	private MarketType marketType;
+	
+	private IPerformanceReportManager perfReporManager;
 
 	public MarketManager(IPositionManager positionManager,
-			IAccountManager accountManager, MarketType type) {
+			IAccountManager accountManager, IPerformanceReportManager perfReporManager, MarketType type) {
 		super();
 		this.positionManager = positionManager;
 		this.accountManager = accountManager;
 		this.marketType = type;
+		this.perfReporManager = perfReporManager;
 	}
+	
+
+	@Override
+	public void generatePerformanceReport() {
+		perfReporManager.generatePerformanceReport(positionManager, accountManager, marketType);
+	}
+
+
 	
 	@Override
 	public MarketType getMarketType() {
@@ -24,7 +36,6 @@ public class MarketManager extends MecaObject implements IMarketManager{
 
 	public Trade executeTrade(Trade trade){
 		
-		System.out.println("MarketManager.executeTrade()");
 		
 		switch(trade.getTradeType()){
 	    	case BUY : {
@@ -61,8 +72,8 @@ public class MarketManager extends MecaObject implements IMarketManager{
 	    	}
 		}
 		
-		System.out.println("PositionManager:\r\n" + positionManager.toString());
-		System.out.println("AccountManager:\r\n" + accountManager.toString());
+		//System.out.println("PositionManager:\r\n" + positionManager.toString());
+		//System.out.println("AccountManager:\r\n" + accountManager.toString());
 		
 		return trade;
 	}

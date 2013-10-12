@@ -6,6 +6,7 @@ import java.util.List;
 public class PositionManager extends MecaObject implements IPositionManager{
 
 	private List<IPosition> positionList;
+	private List<Trade> tradeHistory;
 	
 	@Override
 	public String toString() {
@@ -26,6 +27,7 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		
 		if(this.positionList == null){
 			this.positionList = new ArrayList<IPosition>();
+			this.tradeHistory = new ArrayList<Trade>();
 		}
 	}
 	
@@ -47,8 +49,14 @@ public class PositionManager extends MecaObject implements IPositionManager{
 
 	@Override
 	public Trade addTrade(Trade data) {
+		
+		Trade trade = getPosition(data.getPositionNo()).addTrade(data);
+		
+		if(trade.getStatus() == TradeStatusType.CLOSE){
+			tradeHistory.add(trade);
+		}
 
-		return getPosition(data.getPositionNo()).addTrade(data);
+		return trade;
 	}
 
 	
@@ -63,6 +71,45 @@ public class PositionManager extends MecaObject implements IPositionManager{
 	public Double getTotalRisk() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	
+	public Integer getConsecutiveWinningTrades(){
+	
+		Integer result = 0;
+		Integer rally = 0;
+		
+		for (Trade tr : tradeHistory) {
+		
+			if (tr.getStatus() == TradeStatusType.CLOSE && !(tr.getTradeType() == TradeType.BUY || tr.getTradeType() == TradeType.SELL)) {
+				
+				if(tr.getProfitLoss()>0) rally++;
+				if(tr.getProfitLoss()<0) rally=0;
+				if (rally>result) result = rally;
+				
+			}
+		}
+		
+		return result;
+	}
+	
+	public Integer getConsecutiveLosingTrades(){
+	
+		Integer result = 0;
+		Integer rally = 0;
+		
+		for (Trade tr : tradeHistory) {
+		
+			if (tr.getStatus() == TradeStatusType.CLOSE && !(tr.getTradeType() == TradeType.BUY || tr.getTradeType() == TradeType.SELL)) {
+				
+				if(tr.getProfitLoss()<0) rally++;
+				if(tr.getProfitLoss()>0) rally=0;
+				if (rally>result) result = rally;
+				
+			}
+		}
+		
+		return result;
 	}
 	
 }

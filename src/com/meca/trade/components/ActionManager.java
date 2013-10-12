@@ -71,11 +71,11 @@ public class ActionManager extends Component {
 	    	*/
 	    	
 	    	//This is to slow down the network
-	    	try {
+	    	/*try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
+			}*/
 	    	
 	    	//TODO: Fill in execute order
 	    	placeMarketOrder(value);
@@ -98,7 +98,7 @@ public class ActionManager extends Component {
 		
 		for(Trade trade : order.getTradeList()){
 			trade.setRealizedDate(new Date());
-			trade.setRealizedPrice(trade.getOpenPrice() + 0.5d);
+			trade.setRealizedPrice(trade.getOpenPrice());
 			trade.setStatus(TradeStatusType.CLOSE);
 			manager.realizeTrade(trade);
 		}

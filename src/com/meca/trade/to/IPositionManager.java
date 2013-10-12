@@ -10,6 +10,10 @@ public interface IPositionManager {
 	
 	public Double getTotalRisk();
 	
+	public Integer getConsecutiveWinningTrades();
+	
+	public Integer getConsecutiveLosingTrades();
+	
 	public String toString();
 	
 }

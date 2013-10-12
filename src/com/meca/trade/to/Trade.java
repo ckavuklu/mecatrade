@@ -12,7 +12,6 @@ import java.util.Date;
 public class Trade extends MecaObject {
 
 	
-	private String signalName;
 	private TradeType tradeType;
 	private SignalType signal;
 	private Double lot;
@@ -27,6 +26,22 @@ public class Trade extends MecaObject {
 	private MarketType marketType;
 	
 	
+	public Trade(Integer positionNo, Integer tradeNo, TradeType tradeType, SignalType signal, Double lot,
+			Double openPrice, Date openDate, TradeStatusType status, MarketType type) {
+		super();
+		
+		this.tradeType = tradeType;
+		this.signal = signal;
+		this.lot = lot;
+		this.openPrice = openPrice;
+		this.openDate = openDate;
+		this.status = status;
+		this.marketType = type;
+		this.profitLoss = 0d;
+		this.tradeNo = tradeNo;
+		this.positionNo = positionNo;
+	}
+	
 	public Trade(TradeType tradeType, SignalType signal, Double lot,
 			Double openPrice, Date openDate, TradeStatusType status, MarketType type) {
 		super();
@@ -38,8 +53,15 @@ public class Trade extends MecaObject {
 		this.openDate = openDate;
 		this.status = status;
 		this.marketType = type;
+		this.profitLoss = 0d;
 	}
 	
+
+	public Trade() {
+		super();
+		profitLoss = 0d;
+	}
+
 	
 	public Trade(TradeType tradeType, SignalType signal, Double lot,
 			Double openPrice, Date openDate, TradeStatusType status, Integer positionNo, MarketType type) {
@@ -53,6 +75,7 @@ public class Trade extends MecaObject {
 		this.status = status;
 		this.positionNo = positionNo;
 		this.marketType = type;
+		this.profitLoss = 0d;
 	}
 	
 	
@@ -60,9 +83,6 @@ public class Trade extends MecaObject {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		
-		builder.append("signalName=");
-		builder.append(signalName);
-		builder.append(" ");
 		builder.append("tradeType=");
 		builder.append(tradeType);
 		builder.append(" ");
@@ -156,12 +176,6 @@ public class Trade extends MecaObject {
 	}
 	public void setDate(Date date) {
 		this.openDate = date;
-	}
-	public String getSignalName() {
-		return signalName;
-	}
-	public void setSignalName(String signalName) {
-		this.signalName = signalName;
 	}
 	public TradeType getTradeType() {
 		return tradeType;

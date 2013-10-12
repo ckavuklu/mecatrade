@@ -8,9 +8,12 @@ import com.meca.trade.to.AccountManager;
 import com.meca.trade.to.AccountStatusType;
 import com.meca.trade.to.CurrencyType;
 import com.meca.trade.to.IAccount;
+import com.meca.trade.to.IMarketManager;
 import com.meca.trade.to.MarketManager;
 import com.meca.trade.to.MarketType;
+import com.meca.trade.to.PerformanceReportManager;
 import com.meca.trade.to.PositionManager;
+import com.meca.trade.to.TestTradeDataSet;
 
 public class TradeNetwork extends Network {
 
@@ -19,11 +22,20 @@ public class TradeNetwork extends Network {
 	    //component("_Discard", com.jpmorrsn.fbp.components.Discard.class);
 	    //component("_Write_text_to_pane", com.jpmorrsn.fbp.components.ShowText.class);
 		
+		final String INPUT_MARKET_DATA_FILE_NAME = "TESTDATA_MACD.txt";
+		final String INPUT_TEST_TRADE_DATA_FILE_NAME = "TestTradeSet-1";
+		
+		PerformanceReportManager reportManager = new PerformanceReportManager(INPUT_MARKET_DATA_FILE_NAME,INPUT_TEST_TRADE_DATA_FILE_NAME);
+		
 		ArrayList accList = new ArrayList<IAccount>();
-		accList.add(new Account(CurrencyType.EUR,"1234",10000000d,AccountStatusType.OPEN,true));
-		accList.add(new Account(CurrencyType.USD,"5678",50000000d,AccountStatusType.OPEN,true));
+		accList.add(new Account(CurrencyType.EUR,"1234",1000000d,AccountStatusType.OPEN,true));
+		accList.add(new Account(CurrencyType.USD,"5678",1000000d,AccountStatusType.OPEN,true));
+		
+		
 			
-		MarketManager manager = new MarketManager(new PositionManager(null), new AccountManager(accList), MarketType.EURUSD);
+		MarketManager manager = new MarketManager(new PositionManager(null), new AccountManager(accList), reportManager, MarketType.EURUSD);
+		TestTradeDataSet dataSet = new TestTradeDataSet(INPUT_TEST_TRADE_DATA_FILE_NAME);
+		
 	    
 		// Trade Data Components
 		component("_DataSource", com.meca.trade.components.TestDataSource.class);
@@ -45,7 +57,7 @@ public class TradeNetwork extends Network {
 	    initialize("ALL", component("_DataFeeder"), port("SCHEDULETYPE"));
 	    //initialize("Minute", component("_DataFeeder"), port("SCHEDULETYPE"));
 	    initialize(Integer.valueOf(2), component("_DataFeeder"), port("SCHEDULEPERIOD"));
-	    initialize("TESTDATA_MACD.txt", component("_DataSource"), port("FILENAME"));
+	    initialize(INPUT_MARKET_DATA_FILE_NAME, component("_DataSource"), port("FILENAME"));
 
 	    
 	    // Indicator Components
@@ -65,8 +77,10 @@ public class TradeNetwork extends Network {
 	    component("_TradeMultiplexer", com.meca.trade.components.TradeMultiplexer.class);
 	    component("_PortolioManager", com.meca.trade.components.PortolioManager.class);
 	    component("_ActionManager", com.meca.trade.components.ActionManager.class);
+	
 	    
 	    initialize(manager, component("_PortolioManager"), port("MARKETMANAGER"));
+	    initialize(dataSet, component("_PortolioManager"), port("TESTTRADEDATASET"));
 	    initialize(manager, component("_ActionManager"), port("MARKETMANAGER"));
 	    
 	    connect(component("_DataSource"), port("OUT"), component("_DataFeeder"), port("TRADEDATA"));

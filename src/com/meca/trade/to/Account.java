@@ -1,5 +1,7 @@
 package com.meca.trade.to;
 
+import java.text.DecimalFormat;
+
 public class Account implements IAccount {
 	
 	private CurrencyType currency = null;
@@ -14,6 +16,7 @@ public class Account implements IAccount {
 	
 	@Override
 	public String toString() {
+		DecimalFormat format = new DecimalFormat("#.##");
 		StringBuilder builder = new StringBuilder();
 		
 		builder.append("currency=");
@@ -23,7 +26,7 @@ public class Account implements IAccount {
 		builder.append(accountNo);
 		builder.append(" ");
 		builder.append("balance=");
-		builder.append(balance);
+		builder.append(format.format(balance));
 		builder.append(" ");
 		builder.append("blocked=");
 		builder.append(blocked);

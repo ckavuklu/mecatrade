@@ -37,7 +37,7 @@ public enum MarketType implements Serializable{
     }
     
     public Integer getLotSize(){
-    	return 100000;
+    	return 1000;
 
     }
     
