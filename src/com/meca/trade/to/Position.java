@@ -14,6 +14,15 @@ public class Position extends MecaObject implements IPosition {
 	private TradeStatusType status;
 	private Double openLotCount;
 	private List<Trade> tradeList;
+	
+	public Integer getPositionNo() {
+		return positionNo;
+	}
+
+	public void setPositionNo(Integer positionNo) {
+		this.positionNo = positionNo;
+	}
+
 	private MarketType marketType;
 	private TradeType tradeType;
 	
@@ -57,7 +66,7 @@ public class Position extends MecaObject implements IPosition {
 		this.openLotCount = 0d;
 	}
 
-	private Double getOpenLotCount() {
+	public Double getOpenLotCount() {
 		return openLotCount;
 	}
 
@@ -131,13 +140,28 @@ public class Position extends MecaObject implements IPosition {
 	public Double getCurrentRisk() { 
 		return null;
 	}
-	
+
+
 	private Double getEntryPrice(){
 		Double result = 0d;
 		for (Trade tr : tradeList) {
 			if ((tr.getTradeType() == TradeType.BUY || tr.getTradeType() == TradeType.SELL)
 					&& (tr.getStatus() == TradeStatusType.CLOSE)) {
 						result = tr.getRealizedPrice();
+					break;
+				}
+		}
+		
+		return result;
+	}
+	
+	
+	public TradeType getEntryTradeType(){
+		TradeType result = null;
+		for (Trade tr : tradeList) {
+			if ((tr.getTradeType() == TradeType.BUY || tr.getTradeType() == TradeType.SELL)
+					&& (tr.getStatus() == TradeStatusType.CLOSE)) {
+						result = tr.getTradeType();
 					break;
 				}
 		}

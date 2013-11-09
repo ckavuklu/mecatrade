@@ -69,7 +69,6 @@ public class PositionManager extends MecaObject implements IPositionManager{
 
 	@Override
 	public Double getTotalRisk() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	

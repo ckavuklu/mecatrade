@@ -8,4 +8,8 @@ public interface IMarketManager {
 	public Trade cancelTrade(Trade trade);
 	public void generatePerformanceReport();
 	public MarketType getMarketType();
+	
+	public IAccountManager getAccountManager();
+	
+	public IPositionManager getPositionManager();
 }

@@ -50,7 +50,7 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		this.type = type;
 		
 		
-		calculatePostionPerformance();
+		calculatePositionPerformance();
 		StringBuilder builder = new StringBuilder();
 		builder.append("PerformanceReportManager.generatePerformanceReport()");
 		builder.append(endln);
@@ -116,7 +116,7 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		
 	}
 	
-	private void calculatePostionPerformance(){
+	private void calculatePositionPerformance(){
 		
 		for(IPosition pos:positionManager.getPositions()){
 			

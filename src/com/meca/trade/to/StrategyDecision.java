@@ -1,19 +1,22 @@
 package com.meca.trade.to;
 
 public class StrategyDecision extends MecaObject{
-	@Override
-	public String toString() {
-		
-		return "DecisionType:"+decision+" QuoteType:"+quote;
+	
+	private DecisionType decision;
+	private PriceData price;
+	
+	public PriceData getPrice() {
+		return price;
 	}
 
-	private DecisionType decision;
-	private MarketType quote;
+	private void setPrice(PriceData price) {
+		this.price = price;
+	}
 
-	public StrategyDecision(DecisionType decision, MarketType quote) {
+	public StrategyDecision(DecisionType decision, PriceData price) {
 		super();
 		this.decision = decision;
-		this.quote = quote;
+		this.price = price;
 	}
 
 	public DecisionType getDecision() {
@@ -24,12 +27,10 @@ public class StrategyDecision extends MecaObject{
 		this.decision = decision;
 	}
 
-	public MarketType getQuote() {
-		return quote;
-	}
-
-	public void setQuote(MarketType quote) {
-		this.quote = quote;
+	@Override
+	public String toString() {
+		
+		return "DecisionType:"+decision;
 	}
 
 }

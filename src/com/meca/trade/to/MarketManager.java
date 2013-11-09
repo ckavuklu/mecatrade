@@ -21,6 +21,17 @@ public class MarketManager extends MecaObject implements IMarketManager{
 		this.perfReporManager = perfReporManager;
 	}
 	
+	@Override
+	public IAccountManager getAccountManager() {
+		
+		return accountManager;
+	}
+
+
+	@Override
+	public IPositionManager getPositionManager() {
+		return positionManager;
+	}
 
 	@Override
 	public void generatePerformanceReport() {
@@ -116,8 +127,8 @@ public class MarketManager extends MecaObject implements IMarketManager{
 	    	}
 		}
 		
-    	System.out.println("PositionManager:\r\n" + positionManager.toString());
-		System.out.println("AccountManager:\r\n" + accountManager.toString());
+    	//System.out.println("PositionManager:\r\n" + positionManager.toString());
+		//System.out.println("AccountManager:\r\n" + accountManager.toString());
     	
     	return trade;
 	}
@@ -130,8 +141,8 @@ public class MarketManager extends MecaObject implements IMarketManager{
 		accountManager.cancel(trade);
 		positionManager.addTrade(trade);
 		
-		System.out.println("PositionManager:\r\n" + positionManager.toString());
-		System.out.println("AccountManager:\r\n" + accountManager.toString());
+		//System.out.println("PositionManager:\r\n" + positionManager.toString());
+		//System.out.println("AccountManager:\r\n" + accountManager.toString());
 	    	
     	return trade;
 	}

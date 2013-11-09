@@ -34,6 +34,8 @@ public class SimpleMovingAverage extends Indicator {
 		Packet dataPacket = null;
 		Packet windowPacket = null;
 
+	//	System.out.println("********************** SimpleMovingAverage NAME" + this.);
+		
 		if (windowSize == null) {
 			windowPacket = windowPort.receive();
 			Double doubleValue = (Double) windowPacket.getContent();

@@ -4,6 +4,12 @@ public interface IPosition {
 
 	public Double getCurrentRisk();
 	
+	public Double getOpenLotCount();
+	
+	public Integer getPositionNo();
+	
+	public TradeType getEntryTradeType();
+	
 	public Double getCurrentProfitLoss(Double quote);
 	
 	public Double getRealizedProfitLoss();

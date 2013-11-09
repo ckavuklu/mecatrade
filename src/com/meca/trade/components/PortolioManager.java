@@ -92,9 +92,6 @@ public class PortolioManager extends Component {
 	    }
 	  
 	    
-	    
-	    
-	    
 	    while((pArray[0] = inportArray[0].receive()) != null){
 	    	
 	    	//System.out.print("Portfolio Data: ");
@@ -114,7 +111,7 @@ public class PortolioManager extends Component {
 	          }
 		    }
 		    
-		    Order order = new Order(executeTrades(evaluateDecisions(strategyDecisions)));
+		    Order order = new Order(executeTrades(evaluateTestDecisions(strategyDecisions)));
 		    
 	    	strategyDecisions.clear();
 	    	
@@ -126,7 +123,30 @@ public class PortolioManager extends Component {
 
 	}
 	
-	private List<Trade> evaluateDecisions(final List<StrategyDecision> decisionList){
+	
+	private List<Trade> evaluateStrategyDecisions(final List<StrategyDecision> decisionList){
+		Trade trade = null;
+		
+		
+		
+		
+		/*
+		 * 
+		 * 
+		 * 
+		 * 
+		 * */
+		
+		
+		List<Trade> tradeList = new ArrayList<Trade>();
+		
+		if(trade != null)
+			tradeList.add(trade);
+		
+		return tradeList;
+	}
+	
+	private List<Trade> evaluateTestDecisions(final List<StrategyDecision> decisionList){
 		Trade trade = null;
 		
 		trade = testTradeDataSet.getNext();

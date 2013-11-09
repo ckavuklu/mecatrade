@@ -1,17 +1,22 @@
 package com.meca.trade.to;
 
-public class Action extends StrategyDecision {
+public class Action {
+	
+	MarketType quote;
+	DecisionType decision;
+	
 	@Override
 	public String toString() {
 		
-		return super.toString() + " Lot:"+lot;
+		return "DecisionType:"+decision + " Lot:"+lot;
 	}
 
 	private Double lot;
 
 	public Action(DecisionType decision, MarketType quote, Double lot) {
-		super(decision, quote);
+		this.decision = decision;
 		this.lot = lot;
+		this.quote = quote;
 	}
 
 	public Double getLot() {
