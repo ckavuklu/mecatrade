@@ -6,6 +6,7 @@ import com.jpmorrsn.fbp.engine.Network;
 import com.meca.trade.to.Account;
 import com.meca.trade.to.AccountManager;
 import com.meca.trade.to.AccountStatusType;
+import com.meca.trade.to.BaseTrader;
 import com.meca.trade.to.CurrencyType;
 import com.meca.trade.to.IAccount;
 import com.meca.trade.to.IndicatorSet;
@@ -24,14 +25,14 @@ public class TradeNetwork extends Network {
 	    //component("_Discard", com.jpmorrsn.fbp.components.Discard.class);
 	    //component("_Write_text_to_pane", com.jpmorrsn.fbp.components.ShowText.class);
 		
-		final String INPUT_MARKET_DATA_FILE_NAME = "TESTDATA_MACD.txt";
+		final String INPUT_MARKET_DATA_FILE_NAME = "TESTDATA.txt";
 		final String INPUT_TEST_TRADE_DATA_FILE_NAME = "TestTradeSet-1";
 		
 		PerformanceReportManager reportManager = new PerformanceReportManager(INPUT_MARKET_DATA_FILE_NAME,INPUT_TEST_TRADE_DATA_FILE_NAME);
 		
 		ArrayList accList = new ArrayList<IAccount>();
 		accList.add(new Account(CurrencyType.EUR,"1234",1000000d,AccountStatusType.OPEN,true));
-		accList.add(new Account(CurrencyType.USD,"5678",1000000d,AccountStatusType.OPEN,true));
+		accList.add(new Account(CurrencyType.USD,"5678",0d,AccountStatusType.OPEN,true));
 		
 		
 		IndicatorSet shortSet = new IndicatorSet();
@@ -48,7 +49,7 @@ public class TradeNetwork extends Network {
 		//TurtleStrategy turtleStrategy = new TurtleStrategy(shortSet);
 		SMAStrategy smaStrategy = new SMAStrategy(shortSet,longSet);
 		
-		
+		BaseTrader base = new BaseTrader(manager);
 		
 	    
 		// Trade Data Components
@@ -77,16 +78,16 @@ public class TradeNetwork extends Network {
 	    // Indicator Components
 	    component("_SimpleMovingAverage_SHORT", com.meca.trade.components.SimpleMovingAverage.class);
 	    component("_SimpleMovingAverage_LONG", com.meca.trade.components.SimpleMovingAverage.class);
-	    component("_ExponentialMovingAverage", com.meca.trade.components.ExponentialMovingAverage.class);
-	    component("_MACD", com.meca.trade.networks.subnets.MACDSubNetwork.class);
+	   /* component("_ExponentialMovingAverage", com.meca.trade.components.ExponentialMovingAverage.class);
+	    component("_MACD", com.meca.trade.networks.subnets.MACDSubNetwork.class);*/
 	    
 	    
-	    initialize(Double.valueOf(5), component("_SimpleMovingAverage_SHORT"), port("WINDOW"));
-	    initialize(Double.valueOf(15), component("_SimpleMovingAverage_LONG"), port("WINDOW"));
-	    initialize(Double.valueOf(5), component("_ExponentialMovingAverage"), port("WINDOW"));
+	    initialize(Double.valueOf(3), component("_SimpleMovingAverage_SHORT"), port("WINDOW"));
+	    initialize(Double.valueOf(6), component("_SimpleMovingAverage_LONG"), port("WINDOW"));
+/*	    initialize(Double.valueOf(5), component("_ExponentialMovingAverage"), port("WINDOW"));
 	    initialize(Double.valueOf(12), component("_MACD"), port("SHORTEMAPERIOD"));
 	    initialize(Double.valueOf(26), component("_MACD"), port("LONGEMAPERIOD"));
-	    initialize(Double.valueOf(9), component("_MACD"), port("SIGNALPERIOD"));
+	    initialize(Double.valueOf(9), component("_MACD"), port("SIGNALPERIOD"));*/
 	    
 	    
 	    
@@ -98,6 +99,7 @@ public class TradeNetwork extends Network {
 	    
 	    initialize(manager, component("_PortolioManager"), port("MARKETMANAGER"));
 	    initialize(dataSet, component("_PortolioManager"), port("TESTTRADEDATASET"));
+	    initialize(base, component("_PortolioManager"), port("TRADER"));
 	    initialize(manager, component("_ActionManager"), port("MARKETMANAGER"));
 	    initialize(smaStrategy, component("_TradeMultiplexer"), port("STRATEGY"));
 	    
@@ -120,8 +122,8 @@ public class TradeNetwork extends Network {
 	    connect(component("_ActionManager"), port("CLOCKTICK",3), component("_QuotePrice_L"), port("CLOCKTICK"));
 	    
 	    connect(component("_QuotePrice_C"), port("OUT",1), component("_SimpleMovingAverage_SHORT"), port("DATA"));
-	    connect(component("_QuotePrice_C"), port("OUT",2), component("_ExponentialMovingAverage"), port("DATA"));
-	    connect(component("_QuotePrice_C"), port("OUT",3), component("_MACD"), port("INPUT"));
+/*	    connect(component("_QuotePrice_C"), port("OUT",2), component("_ExponentialMovingAverage"), port("DATA"));
+	    connect(component("_QuotePrice_C"), port("OUT",3), component("_MACD"), port("INPUT"));*/
 	    connect(component("_QuotePrice_C"), port("OUT",4), component("_SimpleMovingAverage_LONG"), port("DATA"));
 	    
 	    
@@ -131,10 +133,10 @@ public class TradeNetwork extends Network {
 	    connect(component("_QuotePrice_L"), port("OUT",0), component("_TradeMultiplexer"), port("IN",3));
 	  
 	    connect(component("_SimpleMovingAverage_SHORT"), port("OUT"), component("_TradeMultiplexer"), port("IN",4));
-	    connect(component("_ExponentialMovingAverage"), port("OUT",0), component("_TradeMultiplexer"), port("IN",5));
+/*	    connect(component("_ExponentialMovingAverage"), port("OUT",0), component("_TradeMultiplexer"), port("IN",5));
 	    connect(component("_MACD"), port("MACDLINE"), component("_TradeMultiplexer"), port("IN",6));
 	    connect(component("_MACD"), port("SIGNALLINE"), component("_TradeMultiplexer"), port("IN",7));
-	    connect(component("_MACD"), port("HISTOGRAM"), component("_TradeMultiplexer"), port("IN",8));
+	    connect(component("_MACD"), port("HISTOGRAM"), component("_TradeMultiplexer"), port("IN",8));*/
 	    connect(component("_SimpleMovingAverage_LONG"), port("OUT"), component("_TradeMultiplexer"), port("IN",9));
 	    
 	    

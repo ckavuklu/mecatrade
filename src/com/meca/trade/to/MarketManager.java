@@ -91,8 +91,6 @@ public class MarketManager extends MecaObject implements IMarketManager{
 	
     public Trade realizeTrade(Trade trade){
 		
-    	System.out.println("MarketManager.realizeTrade()");
-    	
     	switch(trade.getTradeType()){
 	    	case BUY : {
 	    		
@@ -127,8 +125,8 @@ public class MarketManager extends MecaObject implements IMarketManager{
 	    	}
 		}
 		
-    	//System.out.println("PositionManager:\r\n" + positionManager.toString());
-		//System.out.println("AccountManager:\r\n" + accountManager.toString());
+    	System.out.println("PositionManager:\r\n" + positionManager.toString());
+		System.out.println("AccountManager:\r\n" + accountManager.toString());
     	
     	return trade;
 	}

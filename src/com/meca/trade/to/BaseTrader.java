@@ -12,6 +12,7 @@ public class BaseTrader implements ITrader {
 	private IPositionManager positionManager;
 	private IAccountManager accountManager;
 	private IMarketManager marketManager;
+	private Double price;
 	
 
 	public BaseTrader(IMarketManager marketManager) {
@@ -30,10 +31,12 @@ public class BaseTrader implements ITrader {
 		List<IPosition> positions = positionManager.getPositions();
 		Double baseBalance = accountManager.getBalance(marketManager.getMarketType().getBaseCurrency());
 		Double quoteBalance = accountManager.getBalance(marketManager.getMarketType().getQuoteCurrency());
+		
 
 		for(StrategyDecision decision : decisionList){
 
-			Double price = decision.getPrice().getClose();
+			price = decision.getPrice().getClose();
+			
 			
 			if(decision.getDecision() == DecisionType.LONG){
 				
@@ -54,6 +57,22 @@ public class BaseTrader implements ITrader {
 					
 				}
 				
+				for(IPosition p:positions){
+					if(p.getStatus() == TradeStatusType.OPEN && p.getEntryTradeType()==TradeType.SELL){
+						Trade tradeData = new Trade();
+						tradeData.setDate(new Date());
+						tradeData.setStatus(TradeStatusType.OPEN);
+						tradeData.setPositionNo(p.getPositionNo());
+						tradeData.setStatus(TradeStatusType.OPEN);
+						tradeData.setTradeType(TradeType.SEXIT);
+						tradeData.setSignal(SignalType.Ex);
+						tradeData.setLot(p.getOpenLotCount());
+						tradeData.setOpenPrice(price);
+						tradeData.setMarketType(marketManager.getMarketType());
+						tradeList.add(tradeData);
+					}
+				}
+				
 			}else if(decision.getDecision() == DecisionType.SHORT){
 				
 				if(baseBalance > 0){
@@ -69,33 +88,56 @@ public class BaseTrader implements ITrader {
 					tradeData.setOpenPrice(price);
 					tradeData.setMarketType(marketManager.getMarketType());
 					tradeList.add(tradeData);
-					
 				}
 				
 				for(IPosition p:positions){
 
-					Trade tradeData = new Trade();
-					tradeData.setDate(new Date());
-					tradeData.setStatus(TradeStatusType.OPEN);
-					tradeData.setPositionNo(p.getPositionNo());
-					tradeData.setStatus(TradeStatusType.OPEN);
-					tradeData.setTradeType(p.getEntryTradeType()==TradeType.SELL?TradeType.SEXIT:TradeType.LEXIT);
-					tradeData.setSignal(SignalType.Ex);
-					tradeData.setLot(p.getOpenLotCount());
-					tradeData.setOpenPrice(price);
-					tradeData.setMarketType(marketManager.getMarketType());
-					tradeList.add(tradeData);
+					if(p.getStatus() == TradeStatusType.OPEN && p.getEntryTradeType()==TradeType.BUY){
+						Trade tradeData = new Trade();
+						tradeData.setDate(new Date());
+						tradeData.setStatus(TradeStatusType.OPEN);
+						tradeData.setPositionNo(p.getPositionNo());
+						tradeData.setStatus(TradeStatusType.OPEN);
+						tradeData.setTradeType(TradeType.LEXIT);
+						tradeData.setSignal(SignalType.Ex);
+						tradeData.setLot(p.getOpenLotCount());
+						tradeData.setOpenPrice(price);
+						tradeData.setMarketType(marketManager.getMarketType());
+						tradeList.add(tradeData);
+					}
 					
 				}
-				
-				
-				
+
 			}else {
 				
 			}
 		}
+
+		return tradeList;
+	}
+
+	@Override
+	public List<Trade> endOfMarket() {
+		ArrayList<Trade> tradeList = new ArrayList<Trade>();
 		
-		
+		List<IPosition> positions = positionManager.getPositions();
+
+		for(IPosition p:positions){
+
+			if(p.getStatus() == TradeStatusType.OPEN){
+				Trade tradeData = new Trade();
+				tradeData.setDate(new Date());
+				tradeData.setStatus(TradeStatusType.OPEN);
+				tradeData.setPositionNo(p.getPositionNo());
+				tradeData.setStatus(TradeStatusType.OPEN);
+				tradeData.setTradeType(p.getEntryTradeType()==TradeType.SELL?TradeType.SEXIT:TradeType.LEXIT);
+				tradeData.setSignal(SignalType.Ex);
+				tradeData.setLot(p.getOpenLotCount());
+				tradeData.setOpenPrice(price);
+				tradeData.setMarketType(marketManager.getMarketType());
+				tradeList.add(tradeData);
+			}
+		}
 		
 		return tradeList;
 	}

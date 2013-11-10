@@ -94,7 +94,11 @@ public class TradeMultiplexer extends Component {
 		    
 		    System.out.println("");
 		    
-		    Packet p = create(strategy.execute(pArray, new PriceData(open,close,high,low)));
+		    StrategyDecision dec = strategy.execute(pArray, new PriceData(open,close,high,low));
+		    
+		    System.out.println("Decision: " + dec);
+		    
+		    Packet p = create(dec);
 			outport.send(p);
 	    }
 

@@ -5,4 +5,6 @@ import java.util.List;
 
 public interface ITrader extends Serializable {
 	List<Trade> evaluateStrategyDecisions(List<StrategyDecision> decisionList);
+	
+	List<Trade> endOfMarket();
 }

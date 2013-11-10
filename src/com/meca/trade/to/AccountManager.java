@@ -40,7 +40,7 @@ public class AccountManager extends MecaObject implements IAccountManager{
 			}
 		}
 		
-		return null;
+		return balance;
 	}
 
 	@Override

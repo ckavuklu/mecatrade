@@ -1,8 +1,6 @@
 package com.meca.trade.components;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import com.jpmorrsn.fbp.engine.Component;
@@ -15,12 +13,10 @@ import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
 import com.meca.trade.to.IMarketManager;
 import com.meca.trade.to.ITestTradeDataSet;
+import com.meca.trade.to.ITrader;
 import com.meca.trade.to.Order;
-import com.meca.trade.to.SignalType;
 import com.meca.trade.to.StrategyDecision;
 import com.meca.trade.to.Trade;
-import com.meca.trade.to.TradeStatusType;
-import com.meca.trade.to.TradeType;
 
 /** Sort a stream of Packets to an output stream **/
 @ComponentDescription("Messages")
@@ -28,6 +24,7 @@ import com.meca.trade.to.TradeType;
 
 @InPorts({
 	@InPort(value = "MARKETMANAGER", description = "market manafer interface", type = IMarketManager.class),
+	@InPort(value = "TRADER", description = "market manafer interface", type = ITrader.class),
 	@InPort(value = "TESTTRADEDATASET", description = "test trade interface", type = ITestTradeDataSet.class),
 	@InPort(value = "IN", arrayPort = true)})
 
@@ -45,6 +42,8 @@ public class PortolioManager extends Component {
 	
 	InputPort testTradePort;
 	
+	InputPort traderPort;
+	
 	InputPort[] inportArray;
 	
 	Packet pArray[];
@@ -53,9 +52,13 @@ public class PortolioManager extends Component {
 	
 	IMarketManager manager = null;
 	
+	ITrader trader = null;
+	
 	ITestTradeDataSet testTradeDataSet = null;
 
 	List<Trade> tradeList = new ArrayList<Trade>();
+	
+	boolean endOfMarketData = false;
 	
 	@Override
 	protected void execute() {
@@ -67,6 +70,7 @@ public class PortolioManager extends Component {
 	    
 	    
 	    Packet managerPer = null;
+	    Packet tradeT = null;
 	    Packet tradePer = null;
 	    
 	    if(manager == null){
@@ -79,6 +83,20 @@ public class PortolioManager extends Component {
 			
 			
 	    }
+	    
+	    if(trader == null){
+	    	tradeT = traderPort.receive();
+			
+	    	trader = (ITrader) tradeT.getContent();
+			
+			drop(tradeT);
+			traderPort.close();
+			
+			
+	    }
+	    
+	    
+	    
 	    
 	    if(testTradeDataSet == null){
 	    	tradePer = testTradePort.receive();
@@ -104,14 +122,24 @@ public class PortolioManager extends Component {
 		    
 	    	if (pArray[i] != null) {
 	    		  StrategyDecision value = (StrategyDecision) pArray[i].getContent();
+	    		  
+	    		  if(value.getPrice().getClose() < 0 || value.getPrice().getOpen() < 0
+	    				  || value.getPrice().getHigh() < 0 || value.getPrice().getLow() < 0){
+	    			  endOfMarketData = true;
+	    		  }
 	    		  strategyDecisions.add(value);
 		    	  //System.out.print(value + " ");
 	    		  
 		    	  drop(pArray[i]);
 	          }
 		    }
+		    Order order = null;
 		    
-		    Order order = new Order(executeTrades(evaluateTestDecisions(strategyDecisions)));
+		    if(!endOfMarketData){
+		    	order = new Order(executeTrades(evaluateStrategyDecisions(strategyDecisions)));
+		    }else{
+		    	order = new Order(executeTrades(trader.endOfMarket()));
+		    }
 		    
 	    	strategyDecisions.clear();
 	    	
@@ -119,31 +147,27 @@ public class PortolioManager extends Component {
 			outport.send(p);
 	    }
 	    
+		
+	    System.out.println("END OF TRADES");
 	    manager.generatePerformanceReport();
+	    System.out.println("POSITIONS:");
+	    System.out.println(manager.getPositionManager());
+	    System.out.println("ACCOUNTS:");
+	    System.out.println(manager.getAccountManager());
 
 	}
 	
 	
 	private List<Trade> evaluateStrategyDecisions(final List<StrategyDecision> decisionList){
-		Trade trade = null;
+		List<Trade> result;
 		
+		result = trader.evaluateStrategyDecisions(decisionList);
 		
+		for(Trade tr:result){
+			System.out.println("Trades:" + tr);
+		}
 		
-		
-		/*
-		 * 
-		 * 
-		 * 
-		 * 
-		 * */
-		
-		
-		List<Trade> tradeList = new ArrayList<Trade>();
-		
-		if(trade != null)
-			tradeList.add(trade);
-		
-		return tradeList;
+		return result;
 	}
 	
 	private List<Trade> evaluateTestDecisions(final List<StrategyDecision> decisionList){
@@ -177,6 +201,8 @@ public class PortolioManager extends Component {
 		 marketManagerPort = openInput("MARKETMANAGER");
 		 
 		 testTradePort = openInput("TESTTRADEDATASET");
+		 
+		 traderPort = openInput("TRADER");
 
 		 outport = openOutput("OUT");
 	}
