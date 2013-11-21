@@ -11,7 +11,7 @@ import com.jpmorrsn.fbp.engine.InputPort;
 import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
-import com.meca.trade.to.IMarketManager;
+import com.meca.trade.to.IPositionManager;
 import com.meca.trade.to.ITestTradeDataSet;
 import com.meca.trade.to.ITrader;
 import com.meca.trade.to.Order;
@@ -23,8 +23,8 @@ import com.meca.trade.to.Trade;
 @OutPort(value = "OUT", description = "Output port", type = Order.class)
 
 @InPorts({
-	@InPort(value = "MARKETMANAGER", description = "market manafer interface", type = IMarketManager.class),
-	@InPort(value = "TRADER", description = "market manafer interface", type = ITrader.class),
+	@InPort(value = "MANAGER", description = "position manager interface", type = IPositionManager.class),
+	@InPort(value = "TRADER", description = "trader interface", type = ITrader.class),
 	@InPort(value = "TESTTRADEDATASET", description = "test trade interface", type = ITestTradeDataSet.class),
 	@InPort(value = "IN", arrayPort = true)})
 
@@ -38,7 +38,7 @@ public class PortolioManager extends Component {
 			+ "this License may be found at http://www.jpaulmorrison.com/fbp/artistic2.htm. "
 			+ "THERE IS NO WARRANTY; USE THIS PRODUCT AT YOUR OWN RISK.";
 
-	InputPort marketManagerPort;
+	InputPort managerPort;
 	
 	InputPort testTradePort;
 	
@@ -47,10 +47,10 @@ public class PortolioManager extends Component {
 	InputPort[] inportArray;
 	
 	Packet pArray[];
-
+	
 	OutputPort outport;
 	
-	IMarketManager manager = null;
+	IPositionManager manager = null;
 	
 	ITrader trader = null;
 	
@@ -65,6 +65,7 @@ public class PortolioManager extends Component {
 
 		int no = inportArray.length;
 	    pArray = new Packet[no];
+	    
 	    List<StrategyDecision> strategyDecisions = new ArrayList<StrategyDecision>();
 	    
 	    
@@ -74,12 +75,12 @@ public class PortolioManager extends Component {
 	    Packet tradePer = null;
 	    
 	    if(manager == null){
-	    	managerPer = marketManagerPort.receive();
+	    	managerPer = managerPort.receive();
 			
-			manager = (IMarketManager) managerPer.getContent();
+			manager = (IPositionManager) managerPer.getContent();
 			
 			drop(managerPer);
-			marketManagerPort.close();
+			managerPort.close();
 			
 			
 	    }
@@ -110,13 +111,20 @@ public class PortolioManager extends Component {
 	    }
 	  
 	    
+	    
+	    
+	    
 	    while((pArray[0] = inportArray[0].receive()) != null){
 	    	
-	    	//System.out.print("Portfolio Data: ");
+	    	
 	    	
 		    for (int i = 1; i < no; i++) {
 		    	pArray[i] = inportArray[i].receive();
 		    }
+		    
+		    
+
+		    
 		    
 		    for (int i = 0; i < no; i++) {
 		    
@@ -126,6 +134,9 @@ public class PortolioManager extends Component {
 	    		  if(value.getPrice().getClose() < 0 || value.getPrice().getOpen() < 0
 	    				  || value.getPrice().getHigh() < 0 || value.getPrice().getLow() < 0){
 	    			  endOfMarketData = true;
+	    		  }else{
+	    			  trader.updatePriceData(value.getPrice());
+	    			  manager.updatePriceData(value.getPrice());
 	    		  }
 	    		  strategyDecisions.add(value);
 		    	  //System.out.print(value + " ");
@@ -133,6 +144,10 @@ public class PortolioManager extends Component {
 		    	  drop(pArray[i]);
 	          }
 		    }
+		    
+		    
+		    
+		    
 		    Order order = null;
 		    
 		    if(!endOfMarketData){
@@ -145,15 +160,15 @@ public class PortolioManager extends Component {
 	    	
 		    Packet p = create(order);
 			outport.send(p);
+
 	    }
+	    
 	    
 		
 	    System.out.println("END OF TRADES");
 	    manager.generatePerformanceReport();
 	    System.out.println("POSITIONS:");
-	    System.out.println(manager.getPositionManager());
-	    System.out.println("ACCOUNTS:");
-	    System.out.println(manager.getAccountManager());
+	    System.out.println(manager);
 
 	}
 	
@@ -198,7 +213,7 @@ public class PortolioManager extends Component {
 
 		 inportArray = openInputArray("IN");
 		 
-		 marketManagerPort = openInput("MARKETMANAGER");
+		 managerPort = openInput("MANAGER");
 		 
 		 testTradePort = openInput("TESTTRADEDATASET");
 		 

@@ -6,7 +6,20 @@ public class PriceData extends MecaObject {
 	Double close;
 	Double high;
 	Double low;
+	Double bidPrice;
+	Double askPrice;
 	
+	public Double getBidPrice() {
+		return bidPrice;
+	}
+
+	
+	public Double getAskPrice() {
+		return askPrice;
+	}
+
+	
+
 	/**
 	 * 
 	 * @param open open price of quote
@@ -20,6 +33,8 @@ public class PriceData extends MecaObject {
 		this.close = close;
 		this.high = high;
 		this.low = low;
+		this.bidPrice = close;
+		this.askPrice = bidPrice + Constants.EURUSD_SPREAD;
 	}
 
 	public Double getOpen() {

@@ -56,9 +56,13 @@ public class TestTradeDataSet extends MecaObject implements ITestTradeDataSet {
 					tradeData.setLot(Double.valueOf(trade[4].trim()));
 
 				if (StringUtils.isNotEmpty(trade[5])
-						&& NumberUtils.isNumber(trade[5]))
-					tradeData.setOpenPrice(Double.valueOf(trade[5].trim()));
-
+						&& NumberUtils.isNumber(trade[5])){
+					
+					if(tradeData.getTradeType() == TradeType.BUY || tradeData.getTradeType() == TradeType.SELL)
+						tradeData.setEntryPrice(Double.valueOf(trade[5].trim()));
+					else
+						tradeData.setExitPrice(Double.valueOf(trade[5].trim()));
+				}
 				if (StringUtils.isNotEmpty(trade[6]))
 					tradeData
 							.setMarketType(MarketType.valueOf(trade[6].trim()));

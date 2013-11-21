@@ -10,17 +10,18 @@ import com.jpmorrsn.fbp.engine.InputPort;
 import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
-import com.meca.trade.to.IMarketManager;
+import com.meca.trade.to.IPositionManager;
 import com.meca.trade.to.Order;
 import com.meca.trade.to.Trade;
 import com.meca.trade.to.TradeStatusType;
+import com.meca.trade.to.TradeType;
 
 /** Sort a stream of Packets to an output stream **/
 @ComponentDescription("ActionManager")
 
 
 @InPorts({
-	@InPort(value = "MARKETMANAGER", description = "market manafer interface", type = IMarketManager.class),
+	@InPort(value = "MANAGER", description = "position manafer interface", type = IPositionManager.class),
 	@InPort(value = "IN", description = "Input port", type = Order.class) })
 
 @OutPort(value = "CLOCKTICK", arrayPort = true)
@@ -40,7 +41,7 @@ public class ActionManager extends Component {
 	
 	InputPort marketManagerPort;
 	
-	IMarketManager manager = null;
+	IPositionManager manager = null;
 
 	
 	@Override
@@ -51,7 +52,7 @@ public class ActionManager extends Component {
 	    if(manager == null){
 	    	managerPer = marketManagerPort.receive();
 			
-			manager = (IMarketManager) managerPer.getContent();
+			manager = (IPositionManager) managerPer.getContent();
 			
 			drop(managerPer);
 			marketManagerPort.close();
@@ -98,7 +99,7 @@ public class ActionManager extends Component {
 		
 		for(Trade trade : order.getTradeList()){
 			trade.setRealizedDate(new Date());
-			trade.setRealizedPrice(trade.getOpenPrice());
+			trade.setRealizedPrice((trade.getTradeType() == TradeType.LEXIT || trade.getTradeType() == TradeType.SEXIT)?trade.getExitPrice():trade.getEntryPrice());
 			trade.setStatus(TradeStatusType.CLOSE);
 			manager.realizeTrade(trade);
 		}
@@ -109,7 +110,7 @@ public class ActionManager extends Component {
 	protected void openPorts() {
 
 		 inport = openInput("IN");
-		 marketManagerPort = openInput("MARKETMANAGER");
+		 marketManagerPort = openInput("MANAGER");
 		 outport = openOutputArray("CLOCKTICK");
 	}
 }

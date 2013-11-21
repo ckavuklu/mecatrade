@@ -1,6 +1,6 @@
 package com.meca.trade.to;
 
-public interface IAccountManager {
+public interface IAccountManager extends IPriceData{
 	public Double getBalance(CurrencyType currency);
 
 	public boolean withdraw(Trade trade);

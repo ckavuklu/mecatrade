@@ -10,16 +10,13 @@ import org.apache.commons.lang3.math.NumberUtils;
 public class BaseTrader implements ITrader {
 	
 	private IPositionManager positionManager;
-	private IAccountManager accountManager;
-	private IMarketManager marketManager;
-	private Double price;
+	private Double askPrice;
+	private Double bidPrice;
 	
 
-	public BaseTrader(IMarketManager marketManager) {
+	public BaseTrader(IPositionManager positionManager) {
 
-		this.positionManager = marketManager.getPositionManager();
-		this.accountManager = marketManager.getAccountManager();
-		this.marketManager = marketManager;
+		this.positionManager = positionManager;
 	}
 
 	@Override
@@ -29,21 +26,18 @@ public class BaseTrader implements ITrader {
 		ArrayList<Trade> tradeList = new ArrayList<Trade>();
 		
 		List<IPosition> positions = positionManager.getPositions();
-		Double baseBalance = accountManager.getBalance(marketManager.getMarketType().getBaseCurrency());
-		Double quoteBalance = accountManager.getBalance(marketManager.getMarketType().getQuoteCurrency());
+		Double baseBalance = positionManager.getBalance(positionManager.getMarketType().getBaseCurrency());
+		Double quoteBalance = positionManager.getBalance(positionManager.getMarketType().getQuoteCurrency());
 		
 
 		for(StrategyDecision decision : decisionList){
 
-			price = decision.getPrice().getClose();
-			
 			
 			if(decision.getDecision() == DecisionType.LONG){
-				
-				
+	
 				if(quoteBalance > 0){
 					
-					double lots = (quoteBalance / price) / marketManager.getMarketType().getLotSize();
+					double lots = (quoteBalance / askPrice) / positionManager.getMarketType().getLotSize();
 					
 					Trade tradeData = new Trade();
 					tradeData.setDate(new Date());
@@ -51,14 +45,14 @@ public class BaseTrader implements ITrader {
 					tradeData.setTradeType(TradeType.BUY);
 					tradeData.setSignal(SignalType.En);
 					tradeData.setLot(lots);
-					tradeData.setOpenPrice(price);
-					tradeData.setMarketType(marketManager.getMarketType());
+					tradeData.setEntryPrice(askPrice);
+					tradeData.setMarketType(positionManager.getMarketType());
 					tradeList.add(tradeData);
 					
 				}
 				
 				for(IPosition p:positions){
-					if(p.getStatus() == TradeStatusType.OPEN && p.getEntryTradeType()==TradeType.SELL){
+					if(p.getStatus() == TradeStatusType.OPEN && p.getTradeType()==TradeType.SELL){
 						Trade tradeData = new Trade();
 						tradeData.setDate(new Date());
 						tradeData.setStatus(TradeStatusType.OPEN);
@@ -67,8 +61,8 @@ public class BaseTrader implements ITrader {
 						tradeData.setTradeType(TradeType.SEXIT);
 						tradeData.setSignal(SignalType.Ex);
 						tradeData.setLot(p.getOpenLotCount());
-						tradeData.setOpenPrice(price);
-						tradeData.setMarketType(marketManager.getMarketType());
+						tradeData.setExitPrice(askPrice);
+						tradeData.setMarketType(positionManager.getMarketType());
 						tradeList.add(tradeData);
 					}
 				}
@@ -77,7 +71,7 @@ public class BaseTrader implements ITrader {
 				
 				if(baseBalance > 0){
 					
-					double lots = (baseBalance) / marketManager.getMarketType().getLotSize();
+					double lots = (baseBalance) / positionManager.getMarketType().getLotSize();
 
 					Trade tradeData = new Trade();
 					tradeData.setDate(new Date());
@@ -85,14 +79,14 @@ public class BaseTrader implements ITrader {
 					tradeData.setTradeType(TradeType.SELL);
 					tradeData.setSignal(SignalType.En);
 					tradeData.setLot(lots);
-					tradeData.setOpenPrice(price);
-					tradeData.setMarketType(marketManager.getMarketType());
+					tradeData.setEntryPrice(bidPrice);
+					tradeData.setMarketType(positionManager.getMarketType());
 					tradeList.add(tradeData);
 				}
 				
 				for(IPosition p:positions){
 
-					if(p.getStatus() == TradeStatusType.OPEN && p.getEntryTradeType()==TradeType.BUY){
+					if(p.getStatus() == TradeStatusType.OPEN && p.getTradeType()==TradeType.BUY){
 						Trade tradeData = new Trade();
 						tradeData.setDate(new Date());
 						tradeData.setStatus(TradeStatusType.OPEN);
@@ -101,8 +95,8 @@ public class BaseTrader implements ITrader {
 						tradeData.setTradeType(TradeType.LEXIT);
 						tradeData.setSignal(SignalType.Ex);
 						tradeData.setLot(p.getOpenLotCount());
-						tradeData.setOpenPrice(price);
-						tradeData.setMarketType(marketManager.getMarketType());
+						tradeData.setExitPrice(bidPrice);
+						tradeData.setMarketType(positionManager.getMarketType());
 						tradeList.add(tradeData);
 					}
 					
@@ -130,16 +124,22 @@ public class BaseTrader implements ITrader {
 				tradeData.setStatus(TradeStatusType.OPEN);
 				tradeData.setPositionNo(p.getPositionNo());
 				tradeData.setStatus(TradeStatusType.OPEN);
-				tradeData.setTradeType(p.getEntryTradeType()==TradeType.SELL?TradeType.SEXIT:TradeType.LEXIT);
+				tradeData.setTradeType(p.getTradeType()==TradeType.SELL?TradeType.SEXIT:TradeType.LEXIT);
 				tradeData.setSignal(SignalType.Ex);
 				tradeData.setLot(p.getOpenLotCount());
-				tradeData.setOpenPrice(price);
-				tradeData.setMarketType(marketManager.getMarketType());
+				tradeData.setExitPrice(p.getTradeType()==TradeType.SELL?askPrice:bidPrice);
+				tradeData.setMarketType(positionManager.getMarketType());
 				tradeList.add(tradeData);
 			}
 		}
 		
 		return tradeList;
+	}
+
+	@Override
+	public void updatePriceData(PriceData data) {
+		this.askPrice = data.getAskPrice();
+		this.bidPrice = data.getBidPrice();
 	}
 
 }

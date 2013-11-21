@@ -1,22 +1,17 @@
 package com.meca.trade.networks;
 
-import java.util.ArrayList;
-
 import com.jpmorrsn.fbp.engine.Network;
 import com.meca.trade.to.Account;
-import com.meca.trade.to.AccountManager;
 import com.meca.trade.to.AccountStatusType;
 import com.meca.trade.to.BaseTrader;
 import com.meca.trade.to.CurrencyType;
-import com.meca.trade.to.IAccount;
+import com.meca.trade.to.IPositionManager;
 import com.meca.trade.to.IndicatorSet;
-import com.meca.trade.to.MarketManager;
 import com.meca.trade.to.MarketType;
 import com.meca.trade.to.PerformanceReportManager;
 import com.meca.trade.to.PositionManager;
 import com.meca.trade.to.SMAStrategy;
 import com.meca.trade.to.TestTradeDataSet;
-import com.meca.trade.to.TurtleStrategy;
 
 public class TradeNetwork extends Network {
 
@@ -30,9 +25,7 @@ public class TradeNetwork extends Network {
 		
 		PerformanceReportManager reportManager = new PerformanceReportManager(INPUT_MARKET_DATA_FILE_NAME,INPUT_TEST_TRADE_DATA_FILE_NAME);
 		
-		ArrayList accList = new ArrayList<IAccount>();
-		accList.add(new Account(CurrencyType.EUR,"1234",1000000d,AccountStatusType.OPEN,true));
-		accList.add(new Account(CurrencyType.USD,"5678",0d,AccountStatusType.OPEN,true));
+		Account usdAcc = new Account(CurrencyType.USD,"5678",100000d,AccountStatusType.OPEN,true);
 		
 		
 		IndicatorSet shortSet = new IndicatorSet();
@@ -44,12 +37,12 @@ public class TradeNetwork extends Network {
 
 		
 			
-		MarketManager manager = new MarketManager(new PositionManager(null), new AccountManager(accList), reportManager, MarketType.EURUSD);
+		IPositionManager posManager = new PositionManager(null,usdAcc,reportManager,MarketType.EURUSD);
 		TestTradeDataSet dataSet = new TestTradeDataSet(INPUT_TEST_TRADE_DATA_FILE_NAME);
 		//TurtleStrategy turtleStrategy = new TurtleStrategy(shortSet);
 		SMAStrategy smaStrategy = new SMAStrategy(shortSet,longSet);
 		
-		BaseTrader base = new BaseTrader(manager);
+		BaseTrader base = new BaseTrader(posManager);
 		
 	    
 		// Trade Data Components
@@ -97,10 +90,10 @@ public class TradeNetwork extends Network {
 	    component("_ActionManager", com.meca.trade.components.ActionManager.class);
 	
 	    
-	    initialize(manager, component("_PortolioManager"), port("MARKETMANAGER"));
+	    initialize(posManager, component("_PortolioManager"), port("MANAGER"));
 	    initialize(dataSet, component("_PortolioManager"), port("TESTTRADEDATASET"));
 	    initialize(base, component("_PortolioManager"), port("TRADER"));
-	    initialize(manager, component("_ActionManager"), port("MARKETMANAGER"));
+	    initialize(posManager, component("_ActionManager"), port("MANAGER"));
 	    initialize(smaStrategy, component("_TradeMultiplexer"), port("STRATEGY"));
 	    
 	    connect(component("_DataSource"), port("OUT"), component("_DataFeeder"), port("TRADEDATA"));
@@ -121,10 +114,8 @@ public class TradeNetwork extends Network {
 	    connect(component("_ActionManager"), port("CLOCKTICK",2), component("_QuotePrice_H"), port("CLOCKTICK"));
 	    connect(component("_ActionManager"), port("CLOCKTICK",3), component("_QuotePrice_L"), port("CLOCKTICK"));
 	    
-	    connect(component("_QuotePrice_C"), port("OUT",1), component("_SimpleMovingAverage_SHORT"), port("DATA"));
-/*	    connect(component("_QuotePrice_C"), port("OUT",2), component("_ExponentialMovingAverage"), port("DATA"));
-	    connect(component("_QuotePrice_C"), port("OUT",3), component("_MACD"), port("INPUT"));*/
-	    connect(component("_QuotePrice_C"), port("OUT",4), component("_SimpleMovingAverage_LONG"), port("DATA"));
+	    connect(component("_QuotePrice_C"), port("OUT",2), component("_SimpleMovingAverage_SHORT"), port("DATA"));
+	    connect(component("_QuotePrice_C"), port("OUT",3), component("_SimpleMovingAverage_LONG"), port("DATA"));
 	    
 	    
 	    connect(component("_QuotePrice_O"), port("OUT",0), component("_TradeMultiplexer"), port("IN",0));
@@ -142,6 +133,8 @@ public class TradeNetwork extends Network {
 	    
 	    
 	    connect(component("_TradeMultiplexer"), port("OUT"), component("_PortolioManager"), port("IN",0));
+	  
+	    
 	    connect(component("_PortolioManager"), port("OUT"), component("_ActionManager"), port("IN"));
 	    
 	    //connect(component("_DataFeeder"), port("OUT"), component("_Write_text_to_pane"), port("IN"));

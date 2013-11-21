@@ -4,7 +4,6 @@ package com.meca.trade.to;
 public class PerformanceReportManager extends MecaObject implements IPerformanceReportManager{
 
 	private IPositionManager positionManager = null;
-	private IAccountManager accountManager = null;
 	private MarketType type = null;
 	
 	private String inputMarketDataFileName = null;
@@ -43,10 +42,8 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 
 
 	@Override
-	public void generatePerformanceReport(IPositionManager positionManager,
-			IAccountManager accountManager, MarketType type) {
+	public void generatePerformanceReport(IPositionManager positionManager,MarketType type) {
 		this.positionManager = positionManager;
-		this.accountManager = accountManager;
 		this.type = type;
 		
 		

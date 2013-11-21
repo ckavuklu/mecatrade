@@ -9,22 +9,75 @@ import java.util.Date;
  * @author ACER
  *
  */
-public class Trade extends MecaObject {
+public class Trade extends MecaObject{
 
 	
 	private TradeType tradeType;
 	private SignalType signal;
 	private Double lot;
-	private Double openPrice;
+	private Double entryPrice;
 	private Double realizedPrice;
-	private Date openDate;
+	private Double exitPrice;
+	private Date entryDate;
+	private Date exitDate;
 	private Date realizedDate;
 	private Double profitLoss;
 	private Integer tradeNo;
 	private Integer positionNo;
 	private TradeStatusType status;
 	private MarketType marketType;
+	private Double takeProfit;
+	private Double stopLoss;
 	
+	
+	public Double getEntryPrice() {
+		return entryPrice;
+	}
+
+	public void setEntryPrice(Double entryPrice) {
+		this.entryPrice = entryPrice;
+	}
+
+	public Double getExitPrice() {
+		return exitPrice;
+	}
+
+	public void setExitPrice(Double exitPrice) {
+		this.exitPrice = exitPrice;
+	}
+
+	public Date getEntryDate() {
+		return entryDate;
+	}
+
+	public void setEntryDate(Date entryDate) {
+		this.entryDate = entryDate;
+	}
+
+	public Date getExitDate() {
+		return exitDate;
+	}
+
+	public void setExitDate(Date exitDate) {
+		this.exitDate = exitDate;
+	}
+
+	public Double getTakeProfit() {
+		return takeProfit;
+	}
+
+	public void setTakeProfit(Double takeProfit) {
+		this.takeProfit = takeProfit;
+	}
+
+	public Double getStopLoss() {
+		return stopLoss;
+	}
+
+	public void setStopLoss(Double stopLoss) {
+		this.stopLoss = stopLoss;
+	}
+
 	
 	public Trade(Integer positionNo, Integer tradeNo, TradeType tradeType, SignalType signal, Double lot,
 			Double openPrice, Date openDate, TradeStatusType status, MarketType type) {
@@ -33,8 +86,8 @@ public class Trade extends MecaObject {
 		this.tradeType = tradeType;
 		this.signal = signal;
 		this.lot = lot;
-		this.openPrice = openPrice;
-		this.openDate = openDate;
+		this.entryPrice = openPrice;
+		this.entryDate = openDate;
 		this.status = status;
 		this.marketType = type;
 		this.profitLoss = 0d;
@@ -43,14 +96,14 @@ public class Trade extends MecaObject {
 	}
 	
 	public Trade(TradeType tradeType, SignalType signal, Double lot,
-			Double openPrice, Date openDate, TradeStatusType status, MarketType type) {
+			Double entryPrice, Date openDate, TradeStatusType status, MarketType type) {
 		super();
 		
 		this.tradeType = tradeType;
 		this.signal = signal;
 		this.lot = lot;
-		this.openPrice = openPrice;
-		this.openDate = openDate;
+		this.entryPrice = entryPrice;
+		this.entryDate = openDate;
 		this.status = status;
 		this.marketType = type;
 		this.profitLoss = 0d;
@@ -64,14 +117,14 @@ public class Trade extends MecaObject {
 
 	
 	public Trade(TradeType tradeType, SignalType signal, Double lot,
-			Double openPrice, Date openDate, TradeStatusType status, Integer positionNo, MarketType type) {
+			Double entryPrice, Date openDate, TradeStatusType status, Integer positionNo, MarketType type) {
 		super();
 		
 		this.tradeType = tradeType;
 		this.signal = signal;
 		this.lot = lot;
-		this.openPrice = openPrice;
-		this.openDate = openDate;
+		this.entryPrice = entryPrice;
+		this.entryDate = openDate;
 		this.status = status;
 		this.positionNo = positionNo;
 		this.marketType = type;
@@ -92,20 +145,29 @@ public class Trade extends MecaObject {
 		builder.append("lot=");
 		builder.append(lot);
 		builder.append(" ");
-		builder.append("openPrice=");
-		builder.append(openPrice);
+		builder.append("entryPrice=");
+		builder.append(entryPrice);
+		builder.append(" ");
+		builder.append("exitPrice=");
+		builder.append(exitPrice);
 		builder.append(" ");
 		builder.append("realizedPrice=");
 		builder.append(realizedPrice);
 		builder.append(" ");
-		builder.append("openDate=");
-		builder.append(openDate);
+		builder.append("entryDate=");
+		builder.append(entryDate);
 		builder.append(" ");
 		builder.append("realizedDate=");
 		builder.append(realizedDate);
 		builder.append(" ");
 		builder.append("profitLoss=");
 		builder.append(profitLoss);
+		builder.append(" ");
+		builder.append("stopLoss=");
+		builder.append(stopLoss);
+		builder.append(" ");
+		builder.append("takeProfit=");
+		builder.append(takeProfit);
 		builder.append(" ");
 		builder.append("tradeNo=");
 		builder.append(tradeNo);
@@ -133,24 +195,14 @@ public class Trade extends MecaObject {
 	}
 
 
-	public Double getOpenPrice() {
-		return openPrice;
-	}
-	public void setOpenPrice(Double openPrice) {
-		this.openPrice = openPrice;
-	}
+	
 	public Double getRealizedPrice() {
 		return realizedPrice;
 	}
 	public void setRealizedPrice(Double realizedPrice) {
 		this.realizedPrice = realizedPrice;
 	}
-	public Date getOpenDate() {
-		return openDate;
-	}
-	public void setOpenDate(Date openDate) {
-		this.openDate = openDate;
-	}
+	
 	public Date getRealizedDate() {
 		return realizedDate;
 	}
@@ -172,10 +224,10 @@ public class Trade extends MecaObject {
 	}
 	
 	public Date getDate() {
-		return openDate;
+		return entryDate;
 	}
 	public void setDate(Date date) {
-		this.openDate = date;
+		this.entryDate = date;
 	}
 	public TradeType getTradeType() {
 		return tradeType;
@@ -210,6 +262,13 @@ public class Trade extends MecaObject {
 	public void setMarketType(MarketType type) {
 		this.marketType = type;
 	}
-
+	
+	
+	public void updateProfitLoss() {
+		setProfitLoss(((getTradeType() == TradeType.LEXIT) ?  (getRealizedPrice() - entryPrice) : (entryPrice - getRealizedPrice()))
+				* getLot() 
+				* getMarketType().getLotSize());
+	
+	}
 
 }

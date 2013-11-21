@@ -10,6 +10,9 @@ public class MarketData extends MecaObject{
 	private String volume;
 	private String low;
 	private String close;
+	private String high;
+	private String date;
+	private String time;
 	
 	public String getQuote() {
 		return quote;
@@ -34,10 +37,6 @@ public class MarketData extends MecaObject{
 	public void setLow(String low) {
 		this.low = low;
 	}
-
-	private String high;
-	private String date;
-	private String time;
 
 	@Override
 	public String toString() {

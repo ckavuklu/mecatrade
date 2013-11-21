@@ -1,6 +1,6 @@
 package com.meca.trade.to;
 
-public interface IPosition {
+public interface IPosition extends IPriceData{
 
 	public Double getCurrentRisk();
 	
@@ -8,9 +8,9 @@ public interface IPosition {
 	
 	public Integer getPositionNo();
 	
-	public TradeType getEntryTradeType();
+	public TradeType getTradeType();
 	
-	public Double getCurrentProfitLoss(Double quote);
+	public Double getOpenPL();
 	
 	public Double getRealizedProfitLoss();
 	
@@ -35,4 +35,6 @@ public interface IPosition {
 	public String toString();
 	
 	public TradeStatusType getStatus();
+	
+	public Double getEntryPrice();
 }

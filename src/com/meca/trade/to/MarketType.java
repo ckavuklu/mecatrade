@@ -37,7 +37,42 @@ public enum MarketType implements Serializable{
     }
     
     public Integer getLotSize(){
-    	return 1000;
+    	Integer result = 0;
+    	switch(this){
+	    	case EURUSD : {
+	    		result = Constants.EURUSD_LOT_SIZE;
+	    		break;
+	    	}
+	    	
+	    	case USDTRY : {
+	    		result = Constants.USDTRY_LOT_SIZE;
+	    		break;
+	    	}
+	    	default:{
+	    		break;
+	    	}
+		}
+    	return result;
+
+    }
+    
+    public Integer getLeverage(){
+    	Integer result = 0;
+    	switch(this){
+	    	case EURUSD : {
+	    		result = Constants.EURUSD_LEVERAGE;
+	    		break;
+	    	}
+	    	
+	    	case USDTRY : {
+	    		result = Constants.USDTRY_LEVERAGE;
+	    		break;
+	    	}
+	    	default:{
+	    		break;
+	    	}
+		}
+    	return result;
 
     }
     

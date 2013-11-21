@@ -12,13 +12,9 @@ public interface IAccount  extends Serializable{
 
 	public Double getBalance();
 
-	public boolean withdrawBlocked(Double amount) ;
-	
 	public boolean withdrawRealized(Double blockedAmount,Double realizedAmount) ;
 	
 	public boolean deposit(Double amount) ;
-	
-	public boolean releaseBlock(Double amount) ;
 	
 	public boolean isTradable();
 	
