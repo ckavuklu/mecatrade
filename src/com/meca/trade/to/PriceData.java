@@ -1,13 +1,41 @@
 package com.meca.trade.to;
 
 public class PriceData extends MecaObject {
-
+	
 	Double open;
 	Double close;
 	Double high;
 	Double low;
 	Double bidPrice;
 	Double askPrice;
+	
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append("open=");
+		builder.append(open);
+		builder.append(" ");
+		builder.append("close=");
+		builder.append(close);
+		builder.append(" ");
+		builder.append("high=");
+		builder.append(high);
+		builder.append(" ");
+		builder.append("low=");
+		builder.append(low);
+		builder.append(" ");
+		builder.append("bidPrice=");
+		builder.append(bidPrice);
+		builder.append(" ");
+		builder.append("askPrice=");
+		builder.append(askPrice);
+		
+		
+		return builder.toString();
+	}
+
 	
 	public Double getBidPrice() {
 		return bidPrice;

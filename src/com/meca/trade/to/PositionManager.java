@@ -50,8 +50,8 @@ public class PositionManager extends MecaObject implements IPositionManager{
 				result +=  pos.getOpenLotCount() * pos.getEntryPrice();
 			}
 		}
-		
-		weightedAverageEntryPrice = result / totalLotCount;
+
+		weightedAverageEntryPrice = (totalLotCount >0 )?(result / totalLotCount):0d;
 		
 		return weightedAverageEntryPrice;
 	}
@@ -102,18 +102,11 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		this.priceData = data;
 		
 		for(IPosition pos:positionList){
-			if(pos.getStatus() == TradeStatusType.OPEN)
-				pos.updatePriceData(priceData);
+			pos.updatePriceData(priceData);
 		}
 		
-		
-		updateOpenPL();
-		
-		updateEquity();
-		
-		updateFreeMargin();
-		
-		
+		update();
+
 	}
 
 	private void updateFreeMargin() {
@@ -184,6 +177,7 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		if(positionNo == null){
 			Integer posNo = this.positionList.size();
 			result = new Position(posNo,TradeStatusType.CLOSE);
+			result.updatePriceData(getPriceData());
 			positionList.add(result);
 		}else{
 			result = positionList.get(positionNo);
@@ -193,6 +187,16 @@ public class PositionManager extends MecaObject implements IPositionManager{
 			
 	}
 	
+	private void update(){
+		
+		updateMargin();
+		
+		updateOpenPL();
+		
+		updateEquity();
+		
+		updateFreeMargin();
+	}
 	
 
 	@Override
@@ -202,12 +206,20 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		
 		if(trade.getStatus() == TradeStatusType.CLOSE){
 			tradeHistory.add(trade);
+			
+			update();
+			
+			updateBalance(trade);
 		}
 		
-		
-		updateMargin();
-
 		return trade;
+	}
+
+
+
+
+	private void updateBalance(Trade trade) {
+		account.setBalance(account.getBalance() - getMargin() + trade.getProfitLoss());
 	}
 
 	private void updateMargin() {
@@ -279,90 +291,23 @@ public class PositionManager extends MecaObject implements IPositionManager{
 	@Override
 	public Trade executeTrade(Trade trade) {
 		
-		switch(trade.getTradeType()){
-	    	case BUY : {
-	    		
-	    		withdraw(addTrade(trade));
-	    		
-	    		break;
-	    	}
-	
-	    	case LEXIT : {
-	    		
-	    		addTrade(trade);
-	
-	    		break;
-	    	}
-	
-	    	
-	    	case SELL : {
-	    		
-	    		withdraw(addTrade(trade));
-	    		
-	    		break;
-	    	}
-	
-	    	case SEXIT : {
-	    		
-	    		addTrade(trade);
-	    		
-	    		break;
-	    	}
-	
-	    	default:{
-	    		break;
-	    	}
-		}
-    	
+		addTrade(trade);
+		
     	return trade;
 	}
 
 	@Override
 	public Trade realizeTrade(Trade trade) {
-		switch(trade.getTradeType()){
-    	case BUY : {
-    		
-    		withdraw(addTrade(trade));
-
-    		break;
-    	}
-    	
-    	case LEXIT : {
-    		
-    		deposit(addTrade(trade));
-
-    		break;
-    	}
-
-    	case SELL : {
-    		
-    		withdraw(addTrade(trade));
-    		
-    		break;
-    	}
-
-    	case SEXIT : {
-    		
-    		deposit(addTrade(trade));
-    		
-    		break;
-    	}
-
-    	default:{
-    		break;
-    	}
-	}
-	
-
-	
-	return trade;
+		
+		addTrade(trade);
+		
+		return trade;
 	}
 
 	@Override
 	public Trade cancelTrade(Trade trade) {
 		
     	System.out.println("cancelTrade()");
-    	cancel(trade);
 		return addTrade(trade);
 		
 	}
@@ -372,115 +317,5 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		this.perfReporManager.generatePerformanceReport(this, getMarketType());
 		
 	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * TODO: We assumed that only one account exist with the same currency type in the same account manager
-	 * 
-	 * 
-	 * 
-	 */
-	@Override
-	public Double getBalance(CurrencyType currency) {
-		Double balance = 0d;
-
-		if (account.getCurrency() == currency && account.isTradable()) {
-			balance += account.getBalance();
-		}
-		
-		
-		return balance;
-	}
-
-	@Override
-	public boolean withdraw(Trade trade) {
-		boolean result=false;
-		CurrencyType currency=null;
-		Double blockAmount = null;
-		
-		
-		if(trade.getTradeType() == TradeType.BUY){
-			 currency = trade.getMarketType().getQuoteCurrency();
-			 blockAmount = trade.getLot() * trade.getMarketType().getLotSize() * trade.getEntryPrice();
-			 
-		}
-		
-		else if(trade.getTradeType() == TradeType.SELL){
-			 currency = trade.getMarketType().getBaseCurrency();
-			 blockAmount = trade.getLot() * trade.getMarketType().getLotSize();
-		}
-			
-		
-	
-		
-		if(account!=null){
-			if (trade.getStatus() == TradeStatusType.CLOSE){
-			
-				Double realAmount = trade.getLot() * trade.getMarketType().getLotSize() * (trade.getTradeType() == TradeType.BUY?trade.getRealizedPrice():1d);
-				result = account.withdrawRealized(blockAmount, realAmount);
-	
-			}
-		}
-		
-		
-		return result;
-	}
-
-	@Override
-	public boolean deposit(Trade trade) {
-		
-		boolean result=false;
-	
-		
-		if(account!=null && account!=null){
-			
-			if (trade.getStatus() == TradeStatusType.CLOSE){
-				
-				
-				
-				if(trade.getTradeType() == TradeType.SEXIT){
-				
-					Double realAmount = trade.getLot() * trade.getMarketType().getLotSize() * 1d;
-					result = account.deposit(realAmount);
-					account.deposit(trade.getProfitLoss());
-				}else{
-					Double realAmount = trade.getLot() * trade.getMarketType().getLotSize() * trade.getRealizedPrice();
-					result = account.deposit(realAmount);
-					//account.deposit(trade.getProfitLoss());
-				}
-	
-			}
-		}
-		
-		
-		return result;
-	}
-
-	
-	
-	@Override
-	public boolean cancel(Trade trade) {
-		
-		boolean result=false;
-		CurrencyType currency=null;
-		
-		
-		if(trade.getTradeType() == TradeType.BUY)
-			 currency = trade.getMarketType().getQuoteCurrency();
-		
-		else if(trade.getTradeType() == TradeType.SELL)
-			 currency = trade.getMarketType().getBaseCurrency();
-			
-		Double blockAmount = trade.getLot() * trade.getMarketType().getLotSize() * trade.getEntryPrice();
-		
-		
-		return false;
-	}
-
-	
 	
 }

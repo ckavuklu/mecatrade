@@ -26,8 +26,7 @@ public class BaseTrader implements ITrader {
 		ArrayList<Trade> tradeList = new ArrayList<Trade>();
 		
 		List<IPosition> positions = positionManager.getPositions();
-		Double baseBalance = positionManager.getBalance(positionManager.getMarketType().getBaseCurrency());
-		Double quoteBalance = positionManager.getBalance(positionManager.getMarketType().getQuoteCurrency());
+		Double freeMargin = positionManager.getFreeMargin();
 		
 
 		for(StrategyDecision decision : decisionList){
@@ -35,9 +34,9 @@ public class BaseTrader implements ITrader {
 			
 			if(decision.getDecision() == DecisionType.LONG){
 	
-				if(quoteBalance > 0){
+				if(freeMargin > 0){
 					
-					double lots = (quoteBalance / askPrice) / positionManager.getMarketType().getLotSize();
+					double lots = (freeMargin / askPrice) / positionManager.getMarketType().getLotSize();
 					
 					Trade tradeData = new Trade();
 					tradeData.setDate(new Date());
@@ -61,6 +60,7 @@ public class BaseTrader implements ITrader {
 						tradeData.setTradeType(TradeType.SEXIT);
 						tradeData.setSignal(SignalType.Ex);
 						tradeData.setLot(p.getOpenLotCount());
+						tradeData.setEntryPrice(p.getEntryPrice());
 						tradeData.setExitPrice(askPrice);
 						tradeData.setMarketType(positionManager.getMarketType());
 						tradeList.add(tradeData);
@@ -69,9 +69,9 @@ public class BaseTrader implements ITrader {
 				
 			}else if(decision.getDecision() == DecisionType.SHORT){
 				
-				if(baseBalance > 0){
+				if(freeMargin > 0){
 					
-					double lots = (baseBalance) / positionManager.getMarketType().getLotSize();
+					double lots = (freeMargin) / positionManager.getMarketType().getLotSize();
 
 					Trade tradeData = new Trade();
 					tradeData.setDate(new Date());
@@ -96,6 +96,7 @@ public class BaseTrader implements ITrader {
 						tradeData.setSignal(SignalType.Ex);
 						tradeData.setLot(p.getOpenLotCount());
 						tradeData.setExitPrice(bidPrice);
+						tradeData.setEntryPrice(p.getEntryPrice());
 						tradeData.setMarketType(positionManager.getMarketType());
 						tradeList.add(tradeData);
 					}
@@ -127,6 +128,7 @@ public class BaseTrader implements ITrader {
 				tradeData.setTradeType(p.getTradeType()==TradeType.SELL?TradeType.SEXIT:TradeType.LEXIT);
 				tradeData.setSignal(SignalType.Ex);
 				tradeData.setLot(p.getOpenLotCount());
+				tradeData.setEntryPrice(p.getEntryPrice());
 				tradeData.setExitPrice(p.getTradeType()==TradeType.SELL?askPrice:bidPrice);
 				tradeData.setMarketType(positionManager.getMarketType());
 				tradeList.add(tradeData);

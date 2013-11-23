@@ -146,8 +146,6 @@ public class PortolioManager extends Component {
 		    }
 		    
 		    
-		    
-		    
 		    Order order = null;
 		    
 		    if(!endOfMarketData){

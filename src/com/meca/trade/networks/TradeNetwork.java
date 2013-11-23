@@ -25,7 +25,7 @@ public class TradeNetwork extends Network {
 		
 		PerformanceReportManager reportManager = new PerformanceReportManager(INPUT_MARKET_DATA_FILE_NAME,INPUT_TEST_TRADE_DATA_FILE_NAME);
 		
-		Account usdAcc = new Account(CurrencyType.USD,"5678",100000d,AccountStatusType.OPEN,true);
+		Account usdAcc = new Account(CurrencyType.USD,"5678",100000d,AccountStatusType.OPEN);
 		
 		
 		IndicatorSet shortSet = new IndicatorSet();

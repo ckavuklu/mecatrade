@@ -111,9 +111,11 @@ public class Position extends MecaObject implements IPosition {
 	public void updatePriceData(PriceData data) {
 		this.currentPrice = data;
 		
-		setProfitLoss(((getTradeType() == TradeType.BUY) ?  (getCurrentPrice().getAskPrice() - entryPrice) : (entryPrice - getCurrentPrice().getBidPrice()))
-				* getOpenLotCount() 
-				* getMarketType().getLotSize());
+		if(status == TradeStatusType.OPEN){
+			setProfitLoss(((getTradeType() == TradeType.BUY) ?  (getCurrentPrice().getAskPrice() - entryPrice) : (entryPrice - getCurrentPrice().getBidPrice()))
+					* getOpenLotCount() 
+					* getMarketType().getLotSize());
+		}
 
 	}
 
@@ -176,9 +178,7 @@ public class Position extends MecaObject implements IPosition {
 
 	@Override
 	public Trade addTrade(Trade trade) {
-		
-		
-				
+
 		if(trade.getPositionNo()==null){
 			trade.setPositionNo(positionNo);
 		}
@@ -208,33 +208,17 @@ public class Position extends MecaObject implements IPosition {
 				}
 			}
 		}
-		else if ((trade.getTradeType() == TradeType.LEXIT || trade.getTradeType() == TradeType.SEXIT)){
+		else if ((trade.getTradeType() == TradeType.LEXIT || trade.getTradeType() == TradeType.SEXIT) && trade.getStatus()==TradeStatusType.CLOSE){
 			
-			switch (trade.getStatus()) {
-				case OPEN: {
-					openLotCount -= trade.getLot();
-	
-					if (openLotCount == 0d)
-						status = TradeStatusType.CLOSE;
-					break;
-				}
-				case CANCEL: {
-					openLotCount += trade.getLot();
-					break;
-				}
-				case CLOSE: {
-					trade.setEntryPrice(entryPrice);
-					
-					trade.updateProfitLoss();
-					break;
-				}
-				default: {
-					break;
-				}
-			}
-	
+			openLotCount -= trade.getLot();
+			
+			if (openLotCount == 0d)
+				status = TradeStatusType.CLOSE;
+			
+			
 		}
 
+		trade.updateProfitLoss();
 		
 		return trade;
 	}

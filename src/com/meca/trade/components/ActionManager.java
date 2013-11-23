@@ -95,7 +95,7 @@ public class ActionManager extends Component {
 
 	private void placeMarketOrder(Order order){
 		
-		//TODO: Market Interface Implementation for Order
+		//TODO: Market Interface Implementation for Order. We will get market data as realized price
 		
 		for(Trade trade : order.getTradeList()){
 			trade.setRealizedDate(new Date());

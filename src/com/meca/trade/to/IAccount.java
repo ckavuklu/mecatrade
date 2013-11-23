@@ -11,12 +11,8 @@ public interface IAccount  extends Serializable{
 	public String getAccountNo();
 
 	public Double getBalance();
-
-	public boolean withdrawRealized(Double blockedAmount,Double realizedAmount) ;
 	
-	public boolean deposit(Double amount) ;
-	
-	public boolean isTradable();
+	public void setBalance(Double amount);
 	
 	public AccountStatusType getStatus();
 	

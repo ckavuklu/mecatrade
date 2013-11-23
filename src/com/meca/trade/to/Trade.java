@@ -265,9 +265,19 @@ public class Trade extends MecaObject{
 	
 	
 	public void updateProfitLoss() {
-		setProfitLoss(((getTradeType() == TradeType.LEXIT) ?  (getRealizedPrice() - entryPrice) : (entryPrice - getRealizedPrice()))
-				* getLot() 
-				* getMarketType().getLotSize());
+		
+		if(getStatus()==TradeStatusType.CLOSE){
+			
+			if((getTradeType() == TradeType.LEXIT || getTradeType() == TradeType.SEXIT))
+			{
+				setProfitLoss(((getTradeType() == TradeType.LEXIT) ?  (getRealizedPrice() - entryPrice) : (entryPrice - getRealizedPrice()))
+					* getLot() 
+					* getMarketType().getLotSize());
+			}else{
+				setProfitLoss(0d);
+			}
+			
+		}
 	
 	}
 

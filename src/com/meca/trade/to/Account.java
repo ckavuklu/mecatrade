@@ -9,10 +9,7 @@ public class Account implements IAccount {
 	private String accountNo = null;
 	private Double balance = null;
 	private AccountStatusType status = null;
-	private boolean tradable = false;
 	
-	
-
 	
 	@Override
 	public String toString() {
@@ -30,9 +27,6 @@ public class Account implements IAccount {
 		builder.append(" ");
 		builder.append("status=");
 		builder.append(status);
-		builder.append(" ");
-		builder.append("tradable=");
-		builder.append(tradable);
 		
 		
 		return builder.toString();
@@ -40,13 +34,13 @@ public class Account implements IAccount {
 
 	
 	public Account(CurrencyType currency, String accountNo, Double balance,
-			AccountStatusType status, boolean tradable) {
+			AccountStatusType status) {
 		super();
 		this.currency = currency;
 		this.accountNo = accountNo;
 		this.balance = balance;
 		this.status = status;
-		this.tradable = tradable;
+		
 	}
 
 	private void setStatus(AccountStatusType status) {
@@ -73,54 +67,21 @@ public class Account implements IAccount {
 		return balance;
 	}
 
-	private void setBalance(Double balance) {
-		this.balance = balance;
-	}
-
-	
-
-	@Override
-	public boolean withdrawRealized(Double blockedAmount, Double realizedAmount) {
-		boolean result = false;
-		
-		if(getStatus() == AccountStatusType.OPEN) {
-			setBalance(getBalance() - realizedAmount);
-			
-			result=true;
-		}
-			
-		return result;
-	}
-
-	@Override
-	public boolean deposit(Double amount) {
-		
-		boolean result = false;
-
-		if(amount > 0 && getStatus() == AccountStatusType.OPEN)
-		{
-			setBalance(getBalance() + amount);
-			result=true;
-		}
-		
-		return result;
-	}
-
-	
-	
-
-	private void setTradable(boolean tradable) {
-		this.tradable = tradable;
-	}
-
-	@Override
-	public boolean isTradable() {
-		return tradable && getStatus() == AccountStatusType.OPEN;
-	}
 
 	@Override
 	public AccountStatusType getStatus() {
 		return status;
+	}
+
+
+	@Override
+	public void setBalance(Double amount) {
+		
+		if(amount > 0 && getStatus() == AccountStatusType.OPEN)
+		{
+			balance = amount;
+		}
+		
 	}
 
 }

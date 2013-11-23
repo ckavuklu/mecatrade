@@ -2,7 +2,7 @@ package com.meca.trade.to;
 
 import java.util.List;
 
-public interface IPositionManager extends IPriceData, IAccountManager{
+public interface IPositionManager extends IPriceData{
 	
 	public Trade addTrade(Trade data);
 	
@@ -22,5 +22,9 @@ public interface IPositionManager extends IPriceData, IAccountManager{
 	
 	public MarketType getMarketType();
 	public void generatePerformanceReport();
+	
+	
+	
+	public Double getFreeMargin();
 	
 }
