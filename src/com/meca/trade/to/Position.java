@@ -241,7 +241,7 @@ public class Position extends MecaObject implements IPosition {
 		Double result = 0d;
 		result = openLotCount * marketType.getLotSize() * ((tradeType == TradeType.BUY) ?  (currentPrice.getBidPrice() - getEntryPrice()) : (getEntryPrice() - currentPrice.getAskPrice()));
 				
-		return result;
+		return Constants.getRoundedUpValue(result);
 	}
 
 	@Override

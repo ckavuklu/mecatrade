@@ -1,5 +1,6 @@
 package com.meca.trade.to;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -270,9 +271,13 @@ public class Trade extends MecaObject{
 			
 			if((getTradeType() == TradeType.LEXIT || getTradeType() == TradeType.SEXIT))
 			{
-				setProfitLoss(((getTradeType() == TradeType.LEXIT) ?  (getRealizedPrice() - entryPrice) : (entryPrice - getRealizedPrice()))
-					* getLot() 
-					* getMarketType().getLotSize());
+				Double val = ((getTradeType() == TradeType.LEXIT) ?  (getRealizedPrice() - entryPrice) : (entryPrice - getRealizedPrice()))
+						* getLot() 
+						* getMarketType().getLotSize();
+				
+				
+				
+				setProfitLoss(Constants.getRoundedUpValue(val));
 			}else{
 				setProfitLoss(0d);
 			}

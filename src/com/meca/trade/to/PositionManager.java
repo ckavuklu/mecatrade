@@ -110,11 +110,11 @@ public class PositionManager extends MecaObject implements IPositionManager{
 	}
 
 	private void updateFreeMargin() {
-		freeMargin = getEquity() - getMargin();
+		freeMargin = Constants.getRoundedUpValue(getEquity() - getMargin());
 	}
 
 	private void updateEquity() {
-		equity = account.getBalance() + getOpenPL();
+		equity = Constants.getRoundedUpValue(account.getBalance() + getOpenPL());
 	}
 
 	@Override
@@ -123,6 +123,9 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		
 		builder.append("equity=");
 		builder.append(equity);
+		builder.append(" ");
+		builder.append("balance=");
+		builder.append(account.getBalance());
 		builder.append(" ");
 		builder.append("margin=");
 		builder.append(margin);
@@ -219,11 +222,11 @@ public class PositionManager extends MecaObject implements IPositionManager{
 
 
 	private void updateBalance(Trade trade) {
-		account.setBalance(account.getBalance() - getMargin() + trade.getProfitLoss());
+		account.setBalance(Constants.getRoundedUpValue(account.getBalance() + trade.getProfitLoss()));
 	}
 
 	private void updateMargin() {
-		margin = ((getMarginLotCount()*getWeightedAverageEntryPrice()) / getMarketType().getLeverage());
+		margin = Constants.getRoundedUpValue(((getMarginLotCount()*getWeightedAverageEntryPrice()*getMarketType().getLotSize()) / getMarketType().getLeverage()));
 	}
 
 	
