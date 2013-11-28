@@ -135,12 +135,15 @@ public class PortolioManager extends Component {
 	    				  || value.getPrice().getHigh() < 0 || value.getPrice().getLow() < 0){
 	    			  endOfMarketData = true;
 	    		  }else{
-	    			  trader.updatePriceData(value.getPrice());
 	    			  manager.updatePriceData(value.getPrice());
+	    			  trader.updatePriceData(value.getPrice());
+	    			  
+	    			  //TODO: We assumed that margin level is 100% of equity for margin call
+	    			  if(manager.getFreeMargin()  <= 0d)
+	    				  endOfMarketData = true;
 	    		  }
 	    		  strategyDecisions.add(value);
-		    	  //System.out.print(value + " ");
-	    		  
+		    	  
 		    	  drop(pArray[i]);
 	          }
 		    }

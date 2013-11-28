@@ -210,9 +210,9 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		if(trade.getStatus() == TradeStatusType.CLOSE){
 			tradeHistory.add(trade);
 			
-			update();
-			
 			updateBalance(trade);
+			
+			update();
 		}
 		
 		return trade;
@@ -304,6 +304,8 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		
 		addTrade(trade);
 		
+		System.out.println("POSITIONS:");
+		System.out.println(this);
 		return trade;
 	}
 
