@@ -304,8 +304,8 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		
 		addTrade(trade);
 		
-		System.out.println("POSITIONS:");
-		System.out.println(this);
+		/*System.out.println("POSITIONS:");
+		System.out.println(this);*/
 		return trade;
 	}
 

@@ -11,6 +11,7 @@ import com.meca.trade.to.MarketType;
 import com.meca.trade.to.PerformanceReportManager;
 import com.meca.trade.to.PositionManager;
 import com.meca.trade.to.SMAStrategy;
+import com.meca.trade.to.StochasticStrategy;
 import com.meca.trade.to.TestTradeDataSet;
 
 public class TradeNetwork extends Network {
@@ -30,17 +31,21 @@ public class TradeNetwork extends Network {
 		
 		IndicatorSet shortSet = new IndicatorSet();
 		shortSet.addIndicator("SMA", 4);
-		
 		IndicatorSet longSet = new IndicatorSet();
 		longSet.addIndicator("SMA", 9);
+		SMAStrategy smaStrategy = new SMAStrategy(shortSet,longSet);
 		
-
+		IndicatorSet stochasticKLine = new IndicatorSet();
+		stochasticKLine.addIndicator("KLINE", 10);
+		IndicatorSet stochasticDLine = new IndicatorSet();
+		stochasticDLine.addIndicator("DLINE", 11);
+		StochasticStrategy stochasticStrategy = new StochasticStrategy(stochasticKLine,stochasticDLine,60d,40d);
 		
 			
 		IPositionManager posManager = new PositionManager(null,usdAcc,reportManager,MarketType.EURUSD);
 		TestTradeDataSet dataSet = new TestTradeDataSet(INPUT_TEST_TRADE_DATA_FILE_NAME);
 		//TurtleStrategy turtleStrategy = new TurtleStrategy(shortSet);
-		SMAStrategy smaStrategy = new SMAStrategy(shortSet,longSet);
+		
 		
 		BaseTrader base = new BaseTrader(posManager);
 		
@@ -71,6 +76,8 @@ public class TradeNetwork extends Network {
 	    // Indicator Components
 	    component("_SimpleMovingAverage_SHORT", com.meca.trade.components.SimpleMovingAverage.class);
 	    component("_SimpleMovingAverage_LONG", com.meca.trade.components.SimpleMovingAverage.class);
+	    component("_Stochastic", com.meca.trade.components.StochasticOscillator.class);
+	    
 	   /* component("_ExponentialMovingAverage", com.meca.trade.components.ExponentialMovingAverage.class);
 	    component("_MACD", com.meca.trade.networks.subnets.MACDSubNetwork.class);*/
 	    
@@ -94,7 +101,13 @@ public class TradeNetwork extends Network {
 	    initialize(dataSet, component("_PortolioManager"), port("TESTTRADEDATASET"));
 	    initialize(base, component("_PortolioManager"), port("TRADER"));
 	    initialize(posManager, component("_ActionManager"), port("MANAGER"));
-	    initialize(smaStrategy, component("_TradeMultiplexer"), port("STRATEGY"));
+	    
+	    //stochasticStrategy
+	    initialize(/*stochasticStrategy*/smaStrategy, component("_TradeMultiplexer"), port("STRATEGY"));
+	    
+	    initialize(Double.valueOf(14), component("_Stochastic"), port("N_WINDOW"));
+	    initialize(Double.valueOf(3), component("_Stochastic"), port("K_WINDOW"));
+	    initialize(Double.valueOf(3), component("_Stochastic"), port("D_WINDOW"));
 	    
 	    connect(component("_DataSource"), port("OUT"), component("_DataFeeder"), port("TRADEDATA"));
 	    
@@ -118,6 +131,11 @@ public class TradeNetwork extends Network {
 	    connect(component("_QuotePrice_C"), port("OUT",3), component("_SimpleMovingAverage_LONG"), port("DATA"));
 	    
 	    
+	    connect(component("_QuotePrice_C"), port("OUT",4), component("_Stochastic"), port("CLOSE"));
+	    connect(component("_QuotePrice_H"), port("OUT",1), component("_Stochastic"), port("HIGH"));
+	    connect(component("_QuotePrice_L"), port("OUT",1), component("_Stochastic"), port("LOW"));
+	    
+	    
 	    connect(component("_QuotePrice_O"), port("OUT",0), component("_TradeMultiplexer"), port("IN",0));
 	    connect(component("_QuotePrice_C"), port("OUT",0), component("_TradeMultiplexer"), port("IN",1));
 	    connect(component("_QuotePrice_H"), port("OUT",0), component("_TradeMultiplexer"), port("IN",2));
@@ -130,6 +148,9 @@ public class TradeNetwork extends Network {
 	    connect(component("_MACD"), port("HISTOGRAM"), component("_TradeMultiplexer"), port("IN",8));*/
 	    connect(component("_SimpleMovingAverage_LONG"), port("OUT"), component("_TradeMultiplexer"), port("IN",9));
 	    
+	    
+	    connect(component("_Stochastic"), port("KLINE"), component("_TradeMultiplexer"), port("IN",10));
+	    connect(component("_Stochastic"), port("DLINE"), component("_TradeMultiplexer"), port("IN",11));
 	    
 	    
 	    connect(component("_TradeMultiplexer"), port("OUT"), component("_PortolioManager"), port("IN",0));
