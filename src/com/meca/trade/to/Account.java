@@ -10,6 +10,7 @@ public class Account implements IAccount {
 	private Double balance = null;
 	private AccountStatusType status = null;
 	
+	/* Git IDE test*/
 	
 	@Override
 	public String toString() {
