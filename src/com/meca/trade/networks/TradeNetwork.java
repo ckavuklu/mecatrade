@@ -21,7 +21,7 @@ public class TradeNetwork extends Network {
 	    //component("_Discard", com.jpmorrsn.fbp.components.Discard.class);
 	    //component("_Write_text_to_pane", com.jpmorrsn.fbp.components.ShowText.class);
 		
-		final String INPUT_MARKET_DATA_FILE_NAME = "TESTDATA.txt";
+		final String INPUT_MARKET_DATA_FILE_NAME = "EURUSD.txt";
 		final String INPUT_TEST_TRADE_DATA_FILE_NAME = "TestTradeSet-1";
 		
 		PerformanceReportManager reportManager = new PerformanceReportManager(INPUT_MARKET_DATA_FILE_NAME,INPUT_TEST_TRADE_DATA_FILE_NAME);
@@ -51,7 +51,7 @@ public class TradeNetwork extends Network {
 		
 	    
 		// Trade Data Components
-		component("_DataSource", com.meca.trade.components.TestDataSource.class);
+		component("_DataSource", com.meca.trade.components.DataSource.class);
 	    component("_DataFeeder", com.meca.trade.components.DataFeeder.class);
 	    
 	    component("_QuotePrice_O", com.meca.trade.components.QuotePrice.class);
@@ -67,9 +67,10 @@ public class TradeNetwork extends Network {
 	    initialize("H", component("_QuotePrice_H"), port("PRICETYPE"));
 	    initialize("L", component("_QuotePrice_L"), port("PRICETYPE"));
 	   
-	    initialize("ALL", component("_DataFeeder"), port("SCHEDULETYPE"));
-	    //initialize("Minute", component("_DataFeeder"), port("SCHEDULETYPE"));
-	    initialize(Integer.valueOf(2), component("_DataFeeder"), port("SCHEDULEPERIOD"));
+	    //initialize("ALL", component("_DataFeeder"), port("SCHEDULETYPE"));
+	    initialize("Minute", component("_DataFeeder"), port("SCHEDULETYPE"));
+	    initialize(Integer.valueOf(1), component("_DataFeeder"), port("SCHEDULEPERIOD"));
+	    initialize("20010110:235100-20010113:235400", component("_DataFeeder"), port("PERIODINTERVAL"));
 	    initialize(INPUT_MARKET_DATA_FILE_NAME, component("_DataSource"), port("FILENAME"));
 
 	    

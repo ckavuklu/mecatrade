@@ -65,7 +65,7 @@ public class DataSource extends Component {
 			
 			Packet p = create(line);
 		    outport.send(p);
-		    ct--;
+		    //ct--;
 		    
 		    //System.out.println("DataSource.execute() " + ct);
 		    

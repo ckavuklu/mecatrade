@@ -152,7 +152,7 @@ public class PortolioManager extends Component {
 		    Order order = null;
 		    
 		    if(!endOfMarketData){
-		    	order = new Order(executeTrades(evaluateTestDecisions(strategyDecisions)));
+		    	order = new Order(executeTrades(evaluateStrategyDecisions(strategyDecisions)));
 		    }else{
 		    	order = new Order(executeTrades(trader.endOfMarket()));
 		    }
