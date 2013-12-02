@@ -57,28 +57,7 @@ public class DataSource extends Component {
 		drop(ctp);
 	}
     
-    String line = null;
-	try {
-		line = br.readLine();
-		
-		while ((line = br.readLine()) != null && ct>0) {
-			
-			Packet p = create(line);
-		    outport.send(p);
-		    //ct--;
-		    
-		    //System.out.println("DataSource.execute() " + ct);
-		    
-		}
-
-		br.close();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} finally{
-		fileName.close();
-		outport.close();
-	}
+    
   }
 
   String repeat(final String string, final int ct) {

@@ -51,7 +51,6 @@ public class TradeNetwork extends Network {
 		
 	    
 		// Trade Data Components
-		component("_DataSource", com.meca.trade.components.DataSource.class);
 	    component("_DataFeeder", com.meca.trade.components.DataFeeder.class);
 	    
 	    component("_QuotePrice_O", com.meca.trade.components.QuotePrice.class);
@@ -68,10 +67,10 @@ public class TradeNetwork extends Network {
 	    initialize("L", component("_QuotePrice_L"), port("PRICETYPE"));
 	   
 	    //initialize("ALL", component("_DataFeeder"), port("SCHEDULETYPE"));
-	    initialize("Minute", component("_DataFeeder"), port("SCHEDULETYPE"));
+	    initialize("MONTH", component("_DataFeeder"), port("SCHEDULETYPE"));
 	    initialize(Integer.valueOf(1), component("_DataFeeder"), port("SCHEDULEPERIOD"));
-	    initialize("20010110:235100-20010113:235400", component("_DataFeeder"), port("PERIODINTERVAL"));
-	    initialize(INPUT_MARKET_DATA_FILE_NAME, component("_DataSource"), port("FILENAME"));
+	    initialize("20010110:204500-20011010:204500", component("_DataFeeder"), port("PERIODINTERVAL"));
+	    initialize(INPUT_MARKET_DATA_FILE_NAME, component("_DataFeeder"), port("FILENAME"));
 
 	    
 	    // Indicator Components
@@ -110,7 +109,7 @@ public class TradeNetwork extends Network {
 	    initialize(Double.valueOf(3), component("_Stochastic"), port("K_WINDOW"));
 	    initialize(Double.valueOf(3), component("_Stochastic"), port("D_WINDOW"));
 	    
-	    connect(component("_DataSource"), port("OUT"), component("_DataFeeder"), port("TRADEDATA"));
+	    //connect(component("_DataSource"), port("OUT"), component("_DataFeeder"), port("TRADEDATA"));
 	    
 	    connect(component("_DataFeeder"), port("OUT",0), component("_QuotePrice_O"), port("TRADEDATA"));
 	    connect(component("_DataFeeder"), port("OUT",1), component("_QuotePrice_C"), port("TRADEDATA"));
