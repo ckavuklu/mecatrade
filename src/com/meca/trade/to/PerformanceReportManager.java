@@ -1,20 +1,25 @@
 package com.meca.trade.to;
 
+import java.util.Calendar;
+
 
 public class PerformanceReportManager extends MecaObject implements IPerformanceReportManager{
 
 	private IPositionManager positionManager = null;
 	private MarketType type = null;
 	
-	private String inputMarketDataFileName = null;
-	private String inputTestTradeDataFileName = null;
-	
+	private RunConfiguration config;
 	private Double netProfitForClosedTrades = 0d;
 	private Double netProfitForOpenTrades = 0d;
 	private Double grossProfitForClosedTrades = 0d;
 	private Double grossLossForClosedTrades = 0d;
 	private Double largestWinningTrade = 0d;
 	private Double largestLosingTrade = 0d;
+	
+	private Double annualizedGrossProfit;
+	private Double annualizedGrossLoss;
+	private Double margin;
+	
 	
 	private Double averageWinningTrade = 0d;
 	private Double averageLosingTrade = 0d;
@@ -30,14 +35,18 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	private final String format = endln;
 	private Integer maxConsecutiveWinners = 0;
 	private Integer maxConsecutiveLosers = 0;
-	
+	private Double annualizationCoefficient = 0d;
+	private Double prom = 0d;
+	private Double annTotalNumberOfWinningTrades  = 0d;
+	private Double annTotalNumberOfLosingTrades = 0d;
 
 
-	public PerformanceReportManager(String inputMarketDataFileName,
-			String inputTestTradeDataFileName) {
+	public PerformanceReportManager(RunConfiguration config) {
 		super();
-		this.inputMarketDataFileName = inputMarketDataFileName;
-		this.inputTestTradeDataFileName = inputTestTradeDataFileName;
+		this.config = config;
+		this.annualizationCoefficient = 365d * 24d * 60d * 60d * 1000 / (config.getPeriodEnd().getTime() -  config.getPeriodStart().getTime());
+		this.margin = config.getAccountBalance();
+		
 	}
 
 
@@ -48,14 +57,16 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		
 		
 		calculatePositionPerformance();
+		evaluatePROM();
+		
 		StringBuilder builder = new StringBuilder();
 		builder.append("PerformanceReportManager.generatePerformanceReport()");
 		builder.append(endln);
 		builder.append("inputMarketDataFileName=");
-		builder.append(inputMarketDataFileName);
+		builder.append(config.getInputMarketDataFile());
 		builder.append(format);
 		builder.append("inputTestTradeDataFileName=");
-		builder.append(inputTestTradeDataFileName);
+		builder.append(config.getInputTestTradeDataFile());
 		builder.append(format);
 		builder.append("netProfitForClosedTrades=");
 		builder.append(netProfitForClosedTrades);
@@ -105,7 +116,21 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		builder.append("maxConsecutiveLosers=");
 		builder.append(maxConsecutiveLosers);
 		builder.append(format);
-		
+		builder.append("PROM=");
+		builder.append(prom);
+		builder.append(format);
+		builder.append("annTotalNumberOfWinningTrades=");
+		builder.append(annTotalNumberOfWinningTrades);
+		builder.append(format);
+		builder.append("annTotalNumberOfLosingTrades=");
+		builder.append(annTotalNumberOfLosingTrades);
+		builder.append(format);
+		builder.append("annualizedGrossProfit=");
+		builder.append(annualizedGrossProfit);
+		builder.append(format);
+		builder.append("annualizedGrossLoss=");
+		builder.append(annualizedGrossLoss);
+		builder.append(format);
 		builder.append(endln);
 		
 		System.out
@@ -156,6 +181,22 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		maxConsecutiveLosers = positionManager.getConsecutiveLosingTrades();
 		
 		
+	}
+	
+	private void evaluatePROM(){
+		
+		annualizedGrossProfit = grossProfitForClosedTrades * annualizationCoefficient;
+		annualizedGrossLoss = grossLossForClosedTrades * annualizationCoefficient;
+		
+		annTotalNumberOfWinningTrades  = totalNumberOfWinningTrades * annualizationCoefficient;
+		annTotalNumberOfLosingTrades = totalNumberOfLosingTrades * annualizationCoefficient;
+		
+		
+		prom = TradeUtils.roundToTwoDigits(((((annualizedGrossProfit/(annTotalNumberOfWinningTrades==0d?1:annTotalNumberOfWinningTrades)) * (annTotalNumberOfWinningTrades - Math.sqrt(annTotalNumberOfWinningTrades)))
+				 +
+				 ((annualizedGrossLoss/(annTotalNumberOfLosingTrades==0d?1:annTotalNumberOfLosingTrades)) * (annTotalNumberOfLosingTrades + Math.sqrt(annTotalNumberOfLosingTrades)))) / margin)*100);
+		
+		return;
 	}
 	
 

@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -22,6 +20,7 @@ import com.jpmorrsn.fbp.engine.Packet;
 import com.meca.trade.to.MarketData;
 import com.meca.trade.to.NullMarketData;
 import com.meca.trade.to.SchedulingParameter;
+import com.meca.trade.to.TradeUtils;
 
 /** Sort a stream of Packets to an output stream **/
 @ComponentDescription("Filters Messages")
@@ -30,7 +29,8 @@ import com.meca.trade.to.SchedulingParameter;
 		@InPort(value = "FILENAME", description = "FileName", type = String.class),
 		@InPort(value = "SCHEDULETYPE", description = "type", type = String.class),
 		@InPort(value = "SCHEDULEPERIOD", description = "period", type = Integer.class),
-		@InPort(value = "PERIODINTERVAL", description = "period start-end date and time", type = String.class),
+		@InPort(value = "PERIODSTART", description = "period start", type = Date.class),
+		@InPort(value = "PERIODEND", description = "period end date and time", type = Date.class),
 		@InPort(value = "SCHEDULEPERIOD", description = "period", type = Integer.class) })
 public class DataFeeder extends Component {
 
@@ -41,7 +41,7 @@ public class DataFeeder extends Component {
 			+ "THERE IS NO WARRANTY; USE THIS PRODUCT AT YOUR OWN RISK.";
 
 	InputPort scheduleTypePort, schedulePeriodPort, tradeDataPort,
-			periodIntervalPort;
+			periodStartPort,periodEndPort;
 
 	OutputPort[] outportArray;
 	InputPort fileName;
@@ -65,8 +65,6 @@ public class DataFeeder extends Component {
 	private Date cycleStart;
 	private Date cycleEnd;
 	
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd HHmmssSSS");
-
 	
 	private Date nextDate(Date date, Integer interval, String period) {
 		Calendar cal = Calendar.getInstance();
@@ -91,17 +89,7 @@ public class DataFeeder extends Component {
 		return cal.getTime();
 	}
 
-	private Date getTime(String date, String time) {
-		Date dat = null;
-		try {
-			dat = dateFormat.parse(date + " " + time + "000");
-		} catch (ParseException e) {
-			
-			e.printStackTrace();
-		}
-		
-		return dat;
-	}
+	
 
 	private String convertStringDate(Date date) {
 		
@@ -122,16 +110,6 @@ public class DataFeeder extends Component {
 		return result;
 	}
 
-	private void setPeriodIntervals(String interval) {
-		String[] periodTime = interval.split("-");
-		String[] startTime = periodTime[0].split(":");
-		String[] endTime = periodTime[1].split(":");
-
-		periodStart = getTime(startTime[0], startTime[1]);
-		periodEnd = getTime(endTime[0], endTime[1]);
-		
-		
-	}
 
 	private void clearIntervalParameters() {
 		periodHigh = periodLow = periodOpen = periodClose = null;
@@ -167,8 +145,8 @@ public class DataFeeder extends Component {
 		Packet p = null;
 		Packet schedulePer = null;
 		Packet scheduleType = null;
-		Packet periodIntervalPacket = null;
-		String periodInterval = null;
+		Packet periodStartPacket = null;
+		Packet periodEndPacket = null;
 		Boolean periodStarted = false;
 
 		Packet ctp = null;
@@ -176,23 +154,26 @@ public class DataFeeder extends Component {
 		if (schedulePeriod == null) {
 			schedulePer = schedulePeriodPort.receive();
 			scheduleType = scheduleTypePort.receive();
-			periodIntervalPacket = periodIntervalPort.receive();
+			periodStartPacket = periodStartPort.receive();
+			periodEndPacket = periodEndPort.receive();
 			ctp = fileName.receive();
 
 			this.schedulePeriod = this.timeDecrement = new Integer(
 					(Integer) schedulePer.getContent());
 			this.schedule = new String((String) scheduleType.getContent());
 
-			periodInterval = new String(
-					(String) periodIntervalPacket.getContent());
-
+			periodStart = (Date) periodStartPacket.getContent();
+			periodEnd = (Date) periodEndPacket.getContent();
+			
 			drop(schedulePer);
 			drop(scheduleType);
-			drop(periodIntervalPacket);
+			drop(periodStartPacket);
+			drop(periodEndPacket);
 
 			schedulePeriodPort.close();
 			scheduleTypePort.close();
-			periodIntervalPort.close();
+			periodStartPort.close();
+			periodEndPort.close();
 			fileName.close();
 		}
 
@@ -203,8 +184,6 @@ public class DataFeeder extends Component {
 		SchedulingParameter defaultAllSchedule = new SchedulingParameter(1,
 				"Minutes");
 		
-		setPeriodIntervals(periodInterval);
-
 		cycleStart = periodStart;
 		cycleEnd = nextDate(periodStart, schedulePeriod, schedule);
 
@@ -234,7 +213,7 @@ public class DataFeeder extends Component {
 
 				if (!schedule.equalsIgnoreCase("ALL")) {
 
-					Date date = getTime(trade[1], trade[2]);
+					Date date = TradeUtils.getTime(trade[1] + "-" + trade[2]);
 					
 					if (cycleEnd.compareTo(periodEnd) > 0) {
 
@@ -349,7 +328,8 @@ public class DataFeeder extends Component {
 		scheduleTypePort = openInput("SCHEDULETYPE");
 		schedulePeriodPort = openInput("SCHEDULEPERIOD");
 		fileName = openInput("FILENAME");
-		periodIntervalPort = openInput("PERIODINTERVAL");
+		periodStartPort = openInput("PERIODSTART");
+		periodEndPort = openInput("PERIODEND");
 
 		outportArray = openOutputArray("OUT");
 

@@ -2,6 +2,7 @@ package com.meca.trade.networks;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Properties;
 
 import com.jpmorrsn.fbp.engine.Network;
@@ -14,9 +15,11 @@ import com.meca.trade.to.IndicatorSet;
 import com.meca.trade.to.MarketType;
 import com.meca.trade.to.PerformanceReportManager;
 import com.meca.trade.to.PositionManager;
+import com.meca.trade.to.RunConfiguration;
 import com.meca.trade.to.SMAStrategy;
 import com.meca.trade.to.StochasticStrategy;
 import com.meca.trade.to.TestTradeDataSet;
+import com.meca.trade.to.TradeUtils;
 
 public class TradeNetwork extends Network {
 
@@ -26,21 +29,28 @@ public class TradeNetwork extends Network {
 	    //component("_Write_text_to_pane", com.jpmorrsn.fbp.components.ShowText.class);
 		
 		Properties prop = new Properties();
+		RunConfiguration config = new RunConfiguration();
 
         try {
                prop.load(new FileInputStream("config.properties"));
+               
         } catch (IOException ex) {
 
                ex.printStackTrace();
         }
-
+        
+        config.setPeriodStart(TradeUtils.getTime(prop.getProperty("start_of_trading_period")));
+        config.setPeriodEnd(TradeUtils.getTime(prop.getProperty("end_of_trading_period")));
+        config.setPeriodStepSize(Integer.valueOf(prop.getProperty("trading_period_step_size")));
+        config.setPeriodType(prop.getProperty("trading_period_type"));
+        config.setAccountBalance(Double.valueOf(prop.getProperty("usd_account_balance")));
 		
-		final String INPUT_MARKET_DATA_FILE_NAME = prop.getProperty("input_market_data_file_name");
-		final String INPUT_TEST_TRADE_DATA_FILE_NAME = "TestTradeSet-1";
+        config.setInputMarketDataFile(prop.getProperty("input_market_data_file_name"));
+        config.setInputTestTradeDataFile(prop.getProperty("input_test_trade_data_file_name"));
 		
-		PerformanceReportManager reportManager = new PerformanceReportManager(INPUT_MARKET_DATA_FILE_NAME,INPUT_TEST_TRADE_DATA_FILE_NAME);
+		PerformanceReportManager reportManager = new PerformanceReportManager(config);
 		
-		Account usdAcc = new Account(CurrencyType.USD,"5678",99332.53d,AccountStatusType.OPEN);
+		Account usdAcc = new Account(CurrencyType.USD,"5678",config.getAccountBalance(),AccountStatusType.OPEN);
 		
 		
 		IndicatorSet shortSet = new IndicatorSet();
@@ -53,11 +63,11 @@ public class TradeNetwork extends Network {
 		stochasticKLine.addIndicator("KLINE", 10);
 		IndicatorSet stochasticDLine = new IndicatorSet();
 		stochasticDLine.addIndicator("DLINE", 11);
-		StochasticStrategy stochasticStrategy = new StochasticStrategy(stochasticKLine,stochasticDLine,60d,40d);
+		StochasticStrategy stochasticStrategy = new StochasticStrategy(stochasticKLine,stochasticDLine,80d,20d);
 		
 			
 		IPositionManager posManager = new PositionManager(null,usdAcc,reportManager,MarketType.EURUSD);
-		TestTradeDataSet dataSet = new TestTradeDataSet(INPUT_TEST_TRADE_DATA_FILE_NAME);
+		TestTradeDataSet dataSet = new TestTradeDataSet(config.getInputTestTradeDataFile());
 		//TurtleStrategy turtleStrategy = new TurtleStrategy(shortSet);
 		
 		
@@ -81,10 +91,16 @@ public class TradeNetwork extends Network {
 	    initialize("L", component("_QuotePrice_L"), port("PRICETYPE"));
 	   
 	    //initialize("ALL", component("_DataFeeder"), port("SCHEDULETYPE"));
-	    initialize("MONTH", component("_DataFeeder"), port("SCHEDULETYPE"));
-	    initialize(Integer.valueOf(1), component("_DataFeeder"), port("SCHEDULEPERIOD"));
-	    initialize("20010110:204500-20010720:024500", component("_DataFeeder"), port("PERIODINTERVAL"));
-	    initialize(INPUT_MARKET_DATA_FILE_NAME, component("_DataFeeder"), port("FILENAME"));
+	    initialize(config.getPeriodType(), component("_DataFeeder"), port("SCHEDULETYPE"));
+	    initialize(config.getPeriodStepSize(), component("_DataFeeder"), port("SCHEDULEPERIOD"));
+	    
+	    
+	    
+	    initialize(config.getPeriodStart(), component("_DataFeeder"), port("PERIODSTART"));
+	    initialize(config.getPeriodEnd(), component("_DataFeeder"), port("PERIODEND"));
+	    
+	    
+	    initialize(config.getInputMarketDataFile(), component("_DataFeeder"), port("FILENAME"));
 
 	    
 	    // Indicator Components
@@ -96,8 +112,8 @@ public class TradeNetwork extends Network {
 	    component("_MACD", com.meca.trade.networks.subnets.MACDSubNetwork.class);*/
 	    
 	    
-	    initialize(Double.valueOf(3), component("_SimpleMovingAverage_SHORT"), port("WINDOW"));
-	    initialize(Double.valueOf(6), component("_SimpleMovingAverage_LONG"), port("WINDOW"));
+	    initialize(Double.valueOf(12), component("_SimpleMovingAverage_SHORT"), port("WINDOW"));
+	    initialize(Double.valueOf(26), component("_SimpleMovingAverage_LONG"), port("WINDOW"));
 /*	    initialize(Double.valueOf(5), component("_ExponentialMovingAverage"), port("WINDOW"));
 	    initialize(Double.valueOf(12), component("_MACD"), port("SHORTEMAPERIOD"));
 	    initialize(Double.valueOf(26), component("_MACD"), port("LONGEMAPERIOD"));
@@ -117,7 +133,7 @@ public class TradeNetwork extends Network {
 	    initialize(posManager, component("_ActionManager"), port("MANAGER"));
 	    
 	    //stochasticStrategy
-	    initialize(/*stochasticStrategy*/smaStrategy, component("_TradeMultiplexer"), port("STRATEGY"));
+	    initialize(/*stochasticStrategy*/ smaStrategy, component("_TradeMultiplexer"), port("STRATEGY"));
 	    
 	    initialize(Double.valueOf(14), component("_Stochastic"), port("N_WINDOW"));
 	    initialize(Double.valueOf(3), component("_Stochastic"), port("K_WINDOW"));

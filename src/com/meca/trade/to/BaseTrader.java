@@ -20,14 +20,6 @@ public class BaseTrader implements ITrader {
 		this.positionManager = positionManager;
 	}
 	
-	private Double evaluateProperLot(Double lot){
-		//System.out.println("BaseTrader.evaluateProperLot() before:" + lot);
-		BigDecimal value = new BigDecimal(lot);
-		BigDecimal roundOff = value.setScale(2, BigDecimal.ROUND_DOWN);
-		
-		//System.out.println("BaseTrader.evaluateProperLot() after:" + roundOff.doubleValue());
-		return roundOff.doubleValue();
-	}
 
 	@Override
 	public List<Trade> evaluateStrategyDecisions(
@@ -45,7 +37,7 @@ public class BaseTrader implements ITrader {
 			if(decision.getDecision() == DecisionType.LONG){
 	
 				if(freeMargin > 0){
-					double lots = evaluateProperLot((freeMargin / askPrice) / positionManager.getMarketType().getLotSize());
+					double lots = TradeUtils.roundToTwoDigits((freeMargin / askPrice) / positionManager.getMarketType().getLotSize());
 					
 					
 					Trade tradeData = new Trade();
@@ -81,7 +73,7 @@ public class BaseTrader implements ITrader {
 				
 				if(freeMargin > 0){
 					
-					double lots = evaluateProperLot((freeMargin) / positionManager.getMarketType().getLotSize());
+					double lots = TradeUtils.roundToTwoDigits((freeMargin) / positionManager.getMarketType().getLotSize());
 
 					Trade tradeData = new Trade();
 					tradeData.setDate(new Date());
@@ -125,7 +117,7 @@ public class BaseTrader implements ITrader {
 	public List<Trade> endOfMarket() {
 		ArrayList<Trade> tradeList = new ArrayList<Trade>();
 		
-		/*List<IPosition> positions = positionManager.getPositions();
+		List<IPosition> positions = positionManager.getPositions();
 
 		for(IPosition p:positions){
 
@@ -143,7 +135,7 @@ public class BaseTrader implements ITrader {
 				tradeData.setMarketType(positionManager.getMarketType());
 				tradeList.add(tradeData);
 			}
-		}*/
+		}
 		
 		return tradeList;
 	}
