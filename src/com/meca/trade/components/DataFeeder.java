@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -62,7 +64,10 @@ public class DataFeeder extends Component {
 
 	private Date cycleStart;
 	private Date cycleEnd;
+	
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd HHmmssSSS");
 
+	
 	private Date nextDate(Date date, Integer interval, String period) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
@@ -87,16 +92,15 @@ public class DataFeeder extends Component {
 	}
 
 	private Date getTime(String date, String time) {
-		Calendar cal = Calendar.getInstance();
-		cal.set(Integer.valueOf(date.substring(0, 4).trim()),
-				Integer.valueOf(date.substring(4, 6).trim()) - 1,
-				Integer.valueOf(date.substring(6, 8).trim()),
-				Integer.valueOf(time.substring(0, 2).trim()),
-				Integer.valueOf(time.substring(2, 4).trim()),
-				Integer.valueOf(time.substring(4, 6).trim()));
+		Date dat = null;
+		try {
+			dat = dateFormat.parse(date + " " + time + "000");
+		} catch (ParseException e) {
+			
+			e.printStackTrace();
+		}
 		
-		cal.set(Calendar.MILLISECOND, 0);
-		return cal.getTime();
+		return dat;
 	}
 
 	private String convertStringDate(Date date) {
@@ -125,17 +129,21 @@ public class DataFeeder extends Component {
 
 		periodStart = getTime(startTime[0], startTime[1]);
 		periodEnd = getTime(endTime[0], endTime[1]);
+		
+		
 	}
 
 	private void clearIntervalParameters() {
 		periodHigh = periodLow = periodOpen = periodClose = null;
 	}
 
-	private void setIntervalParameters(MarketData data) {
-		Double high = Double.valueOf(data.getHigh());
-		Double low = Double.valueOf(data.getLow());
-		Double open = Double.valueOf(data.getOpen());
-		Double close = Double.valueOf(data.getClose());
+	
+	
+	private void setIntervalParameters(String highParam, String lowParam, String openParam, String closeParam) {
+		Double high = Double.valueOf(highParam);
+		Double low = Double.valueOf(lowParam);
+		Double open = Double.valueOf(openParam);
+		Double close = Double.valueOf(closeParam);
 
 		if (periodHigh == null || (periodHigh < high)) {
 			periodHigh = high;
@@ -188,6 +196,13 @@ public class DataFeeder extends Component {
 			fileName.close();
 		}
 
+		
+		SchedulingParameter scheduleParameter = new SchedulingParameter(
+				schedulePeriod, schedule);
+		
+		SchedulingParameter defaultAllSchedule = new SchedulingParameter(1,
+				"Minutes");
+		
 		setPeriodIntervals(periodInterval);
 
 		cycleStart = periodStart;
@@ -214,31 +229,17 @@ public class DataFeeder extends Component {
 
 				String[] trade = line.split(",");
 
-				MarketData data = new MarketData(new SchedulingParameter(1,
-						"Minutes"));
-
-				data.setQuote(trade[0]);
-				data.setDate(trade[1]);
-				data.setTime(trade[2]);
-				data.setOpen(trade[3]);
-				data.setHigh(trade[4]);
-				data.setLow(trade[5]);
-				data.setClose(trade[6]);
-				data.setVolume(trade[7]);
-
-				MarketData result = new NullMarketData();
+				MarketData data = null;
+				MarketData result = null;
 
 				if (!schedule.equalsIgnoreCase("ALL")) {
 
-					Date date = getTime(data.getDate(), data.getTime());
-					
+					Date date = getTime(trade[1], trade[2]);
 					
 					if (cycleEnd.compareTo(periodEnd) > 0) {
 
 						// Exit as we reach period end
-						MarketData dataEnd = new MarketData(
-								new SchedulingParameter(
-										schedulePeriod, schedule));
+						MarketData dataEnd = new MarketData(scheduleParameter);
 
 						dataEnd.setQuote(trade[0]);
 						dataEnd.setDate(convertStringDate(cycleStart));
@@ -257,15 +258,13 @@ public class DataFeeder extends Component {
 					else if (date.compareTo(cycleStart) >= 0) {
 
 						if (date.compareTo(cycleEnd) < 0) {
-							setIntervalParameters(data);
+							setIntervalParameters(trade[4],trade[5],trade[3],trade[6]);
 
 						} else {
 
 							if (periodHigh != null && periodLow != null) {
 
-								MarketData newData = new MarketData(
-										new SchedulingParameter(schedulePeriod,
-												schedule));
+								MarketData newData = new MarketData(scheduleParameter);
 
 								newData.setQuote(trade[0]);
 								newData.setDate(convertStringDate(cycleStart));
@@ -287,7 +286,7 @@ public class DataFeeder extends Component {
 
 								} while (date.compareTo(cycleEnd) >= 0);
 								
-								setIntervalParameters(data);
+								setIntervalParameters(trade[4],trade[5],trade[3],trade[6]);
 								
 							} 
 						}
@@ -296,12 +295,22 @@ public class DataFeeder extends Component {
 					}
 
 				} else {
+					data = new MarketData(defaultAllSchedule);
+
+					data.setQuote(trade[0]);
+					data.setDate(trade[1]);
+					data.setTime(trade[2]);
+					data.setOpen(trade[3]);
+					data.setHigh(trade[4]);
+					data.setLow(trade[5]);
+					data.setClose(trade[6]);
+					data.setVolume(trade[7]);
 					result = data;
 				}
 
 				try {
 
-					if (!(result instanceof NullMarketData)) {
+					if (result != null && !(result instanceof NullMarketData)) {
 						System.out.println("DataFeeder-2: " + result);
 						
 						for (int i = 0; i < outportArray.length; i++) {
@@ -316,7 +325,7 @@ public class DataFeeder extends Component {
 					e.printStackTrace();
 				} finally {
 
-					if (!(result instanceof NullMarketData)
+					if (result != null && !(result instanceof NullMarketData)
 							&& Double.valueOf(result.getHigh()) < 0) {
 						break;
 					}

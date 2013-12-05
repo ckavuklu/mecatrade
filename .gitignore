@@ -39,3 +39,5 @@ celal.txt
 *.md
 .metadata/
 /bin
+/build
+/output

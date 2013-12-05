@@ -1,5 +1,9 @@
 package com.meca.trade.networks;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 import com.jpmorrsn.fbp.engine.Network;
 import com.meca.trade.to.Account;
 import com.meca.trade.to.AccountStatusType;
@@ -21,7 +25,17 @@ public class TradeNetwork extends Network {
 	    //component("_Discard", com.jpmorrsn.fbp.components.Discard.class);
 	    //component("_Write_text_to_pane", com.jpmorrsn.fbp.components.ShowText.class);
 		
-		final String INPUT_MARKET_DATA_FILE_NAME = "EURUSD.txt";
+		Properties prop = new Properties();
+
+        try {
+               prop.load(new FileInputStream("config.properties"));
+        } catch (IOException ex) {
+
+               ex.printStackTrace();
+        }
+
+		
+		final String INPUT_MARKET_DATA_FILE_NAME = prop.getProperty("input_market_data_file_name");
 		final String INPUT_TEST_TRADE_DATA_FILE_NAME = "TestTradeSet-1";
 		
 		PerformanceReportManager reportManager = new PerformanceReportManager(INPUT_MARKET_DATA_FILE_NAME,INPUT_TEST_TRADE_DATA_FILE_NAME);
@@ -69,7 +83,7 @@ public class TradeNetwork extends Network {
 	    //initialize("ALL", component("_DataFeeder"), port("SCHEDULETYPE"));
 	    initialize("MONTH", component("_DataFeeder"), port("SCHEDULETYPE"));
 	    initialize(Integer.valueOf(1), component("_DataFeeder"), port("SCHEDULEPERIOD"));
-	    initialize("20010110:204500-20011010:204500", component("_DataFeeder"), port("PERIODINTERVAL"));
+	    initialize("20010110:204500-20010720:024500", component("_DataFeeder"), port("PERIODINTERVAL"));
 	    initialize(INPUT_MARKET_DATA_FILE_NAME, component("_DataFeeder"), port("FILENAME"));
 
 	    
