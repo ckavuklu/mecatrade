@@ -4,8 +4,8 @@ import com.jpmorrsn.fbp.engine.Packet;
 
 public class SMAStrategy implements IStrategy {
 	
-	IndicatorSet shortSMA;
-	IndicatorSet longSMA;
+	IndicatorSet set;
+	
 	
 	Double previousShortSMA = Double.NaN;
 	Double currentShortSMA = Double.NaN;
@@ -13,10 +13,9 @@ public class SMAStrategy implements IStrategy {
 	Double currentLongSMA = Double.NaN;
 
 
-	public SMAStrategy(IndicatorSet shortSMA, IndicatorSet longSMA) {
+	public SMAStrategy(IndicatorSet set) {
 		super();
-		this.shortSMA = shortSMA;
-		this.longSMA = longSMA;
+		this.set = set;
 	}
 
 
@@ -24,8 +23,8 @@ public class SMAStrategy implements IStrategy {
 	public StrategyDecision execute(Packet[] pArray, PriceData data) {
 		StrategyDecision decision = new StrategyDecision(DecisionType.KEEP, data);
 		
-		this.currentShortSMA = (Double)pArray[shortSMA.getMap().get("SMA")].getContent();
-		this.currentLongSMA = (Double)pArray[longSMA.getMap().get("SMA")].getContent();
+		this.currentShortSMA = (Double)pArray[set.getMap().get("SMASHORT")].getContent();
+		this.currentLongSMA = (Double)pArray[set.getMap().get("SMALONG")].getContent();
 			
 		if(!(previousShortSMA.isNaN() || previousLongSMA.isNaN())){
 			

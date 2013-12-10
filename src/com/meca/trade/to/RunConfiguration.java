@@ -11,6 +11,8 @@ public class RunConfiguration {
 	private Double accountBalance = null;
 	private String inputMarketDataFile = null;
 	private String inputTestTradeDataFile = null;
+	private Double stochasticOverboughtLevel = null;
+	private Double stochasticOversoldLevel = null;
 
 	public RunConfiguration() {
 		

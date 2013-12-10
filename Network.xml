@@ -1,0 +1,191 @@
+<optimization>
+
+	<configuration>
+		<param name="PERIOD_TYPE" type="String" value="Month"></param>
+		<param name="PERIOD_STEP_SIZE" type="Integer" value="1"></param>
+		<param name="PERIOD_START" type="Date" value="20010110-204500"></param>
+		<param name="PERIOD_END" type="Date" value="20020110-204500"></param>
+		<param name="INPUT_MARKET_DATA_FILE_NAME" type="String" value="EURUSD.txt"></param>
+		<param name="ACCOUNT_BALANCE" type="Double" value="100000d"></param>
+		<param name="INPUT_TEST_TRADE_DATA_FILE_NAME" type="String"
+			value="TestTradeSet-1"></param>
+	</configuration>
+
+	<networks>
+		<network name="TradeNetwork-1">
+			<components>
+				<component name="_DataFeeder"
+					class="com.meca.trade.components.DataFeeder.class"></component>
+				<component name="_QuotePrice_O"
+					class="com.meca.trade.components.QuotePrice.class"></component>
+				<component name="_QuotePrice_C"
+					class="com.meca.trade.components.QuotePrice.class"></component>
+				<component name="_QuotePrice_H"
+					class="com.meca.trade.components.QuotePrice.class"></component>
+				<component name="_QuotePrice_L"
+					class="com.meca.trade.components.QuotePrice.class"></component>
+				<component name="_Kicker" class="com.meca.trade.components.Kicker.class"></component>
+
+				<component name="_SimpleMovingAverage_SHORT"
+					class="com.meca.trade.components.SimpleMovingAverage.class"></component>
+				<component name="_SimpleMovingAverage_LONG"
+					class="com.meca.trade.components.SimpleMovingAverage.class"></component>
+				<component name="_TradeMultiplexer"
+					class="com.meca.trade.components.TradeMultiplexer.class"></component>
+				<component name="_PortolioManager"
+					class="com.meca.trade.components.PortolioManager.class"></component>
+				<component name="_ActionManager"
+					class="com.meca.trade.components.ActionManager.class"></component>
+			</components>
+
+			<initializations>
+				<initialize component="_QuotePrice_O" port="PRICETYPE">
+					<parameter value="O" type="String"></parameter>
+				</initialize>
+				<initialize component="_QuotePrice_C" port="PRICETYPE">
+					<parameter value="C" type="String"></parameter>
+				</initialize>
+				<initialize component="_QuotePrice_H" port="PRICETYPE">
+					<parameter value="H" type="String"></parameter>
+				</initialize>
+				<initialize component="_QuotePrice_L" port="PRICETYPE">
+					<parameter value="L" type="String"></parameter>
+				</initialize>
+				<initialize component="_QuotePrice_L" port="PRICETYPE">
+					<parameter value="L" type="String"></parameter>
+				</initialize>
+				<initialize component="_DataFeeder" port="SCHEDULETYPE">
+					<parameter value="PERIOD_TYPE" type="Configuration"></parameter>
+				</initialize>
+				<initialize component="_DataFeeder" port="SCHEDULEPERIOD">
+					<parameter value="PERIOD_STEP_SIZE" type="Configuration"></parameter>
+				</initialize>
+				<initialize component="_DataFeeder" port="PERIODSTART">
+					<parameter value="PERIOD_START" type="Configuration"></parameter>
+				</initialize>
+				<initialize component="_DataFeeder" port="PERIODEND">
+					<parameter value="PERIOD_END" type="Configuration"></parameter>
+				</initialize>
+				<initialize component="_DataFeeder" port="FILENAME">
+					<parameter value="INPUT_MARKET_DATA_FILE_NAME" type="Configuration"></parameter>
+				</initialize>
+				<initialize component="_SimpleMovingAverage_SHORT" port="WINDOW">
+					<parameter value="12" type="Double"></parameter>
+				</initialize>
+				<initialize component="_SimpleMovingAverage_LONG" port="WINDOW">
+					<parameter value="26" type="Double"></parameter>
+				</initialize>
+				<initialize component="_PortolioManager" port="MANAGER">
+					<parameter value="posManager" type="Static"></parameter>
+				</initialize>
+				<initialize component="_PortolioManager" port="TESTTRADEDATASET">
+					<parameter value="dataSet" type="Static"></parameter>
+				</initialize>
+				<initialize component="_PortolioManager" port="TRADER">
+					<parameter value="base" type="Static"></parameter>
+				</initialize>
+				<initialize component="_ActionManager" port="MANAGER">
+					<parameter value="posManager" type="Static"></parameter>
+				</initialize>
+				<initialize component="_TradeMultiplexer" port="STRATEGY">
+					<parameter value="com.meca.trade.to.SMAStrategy" type="Strategy"></parameter>
+				</initialize>
+
+
+			</initializations>
+
+			<connections>
+				<connect>
+					<from component="_DataFeeder" port="OUT" no="0" />
+					<to component="_QuotePrice_O" port="TRADEDATA" />
+				</connect>
+				<connect>
+					<from component="_DataFeeder" port="OUT" no="1" />
+					<to component="_QuotePrice_C" port="TRADEDATA" />
+				</connect>
+				<connect>
+					<from component="_DataFeeder" port="OUT" no="2" />
+					<to component="_QuotePrice_H" port="TRADEDATA" />
+				</connect>
+				<connect>
+					<from component="_DataFeeder" port="OUT" no="3" />
+					<to component="_QuotePrice_L" port="TRADEDATA" />
+				</connect>
+				<connect>
+					<from component="_Kicker" port="OUT" no="0" />
+					<to component="_QuotePrice_O" port="KICKOFF" />
+				</connect>
+				<connect>
+					<from component="_Kicker" port="OUT" no="1" />
+					<to component="_QuotePrice_C" port="KICKOFF" />
+				</connect>
+				<connect>
+					<from component="_Kicker" port="OUT" no="2" />
+					<to component="_QuotePrice_H" port="KICKOFF" />
+				</connect>
+				<connect>
+					<from component="_Kicker" port="OUT" no="3" />
+					<to component="_QuotePrice_L" port="KICKOFF" />
+				</connect>
+				<connect>
+					<from component="_ActionManager" port="CLOCKTICK" no="0" />
+					<to component="_QuotePrice_O" port="CLOCKTICK" />
+				</connect>
+				<connect>
+					<from component="_ActionManager" port="CLOCKTICK" no="1" />
+					<to component="_QuotePrice_C" port="CLOCKTICK" />
+				</connect>
+				<connect>
+					<from component="_ActionManager" port="CLOCKTICK" no="2" />
+					<to component="_QuotePrice_H" port="CLOCKTICK" />
+				</connect>
+				<connect>
+					<from component="_ActionManager" port="CLOCKTICK" no="3" />
+					<to component="_QuotePrice_L" port="CLOCKTICK" />
+				</connect>
+				<connect>
+					<from component="_QuotePrice_C" port="OUT" no="2" />
+					<to component="_SimpleMovingAverage_SHORT" port="DATA" />
+				</connect>
+				<connect>
+					<from component="_QuotePrice_C" port="OUT" no="3" />
+					<to component="_SimpleMovingAverage_LONG" port="DATA" />
+				</connect>
+				<connect>
+					<from component="_QuotePrice_O" port="OUT" no="0" />
+					<to component="_TradeMultiplexer" port="IN" no="0" />
+				</connect>
+				<connect>
+					<from component="_QuotePrice_C" port="OUT" no="0" />
+					<to component="_TradeMultiplexer" port="IN" no="1" />
+				</connect>
+				<connect>
+					<from component="_QuotePrice_H" port="OUT" no="0" />
+					<to component="_TradeMultiplexer" port="IN" no="2" />
+				</connect>
+				<connect>
+					<from component="_QuotePrice_L" port="OUT" no="0" />
+					<to component="_TradeMultiplexer" port="IN" no="3" />
+				</connect>
+				<connect indicator="SMASHORT">
+					<from component="_SimpleMovingAverage_SHORT" port="OUT" />
+					<to component="_TradeMultiplexer" port="IN" no="4" />
+				</connect>
+				<connect indicator="SMALONG">
+					<from component="_SimpleMovingAverage_LONG" port="OUT" />
+					<to component="_TradeMultiplexer" port="IN" no="9" />
+				</connect>
+				<connect>
+					<from component="_TradeMultiplexer" port="OUT" />
+					<to component="_PortolioManager" port="IN" no="0" />
+				</connect>
+				<connect>
+					<from component="_PortolioManager" port="OUT" />
+					<to component="_ActionManager" port="IN" />
+				</connect>
+			</connections>
+
+		</network>
+	</networks>
+
+</optimization>
