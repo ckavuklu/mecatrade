@@ -1,6 +1,9 @@
 package com.meca.trade.to;
 
-import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+
+import com.meca.trade.networks.Parameter;
 
 
 public class PerformanceReportManager extends MecaObject implements IPerformanceReportManager{
@@ -8,7 +11,8 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	private IPositionManager positionManager = null;
 	private MarketType type = null;
 	
-	private RunConfiguration config;
+	//private RunConfiguration config;
+	private HashMap<String,Parameter> config;
 	private Double netProfitForClosedTrades = 0d;
 	private Double netProfitForOpenTrades = 0d;
 	private Double grossProfitForClosedTrades = 0d;
@@ -41,11 +45,13 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	private Double annTotalNumberOfLosingTrades = 0d;
 
 
-	public PerformanceReportManager(RunConfiguration config) {
+	
+	
+	public PerformanceReportManager(HashMap<String,Parameter> config) {
 		super();
 		this.config = config;
-		this.annualizationCoefficient = 365d * 24d * 60d * 60d * 1000 / (config.getPeriodEnd().getTime() -  config.getPeriodStart().getTime());
-		this.margin = config.getAccountBalance();
+		this.annualizationCoefficient = 365d * 24d * 60d * 60d * 1000 / (((Date)config.get("PERIOD_END").getValue()).getTime() -  ((Date)config.get("PERIOD_START").getValue()).getTime());
+		this.margin = (Double)config.get("ACCOUNT_BALANCE").getValue();
 		
 	}
 
@@ -63,10 +69,10 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		builder.append("PerformanceReportManager.generatePerformanceReport()");
 		builder.append(endln);
 		builder.append("inputMarketDataFileName=");
-		builder.append(config.getInputMarketDataFile());
+		builder.append(config.get("INPUT_MARKET_DATA_FILE_NAME").getValue());
 		builder.append(format);
 		builder.append("inputTestTradeDataFileName=");
-		builder.append(config.getInputTestTradeDataFile());
+		builder.append(config.get("INPUT_TEST_TRADE_DATA_FILE_NAME").getValue());
 		builder.append(format);
 		builder.append("netProfitForClosedTrades=");
 		builder.append(netProfitForClosedTrades);

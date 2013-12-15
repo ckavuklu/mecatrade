@@ -2,21 +2,13 @@ package com.meca.trade.to;
 
 import com.jpmorrsn.fbp.engine.Packet;
 
-public class SMAStrategy implements IStrategy {
-	
-	IndicatorSet set;
+public class SMAStrategy extends BaseStrategy {
 	
 	
 	Double previousShortSMA = Double.NaN;
 	Double currentShortSMA = Double.NaN;
 	Double previousLongSMA = Double.NaN;
 	Double currentLongSMA = Double.NaN;
-
-
-	public SMAStrategy(IndicatorSet set) {
-		super();
-		this.set = set;
-	}
 
 
 	@Override

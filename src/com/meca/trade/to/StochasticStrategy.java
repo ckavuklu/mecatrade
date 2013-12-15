@@ -2,7 +2,7 @@ package com.meca.trade.to;
 
 import com.jpmorrsn.fbp.engine.Packet;
 
-public class StochasticStrategy implements IStrategy {
+public class StochasticStrategy  extends BaseStrategy{
 	
 	
 
@@ -12,6 +12,9 @@ public class StochasticStrategy implements IStrategy {
 	Double previousKLine = Double.NaN;
 	Double currentKLine = Double.NaN;
 	Double previousDLine = Double.NaN;
+	
+
+
 	Double currentDLine = Double.NaN;
 	
 	Double overboughtValue;

@@ -2,7 +2,7 @@ package com.meca.trade.networks;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.Properties;
 
 import com.jpmorrsn.fbp.engine.Network;
@@ -48,17 +48,24 @@ public class OriginalTradeNetwork extends Network {
         config.setInputMarketDataFile(prop.getProperty("input_market_data_file_name"));
         config.setInputTestTradeDataFile(prop.getProperty("input_test_trade_data_file_name"));
 		
+        HashMap<String,Parameter> map = new HashMap<String,Parameter>();
+        map.put("PERIOD_START", new Parameter("PERIOD_START","Date",prop.getProperty("start_of_trading_period")));
+        map.put("PERIOD_END", new Parameter("PERIOD_END","Date",prop.getProperty("end_of_trading_period")));
+        map.put("ACCOUNT_BALANCE", new Parameter("ACCOUNT_BALANCE","Double",prop.getProperty("usd_account_balance")));
+        map.put("INPUT_MARKET_DATA_FILE_NAME", new Parameter("INPUT_MARKET_DATA_FILE_NAME","String",prop.getProperty("input_market_data_file_name")));
+        map.put("INPUT_TEST_TRADE_DATA_FILE_NAME", new Parameter("INPUT_TEST_TRADE_DATA_FILE_NAME","String",prop.getProperty("input_test_trade_data_file_name")));
         
+  
         //stochastic_overbought_level
-		PerformanceReportManager reportManager = new PerformanceReportManager(config);
+		PerformanceReportManager reportManager = new PerformanceReportManager(map);
 		
 		Account usdAcc = new Account(CurrencyType.USD,"5678",config.getAccountBalance(),AccountStatusType.OPEN);
 		
 		
-		IndicatorSet set = new IndicatorSet();
-		set.addIndicator("SMASHORT", 4);
-		set.addIndicator("SMALONG", 9);
-		SMAStrategy smaStrategy = new SMAStrategy(set);
+
+		SMAStrategy smaStrategy = new SMAStrategy();
+		smaStrategy.addIndicator("SMASHORT", 4);
+		smaStrategy.addIndicator("SMALONG", 9);
 		
 		IndicatorSet stochasticKLine = new IndicatorSet();
 		stochasticKLine.addIndicator("KLINE", 10);
@@ -107,14 +114,12 @@ public class OriginalTradeNetwork extends Network {
 	    // Indicator Components
 	    component("_SimpleMovingAverage_SHORT", com.meca.trade.components.SimpleMovingAverage.class);
 	    component("_SimpleMovingAverage_LONG", com.meca.trade.components.SimpleMovingAverage.class);
-	    component("_Stochastic", com.meca.trade.components.StochasticOscillator.class);
 	    
 	   /* component("_ExponentialMovingAverage", com.meca.trade.components.ExponentialMovingAverage.class);
 	    component("_MACD", com.meca.trade.networks.subnets.MACDSubNetwork.class);*/
 	    
 	    
-	    initialize(Double.valueOf(12), component("_SimpleMovingAverage_SHORT"), port("WINDOW"));
-	    initialize(Double.valueOf(26), component("_SimpleMovingAverage_LONG"), port("WINDOW"));
+	    
 /*	    initialize(Double.valueOf(5), component("_ExponentialMovingAverage"), port("WINDOW"));
 	    initialize(Double.valueOf(12), component("_MACD"), port("SHORTEMAPERIOD"));
 	    initialize(Double.valueOf(26), component("_MACD"), port("LONGEMAPERIOD"));
@@ -136,9 +141,7 @@ public class OriginalTradeNetwork extends Network {
 	    //stochasticStrategy
 	    initialize(/*stochasticStrategy*/ smaStrategy, component("_TradeMultiplexer"), port("STRATEGY"));
 	    
-	    initialize(Double.valueOf(14), component("_Stochastic"), port("N_WINDOW"));
-	    initialize(Double.valueOf(3), component("_Stochastic"), port("K_WINDOW"));
-	    initialize(Double.valueOf(3), component("_Stochastic"), port("D_WINDOW"));
+
 	    
 	    //connect(component("_DataSource"), port("OUT"), component("_DataFeeder"), port("TRADEDATA"));
 	    
@@ -162,10 +165,6 @@ public class OriginalTradeNetwork extends Network {
 	    connect(component("_QuotePrice_C"), port("OUT",3), component("_SimpleMovingAverage_LONG"), port("DATA"));
 	    
 	    
-	    connect(component("_QuotePrice_C"), port("OUT",4), component("_Stochastic"), port("CLOSE"));
-	    connect(component("_QuotePrice_H"), port("OUT",1), component("_Stochastic"), port("HIGH"));
-	    connect(component("_QuotePrice_L"), port("OUT",1), component("_Stochastic"), port("LOW"));
-	    
 	    
 	    connect(component("_QuotePrice_O"), port("OUT",0), component("_TradeMultiplexer"), port("IN",0));
 	    connect(component("_QuotePrice_C"), port("OUT",0), component("_TradeMultiplexer"), port("IN",1));
@@ -180,8 +179,7 @@ public class OriginalTradeNetwork extends Network {
 	    connect(component("_SimpleMovingAverage_LONG"), port("OUT"), component("_TradeMultiplexer"), port("IN",9));
 	    
 	    
-	    connect(component("_Stochastic"), port("KLINE"), component("_TradeMultiplexer"), port("IN",10));
-	    connect(component("_Stochastic"), port("DLINE"), component("_TradeMultiplexer"), port("IN",11));
+	   
 	    
 	    
 	    connect(component("_TradeMultiplexer"), port("OUT"), component("_PortolioManager"), port("IN",0));
@@ -189,12 +187,15 @@ public class OriginalTradeNetwork extends Network {
 	    
 	    connect(component("_PortolioManager"), port("OUT"), component("_ActionManager"), port("IN"));
 	    
+	    
+	    initialize(Double.valueOf(12), component("_SimpleMovingAverage_SHORT"), port("WINDOW"));
+	    initialize(Double.valueOf(26), component("_SimpleMovingAverage_LONG"), port("WINDOW"));
 	    //connect(component("_DataFeeder"), port("OUT"), component("_Write_text_to_pane"), port("IN"));
 	  }
 	
 	public static void main(final String[] argv) throws Exception {
 	    OriginalTradeNetwork aa = new OriginalTradeNetwork();
-	    
+	 
 	    aa.go();
 	  }
 

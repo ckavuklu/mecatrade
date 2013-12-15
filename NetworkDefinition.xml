@@ -1,41 +1,43 @@
 <optimization>
 
 	<configuration>
-		<param name="PERIOD_TYPE" type="String" value="Month"></param>
+		<param name="PERIOD_TYPE" type="String" value="Day"></param>
 		<param name="PERIOD_STEP_SIZE" type="Integer" value="1"></param>
 		<param name="PERIOD_START" type="Date" value="20010110-204500"></param>
-		<param name="PERIOD_END" type="Date" value="20020110-204500"></param>
+		<param name="PERIOD_END" type="Date" value="20010310-204500"></param>
 		<param name="INPUT_MARKET_DATA_FILE_NAME" type="String" value="EURUSD.txt"></param>
 		<param name="ACCOUNT_BALANCE" type="Double" value="100000d"></param>
 		<param name="INPUT_TEST_TRADE_DATA_FILE_NAME" type="String"
 			value="TestTradeSet-1"></param>
 	</configuration>
-
+	
 	<networks>
 		<network name="TradeNetwork-1">
 			<components>
 				<component name="_DataFeeder"
-					class="com.meca.trade.components.DataFeeder.class"></component>
+					class="com.meca.trade.components.DataFeeder"></component>
 				<component name="_QuotePrice_O"
-					class="com.meca.trade.components.QuotePrice.class"></component>
+					class="com.meca.trade.components.QuotePrice"></component>
 				<component name="_QuotePrice_C"
-					class="com.meca.trade.components.QuotePrice.class"></component>
+					class="com.meca.trade.components.QuotePrice"></component>
 				<component name="_QuotePrice_H"
-					class="com.meca.trade.components.QuotePrice.class"></component>
+					class="com.meca.trade.components.QuotePrice"></component>
 				<component name="_QuotePrice_L"
-					class="com.meca.trade.components.QuotePrice.class"></component>
-				<component name="_Kicker" class="com.meca.trade.components.Kicker.class"></component>
+					class="com.meca.trade.components.QuotePrice"></component>
+				<component name="_Kicker" class="com.meca.trade.components.Kicker"></component>
 
 				<component name="_SimpleMovingAverage_SHORT"
-					class="com.meca.trade.components.SimpleMovingAverage.class"></component>
+					class="com.meca.trade.components.SimpleMovingAverage">
+				</component>
 				<component name="_SimpleMovingAverage_LONG"
-					class="com.meca.trade.components.SimpleMovingAverage.class"></component>
+					class="com.meca.trade.components.SimpleMovingAverage">
+				</component>
 				<component name="_TradeMultiplexer"
-					class="com.meca.trade.components.TradeMultiplexer.class"></component>
+					class="com.meca.trade.components.TradeMultiplexer"></component>
 				<component name="_PortolioManager"
-					class="com.meca.trade.components.PortolioManager.class"></component>
+					class="com.meca.trade.components.PortolioManager"></component>
 				<component name="_ActionManager"
-					class="com.meca.trade.components.ActionManager.class"></component>
+					class="com.meca.trade.components.ActionManager"></component>
 			</components>
 
 			<initializations>
@@ -47,9 +49,6 @@
 				</initialize>
 				<initialize component="_QuotePrice_H" port="PRICETYPE">
 					<parameter value="H" type="String"></parameter>
-				</initialize>
-				<initialize component="_QuotePrice_L" port="PRICETYPE">
-					<parameter value="L" type="String"></parameter>
 				</initialize>
 				<initialize component="_QuotePrice_L" port="PRICETYPE">
 					<parameter value="L" type="String"></parameter>
@@ -69,21 +68,16 @@
 				<initialize component="_DataFeeder" port="FILENAME">
 					<parameter value="INPUT_MARKET_DATA_FILE_NAME" type="Configuration"></parameter>
 				</initialize>
-				<initialize component="_SimpleMovingAverage_SHORT" port="WINDOW">
-					<parameter value="12" type="Double"></parameter>
-				</initialize>
-				<initialize component="_SimpleMovingAverage_LONG" port="WINDOW">
-					<parameter value="26" type="Double"></parameter>
-				</initialize>
 				<initialize component="_PortolioManager" port="MANAGER">
 					<parameter value="posManager" type="Static"></parameter>
+				</initialize>
+				<initialize component="_PortolioManager" port="TRADER">
+					<parameter value="com.meca.trade.to.BaseTrader" type="Trader"></parameter>
 				</initialize>
 				<initialize component="_PortolioManager" port="TESTTRADEDATASET">
 					<parameter value="dataSet" type="Static"></parameter>
 				</initialize>
-				<initialize component="_PortolioManager" port="TRADER">
-					<parameter value="base" type="Static"></parameter>
-				</initialize>
+				
 				<initialize component="_ActionManager" port="MANAGER">
 					<parameter value="posManager" type="Static"></parameter>
 				</initialize>

@@ -1,4 +1,4 @@
-package com.meca.trade.opt;
+package com.meca.trade.networks;
 
 import java.util.Date;
 
