@@ -12,13 +12,13 @@ public class Individual
     public int[] END = new int[SIZE] ;
     	    
     public Individual(int[] START, int[] END) {
+    	
     	for(int i=0;i<SIZE;i++){
-    		
     		this.START[i] = START[i];
     		this.END[i] = END[i];
-    		
     	}	
     }
+
     
     public Individual() {
     }

@@ -12,6 +12,7 @@ public class IndicatorParameter {
 	String type;
 	String start;
 	String end;
+	Object value;
 
 	
 	public IndicatorParameter(String networkName, String name, String port,
@@ -24,19 +25,30 @@ public class IndicatorParameter {
 		this.start = start;
 		this.end = end;
 	}
+	
+	public Object getValue(){
+       
+        if(type.equalsIgnoreCase("Double")){
+        	return (Double)((Integer)value*1d);
+		}else
+			return "Not Yet";
+
+	}
+	
+	public void setValue(Object newValue){
+        value = newValue;
+	}
 
 
 	public Object randomize(){
-		Object result;
-		
         Random rand = new Random();
      
         if(type.equalsIgnoreCase("Double")){
-				result = rand.nextInt(Integer.valueOf(end)-Integer.valueOf(start)+1)+Integer.valueOf(start);
+				value = rand.nextInt(Integer.valueOf(end)-Integer.valueOf(start)+1)+Integer.valueOf(start);
 		}else
-				result = "Not Yet";
+				value = "Not Yet";
 		
-		return (Double)((Integer)result*1d);
+		return (Double)((Integer)value*1d);
 	}
 	
 	public String getNetworkName() {

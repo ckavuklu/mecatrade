@@ -19,7 +19,14 @@ import com.meca.trade.to.ITrader;
 public class NetworkTemplateGenerator {
 	HashMap<String, Parameter> paramMap;
 	List<TradeNetwork> networkList;
+	Integer numOfNetworkTemplates = 0;
+	private Integer populationSize;
 	
+	public Integer getNumOfNetworkTemplates() {
+		return numOfNetworkTemplates;
+	}
+
+
 	public List<TradeNetwork> getNetworkList() {
 		return networkList;
 	}
@@ -153,28 +160,35 @@ public class NetworkTemplateGenerator {
 	
 	private void populateNetworkList(Element networkNode) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException{
 		
-		
+		numOfNetworkTemplates = 0;
 		Iterator itr = networkNode.getChildren().iterator();
 		
 		 while (itr.hasNext()) {
             Element elem = (Element) itr.next();
  
-			networkList.add(populateNetwork(elem));
+            for(int i=0;i<populationSize;i++)
+            	networkList.add(populateNetwork(elem));
 			
-            //paramList.add(new Parameter(elem.getAttribute("name").getValue(), elem.getAttribute("type").getValue(), elem.getAttribute("value").getValue()));
+			numOfNetworkTemplates++;
          }
 		
 		 
 	}
 	
+	public Integer getPopulationSize() {
+		return populationSize;
+	}
+
+
 	public void runNetworks() throws Exception{
 		for(TradeNetwork network:networkList){
 			network.go();
 		}
 	}
 	
-	public NetworkTemplateGenerator(String fileName, HashMap<String, Parameter> paramMap) {
+	public NetworkTemplateGenerator(String fileName, HashMap<String, Parameter> paramMap, Integer populationSize) {
 		this.paramMap = paramMap;
+		this.populationSize = populationSize;
 		networkList = new ArrayList<TradeNetwork>();
 		SAXBuilder builder = new SAXBuilder();
 		

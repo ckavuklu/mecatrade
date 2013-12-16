@@ -205,5 +205,13 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		return;
 	}
 	
+	/*
+	 * 
+	 * TODO: Currently we return only prom as a sole indicator of fitness value
+	 * 
+	 * */
+	public Double getFitnessValue(){
+		return prom;
+	}
 
 }

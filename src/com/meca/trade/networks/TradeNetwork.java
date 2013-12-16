@@ -1,11 +1,14 @@
 package com.meca.trade.networks;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
+import com.jpmorrsn.fbp.engine.Component;
 import com.jpmorrsn.fbp.engine.Network;
 import com.meca.trade.to.Account;
 import com.meca.trade.to.AccountStatusType;
-import com.meca.trade.to.BaseTrader;
 import com.meca.trade.to.CurrencyType;
 import com.meca.trade.to.IPositionManager;
 import com.meca.trade.to.IStrategy;
@@ -25,8 +28,81 @@ public class TradeNetwork extends Network {
 	private TestTradeDataSet dataSet  = null;
 	private ITrader trader = null;
 	private IStrategy strategy = null;
+	private List<IndicatorParameter> indicatorParameterList = null;
+	private Double fitnessValue;
+	
+	public TradeNetwork clone(){
+		TradeNetwork result = new TradeNetwork();
+		
+		Map<String,Component> map = this.getComponents();
+		Map<String,Component> newMap = new HashMap<String,Component>(map);
+		
+		result.setComponents(newMap);
+		
+		return result;
+	}
+	
+	public void randIndicatorParametersAndInitialize() {
+    
+        for(IndicatorParameter indicator:indicatorParameterList){
+			addInitialization(indicator.randomize(), indicator.getName(), indicator.getPort());
+		}
+    }
+
+	
+	public void mutate() {
+        Random rand = new Random();
+        
+        int index = rand.nextInt(indicatorParameterList.size());
+
+        this.indicatorParameterList.get(index).randomize();    
+    }
 	
 	
+	public Double evaluate() throws Exception {
+   
+		this.go();
+		
+        this.setFitnessValue(reportManager.getFitnessValue());
+
+        return this.getFitnessValue();
+    }
+
+	
+	public Double getIndicatorParameterValue(Integer index) {
+		return (Double)indicatorParameterList.get(index).getValue();
+	}
+
+
+	public void setIndicatorParameterValue(Integer index, Double value) {
+		indicatorParameterList.get(index).setValue(value);
+	}
+	
+	public Double getFitnessValue() {
+		return fitnessValue;
+	}
+
+
+
+	public void setFitnessValue(Double fitnessValue) {
+		this.fitnessValue = fitnessValue;
+	}
+
+
+
+	public List<IndicatorParameter> getIndicatorParameterList() {
+		return indicatorParameterList;
+	}
+
+
+
+	public void setIndicatorParameterList(
+			List<IndicatorParameter> indicatorParameterList) {
+		this.indicatorParameterList = indicatorParameterList;
+	}
+
+
+
 	public String getNetworkName() {
 		return networkName;
 	}

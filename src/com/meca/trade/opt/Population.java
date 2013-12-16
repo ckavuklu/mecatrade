@@ -7,15 +7,20 @@ public class Population
 	public static int GENESIZE = 10;
 
     final static int ELITISM_K = 5;
-    final static int POP_SIZE = 500 + ELITISM_K;  // population size
-    final static int MAX_ITER = 100000;             // max number of iterations
-    final static double MUTATION_RATE = 0.20;     // probability of mutation
+    final static int POP_SIZE = 200 + ELITISM_K;  // population size
+    final static int MAX_ITER = 1000;             // max number of iterations
+    final static double MUTATION_RATE = 0.020;     // probability of mutation
     final static double CROSSOVER_RATE = 0.7;     // probability of crossover
 
     private static Random m_rand = new Random();  // random-number generator
     private Individual[] m_population;
     private double totalFitness;
 
+	
+    public static int[] GeneStart = new int[GENESIZE];
+    public static int[] GeneEnd = new int[GENESIZE];
+    
+    
     public Population(int[] START,int[] END) {
         m_population = new Individual[POP_SIZE];
 
@@ -23,8 +28,10 @@ public class Population
         for (int i = 0; i < POP_SIZE; i++) {
             m_population[i] = new Individual(START,END);
             m_population[i].randGenes();
+            System.out.println(m_population[i].toString());
         }
 
+        
         // evaluate current population
         this.evaluate();
     }
@@ -77,7 +84,7 @@ public class Population
             }
         }
         
-        System.out.println("Best Ind.:" + m_population[idxMax].toString() + "Index: " + idxMax);
+        // System.out.println("Best Ind.:" + m_population[idxMax].toString() + " Index: " + idxMax);
 
         //return m_population[idxMin];      // minimization
         return m_population[idxMax];        // maximization
@@ -87,8 +94,8 @@ public class Population
 
     public static Individual[] crossover(Individual indiv1,Individual indiv2) {
         Individual[] newIndiv = new Individual[2];
-        newIndiv[0] = new Individual();
-        newIndiv[1] = new Individual();
+        newIndiv[0] = new Individual(GeneStart,GeneEnd);
+        newIndiv[1] = new Individual(GeneStart,GeneEnd);
 
         int randPoint = m_rand.nextInt(Individual.SIZE);
         int i;
@@ -106,13 +113,11 @@ public class Population
 
 
     public static void main(String[] args) {
-    	    	
-    	int[] GeneStart = new int[GENESIZE];
-    	int[] GeneEnd = new int[GENESIZE];
+
     	
     	
     	// set interval for Genes 
-    	
+    
     	for (int iter = 0; iter < GENESIZE; iter++) {
     		GeneStart[iter] = 10*iter;
     		GeneEnd[iter] = 10*iter+10;
@@ -123,20 +128,10 @@ public class Population
  
         Individual[] newPop = new Individual[POP_SIZE];
         Individual[] indiv = new Individual[2];
-
-        for (int i = 0; i < POP_SIZE; i++) {
-            newPop[i].START = GeneStart;
-            newPop[i].END = GeneEnd;
-        }
-        indiv[0].START = GeneStart;
-        indiv[0].END = GeneEnd;
-        indiv[1].START = GeneStart;
-        indiv[1].END = GeneEnd;
-        
-        
+      
         // current population
         System.out.print("Total Fitness = " + pop.totalFitness);
-        System.out.println(" ; Best Fitness = " + 
+        System.out.println(" Best Fitness = " + 
             pop.findBestIndividual().getFitnessValue());
 
 //        System.out.println("Best Individual " +  pop.findBestIndividual().toString());
@@ -166,20 +161,20 @@ public class Population
                 // Mutation
                 if ( m_rand.nextDouble() < MUTATION_RATE ) {
                     
-                    System.out.println("Before Mutation :" + indiv[0].toString());
+               //     System.out.println("Before Mutation :" + indiv[0].toString());
 
                     indiv[0].mutate();
 
-                    System.out.println("After Mutation :" + indiv[0].toString());
+               //     System.out.println("After Mutation :" + indiv[0].toString());
 
                 }
                 if ( m_rand.nextDouble() < MUTATION_RATE ) {
 
-                    System.out.println("Before Mutation :" + indiv[1].toString());
+                 //   System.out.println("Before Mutation :" + indiv[1].toString());
 
                 	indiv[1].mutate();
 
-                	System.out.println("After Mutation :" + indiv[1].toString());
+                //	System.out.println("After Mutation :" + indiv[1].toString());
 
                 }
 
@@ -192,8 +187,8 @@ public class Population
 
             // reevaluate current population
             pop.evaluate();
-            System.out.print("Iter =" +iter +"Total Fitness = " + pop.totalFitness);
-            System.out.println(" ; Best Fitness = " +
+            System.out.print("Iter =" +iter +" Total Fitness = " + pop.totalFitness);
+            System.out.println(" Best Fitness = " +
             		pop.findBestIndividual().getFitnessValue());
             
     //        System.out.println("Best Individual " +  pop.findBestIndividual().toString());
