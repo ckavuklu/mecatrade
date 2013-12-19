@@ -19,7 +19,8 @@ import com.meca.trade.to.PerformanceReportManager;
 import com.meca.trade.to.PositionManager;
 import com.meca.trade.to.TestTradeDataSet;
 
-public class TradeNetwork extends Network {
+public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
+	
 	private String networkName;
 	private HashMap<String, Parameter> parameterMap;
 	private PerformanceReportManager reportManager = null;
@@ -30,6 +31,14 @@ public class TradeNetwork extends Network {
 	private IStrategy strategy = null;
 	private List<IndicatorParameter> indicatorParameterList = null;
 	private Double fitnessValue;
+	
+	@Override
+	public int compareTo(TradeNetwork arg0) {
+		
+		if (getFitnessValue() < arg0.getFitnessValue()) return -1;
+        if (getFitnessValue() > arg0.getFitnessValue()) return 1;
+        return 0;
+	}
 	
 	public TradeNetwork clone(){
 		TradeNetwork result = new TradeNetwork();
@@ -46,6 +55,15 @@ public class TradeNetwork extends Network {
     
         for(IndicatorParameter indicator:indicatorParameterList){
 			addInitialization(indicator.randomize(), indicator.getName(), indicator.getPort());
+		}
+    }
+	
+	
+	
+	public void initializeByIndicatorParameterValues() {
+	    
+        for(IndicatorParameter indicator:indicatorParameterList){
+			addInitialization(indicator.getValue(), indicator.getName(), indicator.getPort());
 		}
     }
 

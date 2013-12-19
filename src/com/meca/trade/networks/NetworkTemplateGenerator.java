@@ -21,6 +21,7 @@ public class NetworkTemplateGenerator {
 	List<TradeNetwork> networkList;
 	Integer numOfNetworkTemplates = 0;
 	private Integer populationSize;
+	Document doc = null;
 	
 	public Integer getNumOfNetworkTemplates() {
 		return numOfNetworkTemplates;
@@ -55,6 +56,9 @@ public class NetworkTemplateGenerator {
 		populateConnections(network, networkNode.getChild("connections"));
 		return network;
 	}
+
+
+	
 	
 	
 	private void populateComponents(TradeNetwork network, Element connections) throws ClassNotFoundException{
@@ -175,6 +179,34 @@ public class NetworkTemplateGenerator {
 		 
 	}
 	
+	public HashMap<String,List<TradeNetwork>> populateNetworkListBySize(Integer PopSize) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException{
+		Element networksNode = doc.getRootElement().getChildren("networks").get(0);
+		
+		HashMap<String,List<TradeNetwork>> newProp = new HashMap<String,List<TradeNetwork>>();
+		
+		Iterator itr = networksNode.getChildren().iterator();
+		
+		 while (itr.hasNext()) {
+            Element elem = (Element) itr.next();
+ 
+            for(int i=0;i<PopSize;i++){
+            	TradeNetwork network = populateNetwork(elem);
+            	List<TradeNetwork> networkList = newProp.get(network.getNetworkName());
+            	
+            	if(networkList==null){
+            		networkList = new ArrayList<TradeNetwork>();
+            	}
+            	
+            	networkList.add(network);
+            	
+            	newProp.put(network.getNetworkName(), networkList);
+				
+            }
+         }
+		
+		 return newProp;
+	}
+	
 	public Integer getPopulationSize() {
 		return populationSize;
 	}
@@ -193,7 +225,7 @@ public class NetworkTemplateGenerator {
 		SAXBuilder builder = new SAXBuilder();
 		
         try {
-			Document doc = builder.build(fileName);
+			doc = builder.build(fileName);
 		
 			Element networks = doc.getRootElement().getChildren("networks").get(0);
 			populateNetworkList(networks);

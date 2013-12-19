@@ -29,8 +29,16 @@ public class IndicatorParameter {
 	public Object getValue(){
        
         if(type.equalsIgnoreCase("Double")){
-        	return (Double)((Integer)value*1d);
-		}else
+        	
+        	if (value instanceof Integer)
+        		return (Double)((Integer)value*1d);
+
+        	else if (value instanceof Double)
+        	return (Double)(value);
+        	
+        	else return "Not Yet";
+        			}
+      else
 			return "Not Yet";
 
 	}
