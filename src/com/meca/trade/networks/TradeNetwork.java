@@ -1,5 +1,6 @@
 package com.meca.trade.networks;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import com.jpmorrsn.fbp.engine.Component;
 import com.jpmorrsn.fbp.engine.Network;
 import com.meca.trade.to.Account;
 import com.meca.trade.to.AccountStatusType;
+import com.meca.trade.to.Constants;
 import com.meca.trade.to.CurrencyType;
 import com.meca.trade.to.IPositionManager;
 import com.meca.trade.to.IStrategy;
@@ -31,6 +33,24 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 	private IStrategy strategy = null;
 	private List<IndicatorParameter> indicatorParameterList = null;
 	private Double fitnessValue;
+	
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append(networkName);
+		builder.append(Constants.SEPARATOR);
+		
+		for(IndicatorParameter parameter:indicatorParameterList){
+			builder.append(parameter);
+			builder.append(Constants.SPACE);
+		}
+		
+		builder.append("fitnessValue");
+		builder.append(Constants.SEPARATOR);
+		builder.append(getFitnessValue());
+		
+		return builder.toString();
+	}
 	
 	@Override
 	public int compareTo(TradeNetwork arg0) {
@@ -162,6 +182,8 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 	  
 	  public void init(HashMap<String, Parameter> parameterMap){
 	        this.parameterMap = parameterMap;
+	        
+	        indicatorParameterList = new ArrayList<IndicatorParameter>();
 	        
 			reportManager = new PerformanceReportManager(parameterMap);
 			

@@ -20,6 +20,16 @@ public class IndicatorManager {
 	}
 
 
+	public List<IndicatorParameter> getIndicatorList(String mapName) throws CloneNotSupportedException {
+		List<IndicatorParameter> newList = new ArrayList<IndicatorParameter>(); 
+		List<IndicatorParameter> list = indicatorMap.get(mapName);
+		
+		for(IndicatorParameter param:list){
+			newList.add(new IndicatorParameter(param));
+		}
+		
+		return newList;
+	}
 
 	public void addIndicator(IndicatorParameter indicatorParam) {
 		

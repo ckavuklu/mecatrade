@@ -5,7 +5,23 @@ import java.util.Random;
 import com.meca.trade.to.TradeUtils;
 
 
-public class IndicatorParameter {
+public class IndicatorParameter implements java.lang.Cloneable{
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
+	
+	protected IndicatorParameter(IndicatorParameter that) {
+		this.networkName = that.networkName;
+		this.name =that.name;
+		this.port = that.port;
+		this.type = that.type;
+		this.start = that.start;
+		this.end = that.end;
+		this.value = that.getValue();
+	}
+
 	String networkName;
 	String name;
 	String port;
@@ -14,6 +30,15 @@ public class IndicatorParameter {
 	String end;
 	Object value;
 
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append(name);
+		builder.append(":");
+		builder.append(getValue());
+		
+		return builder.toString();
+	}
 	
 	public IndicatorParameter(String networkName, String name, String port,
 			String type, String start, String end) {
@@ -44,6 +69,9 @@ public class IndicatorParameter {
 	}
 	
 	public void setValue(Object newValue){
+		if(newValue == null){
+			System.out.println("IndicatorParameter.setValue()");
+		}
         value = newValue;
 	}
 

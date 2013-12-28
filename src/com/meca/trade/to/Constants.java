@@ -16,6 +16,14 @@ public final class Constants {
 	
 	public final static Integer USDTRY_LEVERAGE = 100;
 	
+	public final static String ENDLN = "\r\n";
+	
+	public final static String FORMAT = ENDLN;
+	
+	public final static String SPACE = " ";
+	
+	public final static String SEPARATOR = ":";
+	
 	public static Double getRoundedUpValue(Double val){
 		BigDecimal result = new BigDecimal(val);
 		

@@ -1,5 +1,6 @@
 package com.meca.trade.networks;
 
+import java.io.Console;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -16,8 +17,6 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
-import com.meca.trade.opt.Individual;
-
 public class Optimizer {
 	
 	HashMap<String, Parameter> paramMap;
@@ -27,8 +26,9 @@ public class Optimizer {
 	private static Random m_rand = new Random();  
 	Integer pop_size, max_iteration,elitizm,tournament_size,individuals_size;
 	Double crossover_rate,mutation_rate;
-	NetworkTemplateGenerator networkTemplates = null;
-	IndicatorManager indicatorMng = new IndicatorManager();
+	Mankind mankind = null;
+	Document doc = null;
+	
 	
 	public Optimizer(String fileName) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 	
@@ -38,14 +38,12 @@ public class Optimizer {
 		SAXBuilder builder = new SAXBuilder();
 		
         try {
-			Document doc = builder.build(fileName);
+			doc = builder.build(fileName);
 			
-		
-			Element configuration = doc.getRootElement().getChildren("configuration").get(0);
-			populateParameterList(configuration);
 			
-			Element geneticConfiguration = doc.getRootElement().getChildren("genetic-configuration").get(0);
-			populateGeneticParameterList(geneticConfiguration);
+			populateParameterList();
+			
+			populateGeneticParameterList();
 			
 			elitizm = (Integer)geneticParamMap.get("ELITISM_K").getValue();
 			pop_size = (Integer)geneticParamMap.get("POP_SIZE").getValue() + elitizm;
@@ -56,29 +54,24 @@ public class Optimizer {
 			individuals_size = (Integer)geneticParamMap.get("INDIVIDUALS_SIZE").getValue();
 
 			
-			networkTemplates = new NetworkTemplateGenerator("NetworkDefinition.xml",paramMap,pop_size);
-
-			Element indicators = doc.getRootElement().getChildren("indicators").get(0);
-			populateIndicators(indicators);
+			mankind = new Mankind("NetworkDefinition.xml",paramMap);
+			m_population = mankind.populateRaceIndividuals(pop_size);
 			
-			setNetworkIndicatorParameterList();
+			populateIndicators(m_population);
 			
+			for(List<TradeNetwork> race:m_population.values()){
+				for(TradeNetwork individual:race){
+					individual.randIndicatorParametersAndInitialize();
+				}
+			}
 			
-			m_population = new HashMap<String,List<TradeNetwork>>();
 			totalFitness = new HashMap<String,Double>();
 			
-			
-			int fromIndex = 0;
-			while(fromIndex < networkTemplates.getNumOfNetworkTemplates()){
-				m_population.put(networkTemplates.networkList.get(fromIndex*pop_size).getNetworkName(), networkTemplates.networkList.subList(fromIndex*pop_size, (fromIndex+1)*pop_size));
-				totalFitness.put(networkTemplates.networkList.get(fromIndex*pop_size).getNetworkName(), 0d);
-				
-				for(TradeNetwork network:m_population.get(networkTemplates.networkList.get(fromIndex*pop_size).getNetworkName())){
-					network.randIndicatorParametersAndInitialize();
-				}
-				
-				fromIndex++;
+			for(int i=0;i<m_population.size();i++){
+				totalFitness.put((String)m_population.keySet().toArray()[i], 0d);
 			}
+			
+			printMankind(m_population);
 			
 			evaluate();
 						
@@ -101,6 +94,32 @@ public class Optimizer {
 		
 	}
 	
+	
+	public void initializeAndAddIndividuals(
+			HashMap<String, List<TradeNetwork>> individuals,
+			HashMap<String, List<TradeNetwork>> newPop) {
+		Set<Entry<String, List<TradeNetwork>>> individualSet = individuals
+				.entrySet();
+		for (Entry<String, List<TradeNetwork>> individualsEntry : individualSet) {
+
+			for (TradeNetwork network : individualsEntry
+					.getValue()) {
+				network.initializeByIndicatorParameterValues();
+				// add network to new population
+				List<TradeNetwork> networkList = newPop
+						.get(network.getNetworkName());
+				if (networkList == null) {
+					networkList = new ArrayList<TradeNetwork>();
+				}
+				networkList.add(network);
+				newPop.put(network.getNetworkName(),
+						networkList);
+
+			}
+		}
+	}
+
+	
 	public void evaluate() throws Exception{
 		
 		Set<Entry<String,List<TradeNetwork>>> set = m_population.entrySet();
@@ -119,8 +138,9 @@ public class Optimizer {
 		
 	}
 	
-	private void populateGeneticParameterList(Element configuration) {
-		Iterator itr = configuration.getChildren().iterator();
+	private void populateGeneticParameterList() {
+		Element geneticConfiguration = doc.getRootElement().getChildren("genetic-configuration").get(0);
+		Iterator itr = geneticConfiguration.getChildren().iterator();
 		
 		 while (itr.hasNext()) {
 	            Element elem = (Element) itr.next();
@@ -130,18 +150,9 @@ public class Optimizer {
 		 
 	}
 
-	private void setNetworkIndicatorParameterList(){
-		List<TradeNetwork> networkList = networkTemplates.getNetworkList();
-		HashMap<String,List<IndicatorParameter>> indicatorMap = indicatorMng.getIndicatorMap();
-		
-		for(TradeNetwork network:networkList){
-			List<IndicatorParameter> indicatorList = indicatorMap.get(network.getNetworkName());
-			network.setIndicatorParameterList(indicatorList);
-		}
-		
-	}
 	
-	private void populateParameterList(Element configuration){
+	private void populateParameterList(){
+		Element configuration = doc.getRootElement().getChildren("configuration").get(0);
 		Iterator itr = configuration.getChildren().iterator();
 		
 		 while (itr.hasNext()) {
@@ -151,29 +162,61 @@ public class Optimizer {
 	         }
 	}
 	
-	private void populateIndicators(Element indicators) throws ClassNotFoundException,
+	private void populateIndicators(HashMap<String,List<TradeNetwork>> mankindMap) throws ClassNotFoundException,
 			InstantiationException, IllegalAccessException,
 			IllegalArgumentException, SecurityException,
 			InvocationTargetException, NoSuchMethodException {
 		
-		Iterator itr = indicators.getChildren().iterator();
-
-		while (itr.hasNext()) {
-			
-			
-			Element indicator =  (Element) itr.next();
-			String networkName = indicator.getAttribute("network").getValue();
-			String componentName = indicator.getAttribute("name").getValue();
-			String portName = indicator.getAttribute("port").getValue();
-			
-			Element interval = indicator.getChild("interval");
-			String start = interval.getAttribute("start").getValue();
-			String end = interval.getAttribute("end").getValue();
-			String paramType = interval.getAttribute("type").getValue();
+		Element indicators = doc.getRootElement().getChildren("indicators").get(0);
 		
-			IndicatorParameter indicatorParam = new IndicatorParameter(networkName,componentName, portName, paramType, start, end);
+		Set<Entry<String,List<TradeNetwork>>> set = mankindMap.entrySet();
+		
+		for(Entry<String,List<TradeNetwork>> e:set){
+			for(TradeNetwork network:e.getValue()){
+				
+				Iterator itr = indicators.getChildren().iterator();
+
+				while (itr.hasNext()) {
+					
+					
+					Element indicator =  (Element) itr.next();
+					String networkName = indicator.getAttribute("network").getValue();
+					
+					if(networkName.equalsIgnoreCase(network.getNetworkName())){
+						String componentName = indicator.getAttribute("name").getValue();
+						String portName = indicator.getAttribute("port").getValue();
+						
+						Element interval = indicator.getChild("interval");
+						String start = interval.getAttribute("start").getValue();
+						String end = interval.getAttribute("end").getValue();
+						String paramType = interval.getAttribute("type").getValue();
+					
+						IndicatorParameter indicatorParam = new IndicatorParameter(networkName,componentName, portName, paramType, start, end);
+						
+						network.getIndicatorParameterList().add(indicatorParam);
+					}
+					
+				}
+			}
+		}
+		
+		
+		
+	}
+	
+	
+	private void printMankind(HashMap<String,List<TradeNetwork>> mankind){
+		
+		// get the sorted m_population and sort anyway to guarantee it is sorted 
+		Set<Entry<String,List<TradeNetwork>>> mankindSet = mankind.entrySet();
+		
+		for(Entry<String,List<TradeNetwork>> race:mankindSet){
+			System.out.println("Race : " + race.getKey());
 			
-			indicatorMng.addIndicator(indicatorParam);
+			for(TradeNetwork individual:race.getValue()){
+				System.out.println("\t[" + race.getValue().indexOf(individual) + "] " + individual);
+			}
+			System.out.println("End Of Race");
 			
 		}
 	}
@@ -209,7 +252,7 @@ public class Optimizer {
 	public HashMap<String,List<TradeNetwork>> elitizm() throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		
 		// create new individuals as the number of elitizm for each race from network definitions 
-		HashMap<String,List<TradeNetwork>> bestIndividuals = networkTemplates.populateNetworkListBySize(elitizm);
+		HashMap<String,List<TradeNetwork>> bestIndividuals = mankind.populateRaceIndividuals(elitizm);
 
 		// get the sorted m_population and sort anyway to guarantee it is sorted 
 		Set<Entry<String,List<TradeNetwork>>> currentMankindSet = m_population.entrySet();
@@ -226,48 +269,47 @@ public class Optimizer {
 		return bestIndividuals;
     }
 	
-	public void crossover(HashMap<String, List<TradeNetwork>> list) throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		  
-		//HashMap<String,List<TradeNetwork>> newIndiv = networkTemplates.populateNetworkListBySize(2);
-		
-		Set<Entry<String,List<TradeNetwork>>> set = list.entrySet();
-		
-		for(Entry<String,List<TradeNetwork>> e:set){
+	public void crossover(HashMap<String, List<TradeNetwork>> list) throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, CloneNotSupportedException {
+		if (m_rand.nextDouble() < crossover_rate) {
+			//HashMap<String,List<TradeNetwork>> newIndiv = networkTemplates.populateNetworkListBySize(2);
 			
-			Integer parameterSize = indicatorMng.getIndicatorMap().get(e.getKey()).size();
+			Set<Entry<String,List<TradeNetwork>>> set = list.entrySet();
 			
-			Integer randPoint = m_rand.nextInt(parameterSize);
-			
-			
-			HashMap<String,List<IndicatorParameter>> indicatorMap = indicatorMng.getIndicatorMap();
-			int child = 0;
-			for(TradeNetwork network:e.getValue()){
-				List<IndicatorParameter> indicatorList = indicatorMap.get(network.getNetworkName());
-				network.setIndicatorParameterList(indicatorList);
+			for(Entry<String,List<TradeNetwork>> e:set){
 				
-				int i;
-				for (i=0; i<randPoint; ++i) {
-					network.setIndicatorParameterValue(i,list.get(e.getKey()).get(child).getIndicatorParameterValue(i));
-		            
-		        }
-		        for (; i<parameterSize; ++i) {
-		        	
-		        	if(child==0)
-		        		network.setIndicatorParameterValue(i,list.get(e.getKey()).get(1).getIndicatorParameterValue(i));
-		        	else if(child==1)
-		        		network.setIndicatorParameterValue(i,list.get(e.getKey()).get(0).getIndicatorParameterValue(i));
-		        }
-		        
-		        child++;
+				Integer parameterSize = e.getValue().get(0).getIndicatorParameterList().size();
+				
+				Integer randPoint = m_rand.nextInt(parameterSize);
+				
+				
+				
+				int child = 0;
+				for(TradeNetwork network:e.getValue()){
+					
+					int i;
+					for (i=0; i<randPoint; ++i) {
+						network.setIndicatorParameterValue(i,list.get(e.getKey()).get(child).getIndicatorParameterValue(i));
+			            
+			        }
+			        for (; i<parameterSize; ++i) {
+			        	
+			        	if(child==0)
+			        		network.setIndicatorParameterValue(i,list.get(e.getKey()).get(1).getIndicatorParameterValue(i));
+			        	else if(child==1)
+			        		network.setIndicatorParameterValue(i,list.get(e.getKey()).get(0).getIndicatorParameterValue(i));
+			        }
+			        
+			        child++;
+				}
+				
 			}
-			
 		}
 		
     }
 		
 	public HashMap<String,List<TradeNetwork>> rouletteWheelSelection() throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		
-		HashMap<String,List<TradeNetwork>> networkList = networkTemplates.populateNetworkListBySize(2);
+		HashMap<String,List<TradeNetwork>> networkList = mankind.populateRaceIndividuals(2);
 		
 		Set<Entry<String,List<TradeNetwork>>> set = m_population.entrySet();
 		for(int i=0;i<2;i++){
@@ -282,11 +324,30 @@ public class Optimizer {
 		return networkList;
         
     }
+	
+	
+	public void mutateIndividuals(HashMap<String, List<TradeNetwork>> individuals) {
+		for (Entry<String, List<TradeNetwork>> individual : individuals
+				.entrySet()) {
+
+			// Mutation
+			if (m_rand.nextDouble() < mutation_rate) {
+				individual.getValue().get(0).mutate();
+
+			}
+
+			if (m_rand.nextDouble() < mutation_rate) {
+				individual.getValue().get(1).mutate();
+			}
+
+		}
+	}
 		
-	public HashMap<String,List<TradeNetwork>> tournamentSelection() throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public HashMap<String,List<TradeNetwork>> tournamentSelection() throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, CloneNotSupportedException {
 	
 		// create new individuals for each race from definitions as many as individualsSize 
-		HashMap<String,List<TradeNetwork>> individuals = networkTemplates.populateNetworkListBySize(individuals_size);
+		HashMap<String,List<TradeNetwork>> individuals = mankind.populateRaceIndividuals(individuals_size);
+		//populateIndicators(individuals);
 		
 		// create a race to hold selected individuals for tournament 
 		HashMap<String,List<TradeNetwork>> selectedIndividualsForTournament = new HashMap<String,List<TradeNetwork>>();
@@ -300,6 +361,11 @@ public class Optimizer {
 			for(int i=0;i<tournament_size;i++){
 				for(Entry<String,List<TradeNetwork>> race:currentMankindSet){
 					TradeNetwork selected = race.getValue().get(m_rand.nextInt(race.getValue().size()));
+					
+					while(selectedIndividualsForTournament.get(selected.getNetworkName())!=null && selectedIndividualsForTournament.get(selected.getNetworkName()).contains(selected)){
+						selected = race.getValue().get(m_rand.nextInt(race.getValue().size()));
+					}
+					
 					List<TradeNetwork> networkList = selectedIndividualsForTournament.get(selected.getNetworkName());
 	            	if(networkList==null){
 	            		networkList = new ArrayList<TradeNetwork>();
@@ -312,14 +378,27 @@ public class Optimizer {
 			// get the entrySet to sort selected individuals 
 			Set<Entry<String,List<TradeNetwork>>> selectedSet = selectedIndividualsForTournament.entrySet();
 			
+			
 			// sort each race and get Indicators from the one with highest fitness and set Indicators for the individual 
 			for(Entry<String,List<TradeNetwork>> selectedRace:selectedSet){
 				Collections.sort(selectedRace.getValue());
-				individuals.get(selectedRace.getKey()).get(individualIndex).setIndicatorParameterList(selectedRace.getValue().get(tournament_size-1).getIndicatorParameterList());
-			
+				//setNetworkIndicatorParameterList(individuals.get(selectedRace.getKey()));
+				List<IndicatorParameter> newParamList = selectedRace.getValue().get(tournament_size-1).getIndicatorParameterList();
+				
+				individuals.get(selectedRace.getKey()).get(individualIndex).getIndicatorParameterList().clear();
+				
+				for(IndicatorParameter newParam:newParamList){
+					individuals.get(selectedRace.getKey()).get(individualIndex).getIndicatorParameterList().add(new IndicatorParameter(newParam));
+				}
+				
 			}
 		
 		} // end of tournament for the size of individuals
+		
+		
+		
+		
+		printMankind(selectedIndividualsForTournament);
 		
 		return individuals;
         
@@ -334,95 +413,43 @@ public class Optimizer {
 
 			HashMap<String, List<TradeNetwork>> individuals = new HashMap<String, List<TradeNetwork>>();
 			HashMap<String, List<TradeNetwork>> bestIndividuals = new HashMap<String, List<TradeNetwork>>();
+			
 
+			
+		
 			System.out.println("Fitness ");
 			System.out.print(optimizer.printTotalFitness());
-
-			// Set<Entry<String,List<TradeNetwork>>> set =
-			// optimizer.m_population.entrySet();
-			// for(Entry<String,List<TradeNetwork>> e:set){
 
 			int count;
 			for (int iter = 0; iter < optimizer.max_iteration; iter++) {
 				count = 0;
-
-				// TODO:check out the hashmaps to be re-created or cleared!!
 				
-				// each time a newPop is created and filled
 				HashMap<String, List<TradeNetwork>> newPop = new HashMap<String, List<TradeNetwork>>();
 
 				// the list is sorted
-				// bestIndividuals = optimizer.findBestIndividuals();
+				
+				optimizer.printMankind(optimizer.m_population);
+				
+				
 				if (optimizer.elitizm > 0) {
 					bestIndividuals = optimizer.elitizm();
-					Set<Entry<String, List<TradeNetwork>>> bestIndividualsSet = bestIndividuals
-							.entrySet();
-					for (Entry<String, List<TradeNetwork>> bestIndividualsEntry : bestIndividualsSet) {
-
-						for (TradeNetwork bestNetwork : bestIndividualsEntry
-								.getValue()) {
-							bestNetwork.initializeByIndicatorParameterValues();
-							// add network to new population
-							List<TradeNetwork> networkList = newPop
-									.get(bestNetwork.getNetworkName());
-							if (networkList == null) {
-								networkList = new ArrayList<TradeNetwork>();
-							}
-							networkList.add(bestNetwork);
-							newPop.put(bestNetwork.getNetworkName(),
-									networkList);
-
-						}
-					}
+					optimizer.initializeAndAddIndividuals(bestIndividuals, newPop);
 					count += optimizer.elitizm;
 				}
 
 				// build new Population
 				while (count < optimizer.pop_size) {
 
-					// individuals = optimizer.rouletteWheelSelection();
+					// Selection
 					individuals = optimizer.tournamentSelection();
 
 					// Crossover
-					if (m_rand.nextDouble() < optimizer.crossover_rate) {
-						optimizer.crossover(individuals);
-					}
+					optimizer.crossover(individuals);
 
-					Set<Entry<String, List<TradeNetwork>>> individualSet = individuals
-							.entrySet();
-
-					for (Entry<String, List<TradeNetwork>> individual : individualSet) {
-
-						// Mutation
-						if (m_rand.nextDouble() < optimizer.mutation_rate) {
-							individual.getValue().get(0).mutate();
-
-						}
-
-						if (m_rand.nextDouble() < optimizer.mutation_rate) {
-							individual.getValue().get(1).mutate();
-						}
-
-						for (TradeNetwork eachNetwork : individual.getValue()) {
-							eachNetwork.initializeByIndicatorParameterValues();
-
-							// add network to new population
-							List<TradeNetwork> networkList = newPop
-									.get(eachNetwork.getNetworkName());
-							if (networkList == null) {
-								networkList = new ArrayList<TradeNetwork>();
-							}
-							networkList.add(eachNetwork);
-							newPop.put(eachNetwork.getNetworkName(),
-									networkList);
-
-						}
-
-						// newPop.put(individual.getKey(),
-						// individual.getValue());
-
-					}
-
+					// Mutate
+					optimizer.mutateIndividuals(individuals);
+					optimizer.initializeAndAddIndividuals(individuals, newPop);
+					
 					count += 2;
 				}
 
@@ -436,9 +463,9 @@ public class Optimizer {
 						+ " " + optimizer.printTotalFitness());
 				
 				optimizer.findBestIndividuals();
-
 			}
-			// }
+
+			optimizer.printMankind(optimizer.m_population);
 
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -457,8 +484,10 @@ public class Optimizer {
 			e.printStackTrace();
 		}
 		
-		
-		
 	}
 
+
+	
+
+	
 }

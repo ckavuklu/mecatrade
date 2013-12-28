@@ -16,22 +16,11 @@ import com.meca.trade.to.IPositionManager;
 import com.meca.trade.to.IStrategy;
 import com.meca.trade.to.ITrader;
 
-public class NetworkTemplateGenerator {
+public class Mankind {
 	HashMap<String, Parameter> paramMap;
-	List<TradeNetwork> networkList;
-	Integer numOfNetworkTemplates = 0;
-	private Integer populationSize;
+	
 	Document doc = null;
-	
-	public Integer getNumOfNetworkTemplates() {
-		return numOfNetworkTemplates;
-	}
 
-
-	public List<TradeNetwork> getNetworkList() {
-		return networkList;
-	}
-	
 	
 	private IStrategy createStrategy(Class strategyClass) throws InstantiationException, IllegalAccessException{
 		return (IStrategy)strategyClass.newInstance();
@@ -162,24 +151,9 @@ public class NetworkTemplateGenerator {
 
 	}
 	
-	private void populateNetworkList(Element networkNode) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException{
-		
-		numOfNetworkTemplates = 0;
-		Iterator itr = networkNode.getChildren().iterator();
-		
-		 while (itr.hasNext()) {
-            Element elem = (Element) itr.next();
- 
-            for(int i=0;i<populationSize;i++)
-            	networkList.add(populateNetwork(elem));
-			
-			numOfNetworkTemplates++;
-         }
-		
-		 
-	}
 	
-	public HashMap<String,List<TradeNetwork>> populateNetworkListBySize(Integer PopSize) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException{
+	
+	public HashMap<String,List<TradeNetwork>> populateRaceIndividuals(Integer PopSize) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException{
 		Element networksNode = doc.getRootElement().getChildren("networks").get(0);
 		
 		HashMap<String,List<TradeNetwork>> newProp = new HashMap<String,List<TradeNetwork>>();
@@ -207,29 +181,22 @@ public class NetworkTemplateGenerator {
 		 return newProp;
 	}
 	
-	public Integer getPopulationSize() {
-		return populationSize;
-	}
 
-
-	public void runNetworks() throws Exception{
+	/*public void runNetworks() throws Exception{
 		for(TradeNetwork network:networkList){
 			network.go();
 		}
 	}
+	*/
 	
-	public NetworkTemplateGenerator(String fileName, HashMap<String, Parameter> paramMap, Integer populationSize) {
+	public Mankind(String fileName, HashMap<String, Parameter> paramMap) {
 		this.paramMap = paramMap;
-		this.populationSize = populationSize;
-		networkList = new ArrayList<TradeNetwork>();
+		
+		//networkList = new ArrayList<TradeNetwork>();
 		SAXBuilder builder = new SAXBuilder();
 		
         try {
 			doc = builder.build(fileName);
-		
-			Element networks = doc.getRootElement().getChildren("networks").get(0);
-			populateNetworkList(networks);
-
 			
 		} catch (JDOMException e) {
 			
@@ -237,25 +204,10 @@ public class NetworkTemplateGenerator {
 		} catch (IOException e) {
 			
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
+		}catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
