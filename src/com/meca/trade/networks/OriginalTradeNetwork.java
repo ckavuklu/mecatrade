@@ -16,7 +16,7 @@ import com.meca.trade.to.MarketType;
 import com.meca.trade.to.PerformanceReportManager;
 import com.meca.trade.to.PositionManager;
 import com.meca.trade.to.RunConfiguration;
-import com.meca.trade.to.SMAStrategy;
+import com.meca.trade.to.SMAandEMAStrategy;
 import com.meca.trade.to.StochasticStrategy;
 import com.meca.trade.to.TestTradeDataSet;
 import com.meca.trade.to.TradeUtils;
@@ -62,10 +62,16 @@ public class OriginalTradeNetwork extends Network {
 		Account usdAcc = new Account(CurrencyType.USD,"5678",config.getAccountBalance(),AccountStatusType.OPEN);
 		
 		
-
-		SMAStrategy smaStrategy = new SMAStrategy();
+		SMAandEMAStrategy smaStrategy = new SMAandEMAStrategy();
+		smaStrategy.addIndicator("EMASHORT", 5);
+		smaStrategy.addIndicator("EMALONG", 6);
+		//SMAStrategy smaStrategy = new SMAStrategy();
 		smaStrategy.addIndicator("SMASHORT", 4);
 		smaStrategy.addIndicator("SMALONG", 9);
+		
+		
+		
+		
 		
 		IndicatorSet stochasticKLine = new IndicatorSet();
 		stochasticKLine.addIndicator("KLINE", 10);
@@ -115,13 +121,15 @@ public class OriginalTradeNetwork extends Network {
 	    component("_SimpleMovingAverage_SHORT", com.meca.trade.components.SimpleMovingAverage.class);
 	    component("_SimpleMovingAverage_LONG", com.meca.trade.components.SimpleMovingAverage.class);
 	    
-	   /* component("_ExponentialMovingAverage", com.meca.trade.components.ExponentialMovingAverage.class);
-	    component("_MACD", com.meca.trade.networks.subnets.MACDSubNetwork.class);*/
+	    component("_ExponentialMovingAverage_SHORT", com.meca.trade.components.ExponentialMovingAverage.class);
+	    component("_ExponentialMovingAverage_LONG", com.meca.trade.components.ExponentialMovingAverage.class);
+	    /*component("_MACD", com.meca.trade.networks.subnets.MACDSubNetwork.class);*/
 	    
 	    
 	    
-/*	    initialize(Double.valueOf(5), component("_ExponentialMovingAverage"), port("WINDOW"));
-	    initialize(Double.valueOf(12), component("_MACD"), port("SHORTEMAPERIOD"));
+	    initialize(Double.valueOf(5), component("_ExponentialMovingAverage_SHORT"), port("WINDOW"));
+	    initialize(Double.valueOf(12), component("_ExponentialMovingAverage_LONG"), port("WINDOW"));
+/*	    initialize(Double.valueOf(12), component("_MACD"), port("SHORTEMAPERIOD"));
 	    initialize(Double.valueOf(26), component("_MACD"), port("LONGEMAPERIOD"));
 	    initialize(Double.valueOf(9), component("_MACD"), port("SIGNALPERIOD"));*/
 	    
@@ -164,6 +172,9 @@ public class OriginalTradeNetwork extends Network {
 	    connect(component("_QuotePrice_C"), port("OUT",2), component("_SimpleMovingAverage_SHORT"), port("DATA"));
 	    connect(component("_QuotePrice_C"), port("OUT",3), component("_SimpleMovingAverage_LONG"), port("DATA"));
 	    
+	    connect(component("_QuotePrice_C"), port("OUT",4), component("_ExponentialMovingAverage_SHORT"), port("DATA"));
+	    connect(component("_QuotePrice_C"), port("OUT",5), component("_ExponentialMovingAverage_LONG"), port("DATA"));
+	    
 	    
 	    
 	    connect(component("_QuotePrice_O"), port("OUT",0), component("_TradeMultiplexer"), port("IN",0));
@@ -172,8 +183,9 @@ public class OriginalTradeNetwork extends Network {
 	    connect(component("_QuotePrice_L"), port("OUT",0), component("_TradeMultiplexer"), port("IN",3));
 	  
 	    connect(component("_SimpleMovingAverage_SHORT"), port("OUT"), component("_TradeMultiplexer"), port("IN",4));
-/*	    connect(component("_ExponentialMovingAverage"), port("OUT",0), component("_TradeMultiplexer"), port("IN",5));
-	    connect(component("_MACD"), port("MACDLINE"), component("_TradeMultiplexer"), port("IN",6));
+	    connect(component("_ExponentialMovingAverage_SHORT"), port("OUT",0), component("_TradeMultiplexer"), port("IN",5));
+	    connect(component("_ExponentialMovingAverage_LONG"), port("OUT",0), component("_TradeMultiplexer"), port("IN",6));
+/*	    connect(component("_MACD"), port("MACDLINE"), component("_TradeMultiplexer"), port("IN",6));
 	    connect(component("_MACD"), port("SIGNALLINE"), component("_TradeMultiplexer"), port("IN",7));
 	    connect(component("_MACD"), port("HISTOGRAM"), component("_TradeMultiplexer"), port("IN",8));*/
 	    connect(component("_SimpleMovingAverage_LONG"), port("OUT"), component("_TradeMultiplexer"), port("IN",9));

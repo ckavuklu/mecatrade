@@ -1,9 +1,9 @@
 package com.meca.trade.networks;
 
-import java.io.Console;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -32,6 +36,7 @@ public class Optimizer {
 	
 	public Optimizer(String fileName) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 	
+		
 		paramMap = new HashMap<String,Parameter>();
 		geneticParamMap = new HashMap<String,Parameter>();
 		
@@ -71,7 +76,10 @@ public class Optimizer {
 				totalFitness.put((String)m_population.keySet().toArray()[i], 0d);
 			}
 			
+			long currTime = Calendar.getInstance().getTimeInMillis();
+			
 			evaluate();
+			System.out.println("Evaluate Takes : " + String.valueOf(Calendar.getInstance().getTimeInMillis() - currTime));
 						
 		} catch (JDOMException e) {
 			
@@ -121,22 +129,18 @@ public class Optimizer {
 	
 	public void evaluate() throws Exception{
 		
-		Set<Entry<String,List<TradeNetwork>>> set = m_population.entrySet();
-		
-		for(Entry<String,List<TradeNetwork>> e:set){
-			for(TradeNetwork network:e.getValue()){
-				
+		Set<Entry<String, List<TradeNetwork>>> set = m_population.entrySet();
+
+		for (Entry<String, List<TradeNetwork>> e : set) {
+			for (TradeNetwork network : e.getValue()) {
+
 				Double networkFitness = network.evaluate();
 				
-				totalFitness.put(e.getKey(), totalFitness.get(e.getKey())+ networkFitness);
+				totalFitness.put(e.getKey(),
+						totalFitness.get(e.getKey()) + networkFitness);
 			}
 		}
-		
-		
-		
-		
-		
-		
+
 	}
 	
 	private void populateGeneticParameterList() {
@@ -503,13 +507,14 @@ public class Optimizer {
 
 				optimizer.evaluate();
 
-				//optimizer.findBestIndividuals();
+				System.out.println("BEST INDIVIDUALS");
+				optimizer.printBestIndividuals();
 			}
 
 			System.out.println("RESULTING MASTER POPULATION");
 			optimizer.printMankind(optimizer.m_population);
 			
-			System.out.println("BEST INDIVIDUALS");
+			System.out.println("BEST INDIVIDUALS of TOTAL EXECUTION");
 			optimizer.printBestIndividuals();
 
 		} catch (ClassNotFoundException e) {
