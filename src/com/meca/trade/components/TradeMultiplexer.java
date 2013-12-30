@@ -8,6 +8,7 @@ import com.jpmorrsn.fbp.engine.InputPort;
 import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
+import com.meca.trade.to.Constants;
 import com.meca.trade.to.IStrategy;
 import com.meca.trade.to.PriceData;
 import com.meca.trade.to.StrategyDecision;
@@ -67,7 +68,8 @@ public class TradeMultiplexer extends Component {
 	    
 	    while((pArray[0] = inportArray[0].receive()) != null){
 	 
-	    	System.out.print("TradeMultData: ");
+	    	if(Constants.DEBUG_ENABLED)
+	    		System.out.print("TradeMultData: ");
 
 		    for (int i = 1; i < no; i++) {
 		    	pArray[i] = inportArray[i].receive();
@@ -85,18 +87,19 @@ public class TradeMultiplexer extends Component {
 		    		  high = value;
 		    	  if(i == 3)
 		    		  low = value;
-		    	  
-		    	  System.out.print(value + " ");
+		    	  if(Constants.DEBUG_ENABLED)
+		    		  System.out.print(value + " ");
 		    	  drop(pArray[i]);
 	          }
 	    	  
 		    }
-		    
-		    System.out.println("");
+		    if(Constants.DEBUG_ENABLED)
+		    	System.out.println("");
 		    
 		    StrategyDecision dec = strategy.execute(pArray, new PriceData(open,close,high,low));
 		    
-		    System.out.println("Decision: " + dec);
+		    if(Constants.DEBUG_ENABLED)
+		    	System.out.println("Decision: " + dec);
 		    
 		    Packet p = create(dec);
 			outport.send(p);

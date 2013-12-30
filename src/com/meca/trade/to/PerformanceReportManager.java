@@ -10,7 +10,12 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 
 	private IPositionManager positionManager = null;
 	private MarketType type = null;
+	private String generatedReport;
 	
+	public String getGeneratedReport() {
+		return generatedReport;
+	}
+
 	//private RunConfiguration config;
 	private HashMap<String,Parameter> config;
 	private Double netProfitForClosedTrades = 0d;
@@ -138,7 +143,10 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		builder.append(Constants.FORMAT);
 		builder.append(Constants.ENDLN);
 		
-		System.out
+		generatedReport = builder.toString();
+		
+		if(Constants.DEBUG_ENABLED)
+			System.out
 				.println(builder.toString());
 		
 	}

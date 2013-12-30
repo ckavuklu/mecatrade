@@ -213,6 +213,10 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 
 
 
+	public PerformanceReportManager getReportManager() {
+		return reportManager;
+	}
+
 	public ITrader getTrader() {
 		return trader;
 	}

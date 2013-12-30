@@ -17,6 +17,7 @@ import com.jpmorrsn.fbp.engine.InputPort;
 import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
+import com.meca.trade.to.Constants;
 import com.meca.trade.to.MarketData;
 import com.meca.trade.to.NullMarketData;
 import com.meca.trade.to.SchedulingParameter;
@@ -290,7 +291,8 @@ public class DataFeeder extends Component {
 				try {
 
 					if (result != null && !(result instanceof NullMarketData)) {
-						System.out.println("DataFeeder-2: " + result);
+						if(Constants.DEBUG_ENABLED)
+							System.out.println("DataFeeder-2: " + result);
 						
 						for (int i = 0; i < outportArray.length; i++) {
 							

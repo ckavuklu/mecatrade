@@ -11,6 +11,7 @@ import com.jpmorrsn.fbp.engine.InputPort;
 import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
+import com.meca.trade.to.Constants;
 import com.meca.trade.to.IPositionManager;
 import com.meca.trade.to.ITestTradeDataSet;
 import com.meca.trade.to.ITrader;
@@ -165,11 +166,15 @@ public class PortolioManager extends Component {
 	    }
 	    
 	    
-		
-	    System.out.println("END OF TRADES");
+	    if(Constants.DEBUG_ENABLED)
+	    	System.out.println("END OF TRADES");
+	   
 	    manager.generatePerformanceReport();
-	    System.out.println("POSITIONS:");
-	    System.out.println(manager);
+	    
+	    if(Constants.DEBUG_ENABLED){
+	    	System.out.println("POSITIONS:");
+	    	System.out.println(manager);
+	    }
 
 	}
 	
@@ -178,9 +183,11 @@ public class PortolioManager extends Component {
 		List<Trade> result;
 		
 		result = trader.evaluateStrategyDecisions(decisionList);
-		
-		for(Trade tr:result){
-			System.out.println("Trades:" + tr);
+		if(Constants.DEBUG_ENABLED){
+			for(Trade tr:result){
+				
+				System.out.println("Trades:" + tr);
+			}
 		}
 		
 		return result;

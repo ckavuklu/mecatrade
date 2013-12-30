@@ -311,8 +311,8 @@ public class PositionManager extends MecaObject implements IPositionManager{
 
 	@Override
 	public Trade cancelTrade(Trade trade) {
-		
-    	System.out.println("cancelTrade()");
+		if(Constants.DEBUG_ENABLED)
+			System.out.println("cancelTrade()");
 		return addTrade(trade);
 		
 	}

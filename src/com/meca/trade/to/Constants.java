@@ -24,6 +24,8 @@ public final class Constants {
 	
 	public final static String SEPARATOR = ":";
 	
+	public final static Boolean DEBUG_ENABLED = false;
+	
 	public static Double getRoundedUpValue(Double val){
 		BigDecimal result = new BigDecimal(val);
 		

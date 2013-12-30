@@ -69,9 +69,6 @@ public class IndicatorParameter implements java.lang.Cloneable{
 	}
 	
 	public void setValue(Object newValue){
-		if(newValue == null){
-			System.out.println("IndicatorParameter.setValue()");
-		}
         value = newValue;
 	}
 
