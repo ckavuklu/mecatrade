@@ -134,7 +134,7 @@ public class Optimizer {
 		for (Entry<String, List<TradeNetwork>> e : set) {
 			for (TradeNetwork network : e.getValue()) {
 
-				Double networkFitness = network.evaluate();
+				Double networkFitness = network.evaluate(false);
 				
 				totalFitness.put(e.getKey(),
 						totalFitness.get(e.getKey()) + networkFitness);
@@ -255,6 +255,30 @@ public class Optimizer {
 			return result;
 	        
 	    }
+	
+	
+	public void reRunBestIndividuals() throws Exception {
+
+		HashMap<String,List<TradeNetwork>> bestIndividuals = mankind.populateRaceIndividuals(1);
+		Set<Entry<String,List<TradeNetwork>>> currentMankindSet = m_population.entrySet();
+		
+		for(Entry<String,List<TradeNetwork>> race:currentMankindSet){
+			Collections.sort(race.getValue());
+			
+			
+			TradeNetwork best = race.getValue().get(race.getValue().size()-(1));
+			bestIndividuals.get(best.getNetworkName()).get(0).setIndicatorParameterList(best.getIndicatorParameterList());
+			System.out.println("Re-Running Best Child For Network: " +best.getNetworkName());
+			bestIndividuals.get(best.getNetworkName()).get(0).initializeByIndicatorParameterValues();
+			bestIndividuals.get(best.getNetworkName()).get(0).evaluate(true);
+			System.out.println("\t\tPerformance Report: " + bestIndividuals.get(best.getNetworkName()).get(0).getReportManager().getGeneratedReport());	
+		}
+	
+		
+    }
+	
+	
+	
 	/**
 	 * 
 	 * Elitizm selects the top best individuals
@@ -516,6 +540,9 @@ public class Optimizer {
 			
 			System.out.println("BEST INDIVIDUALS of TOTAL EXECUTION");
 			optimizer.printBestIndividuals();
+			
+			System.out.println("RERUN BEST INDIVIDUALS");
+			optimizer.reRunBestIndividuals();
 
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block

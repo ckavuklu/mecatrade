@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.jpmorrsn.fbp.engine.Component;
 import com.jpmorrsn.fbp.engine.ComponentDescription;
 import com.jpmorrsn.fbp.engine.InPort;
@@ -18,15 +16,15 @@ import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
 import com.meca.trade.to.Constants;
-import com.meca.trade.to.MarketData;
-import com.meca.trade.to.NullMarketData;
-import com.meca.trade.to.SchedulingParameter;
+import com.meca.trade.to.PriceData;
 import com.meca.trade.to.TradeUtils;
 
 /** Sort a stream of Packets to an output stream **/
 @ComponentDescription("Filters Messages")
 @OutPort(value = "OUT", arrayPort = true)
 @InPorts({
+	@InPort(value = "KICKOFF", description = "type", type = Double.class),
+	@InPort(value = "CLOCKTICK", description = "type", type = Double.class),
 		@InPort(value = "FILENAME", description = "FileName", type = String.class),
 		@InPort(value = "SCHEDULETYPE", description = "type", type = String.class),
 		@InPort(value = "SCHEDULEPERIOD", description = "period", type = Integer.class),
@@ -42,7 +40,7 @@ public class DataFeeder extends Component {
 			+ "THERE IS NO WARRANTY; USE THIS PRODUCT AT YOUR OWN RISK.";
 
 	InputPort scheduleTypePort, schedulePeriodPort, tradeDataPort,
-			periodStartPort,periodEndPort;
+			periodStartPort,periodEndPort, kickoffPort, clockTickPort;
 
 	OutputPort[] outportArray;
 	InputPort fileName;
@@ -92,25 +90,7 @@ public class DataFeeder extends Component {
 
 	
 
-	private String convertStringDate(Date date) {
-		
-		String result = String.valueOf(date.getYear()+1900)
-				+ StringUtils.leftPad(String.valueOf(date.getMonth() + 1), 2,
-						'0')
-				+ StringUtils.leftPad(String.valueOf(date.getDate()), 2, '0');
-		return result;
-	}
-
-	private String convertStringTime(Date date) {
-		String result = StringUtils.leftPad(String.valueOf(date.getHours()), 2,
-				'0')
-				+ StringUtils
-						.leftPad(String.valueOf(date.getMinutes()), 2, '0')
-				+ StringUtils
-						.leftPad(String.valueOf(date.getSeconds()), 2, '0');
-		return result;
-	}
-
+	
 
 	private void clearIntervalParameters() {
 		periodHigh = periodLow = periodOpen = periodClose = null;
@@ -149,6 +129,10 @@ public class DataFeeder extends Component {
 		Packet periodStartPacket = null;
 		Packet periodEndPacket = null;
 		Boolean periodStarted = false;
+		Packet kickoffPacket = null;
+		boolean kickOff = false;
+		Packet c = null;
+
 
 		Packet ctp = null;
 
@@ -177,13 +161,15 @@ public class DataFeeder extends Component {
 			periodEndPort.close();
 			fileName.close();
 		}
+		
+		if (kickoffPacket == null) {
+			kickoffPacket = kickoffPort.receive();
+			kickOff = true;
+			kickoffPort.close();
+			drop(kickoffPacket);
+		}
 
 		
-		SchedulingParameter scheduleParameter = new SchedulingParameter(
-				schedulePeriod, schedule);
-		
-		SchedulingParameter defaultAllSchedule = new SchedulingParameter(1,
-				"Minutes");
 		
 		cycleStart = periodStart;
 		cycleEnd = nextDate(periodStart, schedulePeriod, schedule);
@@ -205,12 +191,12 @@ public class DataFeeder extends Component {
 		try {
 			line = br.readLine();
 
-			while ((line = br.readLine()) != null) {
+			while ((line = br.readLine()) != null && kickOff) {
 
 				String[] trade = line.split(",");
 
-				MarketData data = null;
-				MarketData result = null;
+				PriceData data = null;
+				PriceData result = null;
 
 				if (!schedule.equalsIgnoreCase("ALL")) {
 
@@ -219,16 +205,11 @@ public class DataFeeder extends Component {
 					if (cycleEnd.compareTo(periodEnd) > 0) {
 
 						// Exit as we reach period end
-						MarketData dataEnd = new MarketData(scheduleParameter);
+						PriceData dataEnd = new PriceData(-1d,-1d,-1d,-1d);
 
 						dataEnd.setQuote(trade[0]);
-						dataEnd.setDate(convertStringDate(cycleStart));
-						dataEnd.setTime(convertStringTime(cycleStart));
-						dataEnd.setOpen("-1");
-						dataEnd.setHigh("-1");
-						dataEnd.setLow("-1");
-						dataEnd.setClose("-1");
-						dataEnd.setVolume(trade[7]);
+						dataEnd.setTime(cycleStart);
+						dataEnd.setVolume(TradeUtils.getDouble(trade[7]));
 
 						result = dataEnd;
 						
@@ -244,17 +225,12 @@ public class DataFeeder extends Component {
 
 							if (periodHigh != null && periodLow != null) {
 
-								MarketData newData = new MarketData(scheduleParameter);
+								PriceData newData = new PriceData(periodOpen,periodClose,periodHigh,periodLow);
 
 								newData.setQuote(trade[0]);
-								newData.setDate(convertStringDate(cycleStart));
-								newData.setTime(convertStringTime(cycleStart));
-								newData.setOpen(String.valueOf(periodOpen));
-								newData.setHigh(String.valueOf(periodHigh));
-								newData.setLow(String.valueOf(periodLow));
-								newData.setClose(String.valueOf(periodClose));
-								newData.setVolume(trade[7]);
-
+								newData.setTime(cycleStart);
+								newData.setVolume(TradeUtils.getDouble(trade[7]));
+								
 								result = newData;
 								
 								clearIntervalParameters();
@@ -275,24 +251,21 @@ public class DataFeeder extends Component {
 					}
 
 				} else {
-					data = new MarketData(defaultAllSchedule);
-
-					data.setQuote(trade[0]);
-					data.setDate(trade[1]);
-					data.setTime(trade[2]);
-					data.setOpen(trade[3]);
-					data.setHigh(trade[4]);
-					data.setLow(trade[5]);
-					data.setClose(trade[6]);
-					data.setVolume(trade[7]);
+					data = new PriceData(TradeUtils.getDouble(trade[3]),TradeUtils.getDouble(trade[6]),TradeUtils.getDouble(trade[4]),TradeUtils.getDouble(trade[5]));
+					Date date = TradeUtils.getTime(trade[1] + "-" + trade[2]);
+					data.setQuote(trade[0]);	
+					data.setTime(date);
+					data.setVolume(TradeUtils.getDouble(trade[7]));
 					result = data;
 				}
 
 				try {
 
-					if (result != null && !(result instanceof NullMarketData)) {
+					if (result != null) {
 						if(Constants.DEBUG_ENABLED)
 							System.out.println("DataFeeder-2: " + result);
+						
+						
 						
 						for (int i = 0; i < outportArray.length; i++) {
 							
@@ -300,13 +273,18 @@ public class DataFeeder extends Component {
 								outportArray[i].send(create(result));
 							}
 						}
+						
+
+						//This is to wait for the clock tick
+						c = clockTickPort.receive();
+						drop(c);
 					}
 
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
 
-					if (result != null && !(result instanceof NullMarketData)
+					if (result != null
 							&& Double.valueOf(result.getHigh()) < 0) {
 						break;
 					}
@@ -319,7 +297,7 @@ public class DataFeeder extends Component {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-
+			clockTickPort.close();
 		}
 
 	}
@@ -332,6 +310,8 @@ public class DataFeeder extends Component {
 		fileName = openInput("FILENAME");
 		periodStartPort = openInput("PERIODSTART");
 		periodEndPort = openInput("PERIODEND");
+		clockTickPort = openInput("CLOCKTICK");
+		kickoffPort = openInput("KICKOFF");
 
 		outportArray = openOutputArray("OUT");
 

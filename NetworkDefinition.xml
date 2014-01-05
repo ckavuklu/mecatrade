@@ -5,15 +5,9 @@
 		<network name="TradeNetwork-1">
 			<components>
 				<component name="_DataFeeder"
-					class="com.meca.trade.components.DataFeeder"></component>
-				<component name="_QuotePrice_O"
-					class="com.meca.trade.components.QuotePrice"></component>
+					class="com.meca.trade.components.DataFeeder"></component>		
 				<component name="_QuotePrice_C"
-					class="com.meca.trade.components.QuotePrice"></component>
-				<component name="_QuotePrice_H"
-					class="com.meca.trade.components.QuotePrice"></component>
-				<component name="_QuotePrice_L"
-					class="com.meca.trade.components.QuotePrice"></component>
+					class="com.meca.trade.components.QuotePrice"></component>		
 				<component name="_Kicker" class="com.meca.trade.components.Kicker"></component>
 
 				<component name="_SimpleMovingAverage_SHORT"
@@ -31,18 +25,11 @@
 			</components>
 
 			<initializations>
-				<initialize component="_QuotePrice_O" port="PRICETYPE">
-					<parameter value="O" type="String"></parameter>
-				</initialize>
+				
 				<initialize component="_QuotePrice_C" port="PRICETYPE">
 					<parameter value="C" type="String"></parameter>
 				</initialize>
-				<initialize component="_QuotePrice_H" port="PRICETYPE">
-					<parameter value="H" type="String"></parameter>
-				</initialize>
-				<initialize component="_QuotePrice_L" port="PRICETYPE">
-					<parameter value="L" type="String"></parameter>
-				</initialize>
+				
 				<initialize component="_DataFeeder" port="SCHEDULETYPE">
 					<parameter value="PERIOD_TYPE" type="Configuration"></parameter>
 				</initialize>
@@ -79,54 +66,22 @@
 			</initializations>
 
 			<connections>
+				
 				<connect>
 					<from component="_DataFeeder" port="OUT" no="0" />
-					<to component="_QuotePrice_O" port="TRADEDATA" />
-				</connect>
-				<connect>
-					<from component="_DataFeeder" port="OUT" no="1" />
 					<to component="_QuotePrice_C" port="TRADEDATA" />
 				</connect>
-				<connect>
-					<from component="_DataFeeder" port="OUT" no="2" />
-					<to component="_QuotePrice_H" port="TRADEDATA" />
-				</connect>
-				<connect>
-					<from component="_DataFeeder" port="OUT" no="3" />
-					<to component="_QuotePrice_L" port="TRADEDATA" />
-				</connect>
+				
 				<connect>
 					<from component="_Kicker" port="OUT" no="0" />
-					<to component="_QuotePrice_O" port="KICKOFF" />
+					<to component="_DataFeeder" port="KICKOFF" />
 				</connect>
-				<connect>
-					<from component="_Kicker" port="OUT" no="1" />
-					<to component="_QuotePrice_C" port="KICKOFF" />
-				</connect>
-				<connect>
-					<from component="_Kicker" port="OUT" no="2" />
-					<to component="_QuotePrice_H" port="KICKOFF" />
-				</connect>
-				<connect>
-					<from component="_Kicker" port="OUT" no="3" />
-					<to component="_QuotePrice_L" port="KICKOFF" />
-				</connect>
+				
 				<connect>
 					<from component="_ActionManager" port="CLOCKTICK" no="0" />
-					<to component="_QuotePrice_O" port="CLOCKTICK" />
+					<to component="_DataFeeder" port="CLOCKTICK" />
 				</connect>
-				<connect>
-					<from component="_ActionManager" port="CLOCKTICK" no="1" />
-					<to component="_QuotePrice_C" port="CLOCKTICK" />
-				</connect>
-				<connect>
-					<from component="_ActionManager" port="CLOCKTICK" no="2" />
-					<to component="_QuotePrice_H" port="CLOCKTICK" />
-				</connect>
-				<connect>
-					<from component="_ActionManager" port="CLOCKTICK" no="3" />
-					<to component="_QuotePrice_L" port="CLOCKTICK" />
-				</connect>
+				
 				<connect>
 					<from component="_QuotePrice_C" port="OUT" no="2" />
 					<to component="_SimpleMovingAverage_SHORT" port="DATA" />
@@ -135,22 +90,12 @@
 					<from component="_QuotePrice_C" port="OUT" no="3" />
 					<to component="_SimpleMovingAverage_LONG" port="DATA" />
 				</connect>
+				
 				<connect>
-					<from component="_QuotePrice_O" port="OUT" no="0" />
-					<to component="_TradeMultiplexer" port="IN" no="0" />
+					<from component="_DataFeeder" port="OUT" no="1" />
+					<to component="_TradeMultiplexer" port="MARKETDATA"/>
 				</connect>
-				<connect>
-					<from component="_QuotePrice_C" port="OUT" no="0" />
-					<to component="_TradeMultiplexer" port="IN" no="1" />
-				</connect>
-				<connect>
-					<from component="_QuotePrice_H" port="OUT" no="0" />
-					<to component="_TradeMultiplexer" port="IN" no="2" />
-				</connect>
-				<connect>
-					<from component="_QuotePrice_L" port="OUT" no="0" />
-					<to component="_TradeMultiplexer" port="IN" no="3" />
-				</connect>
+				
 				<connect indicator="SMASHORT">
 					<from component="_SimpleMovingAverage_SHORT" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="4" />
@@ -179,14 +124,10 @@
 			<components>
 				<component name="_DataFeeder"
 					class="com.meca.trade.components.DataFeeder"></component>
-				<component name="_QuotePrice_O"
-					class="com.meca.trade.components.QuotePrice"></component>
+				
 				<component name="_QuotePrice_C"
 					class="com.meca.trade.components.QuotePrice"></component>
-				<component name="_QuotePrice_H"
-					class="com.meca.trade.components.QuotePrice"></component>
-				<component name="_QuotePrice_L"
-					class="com.meca.trade.components.QuotePrice"></component>
+				
 				<component name="_Kicker" class="com.meca.trade.components.Kicker"></component>
 
 				<component name="_SimpleMovingAverage_SHORT"
@@ -215,18 +156,11 @@
 			</components>
 
 			<initializations>
-				<initialize component="_QuotePrice_O" port="PRICETYPE">
-					<parameter value="O" type="String"></parameter>
-				</initialize>
+				
 				<initialize component="_QuotePrice_C" port="PRICETYPE">
 					<parameter value="C" type="String"></parameter>
 				</initialize>
-				<initialize component="_QuotePrice_H" port="PRICETYPE">
-					<parameter value="H" type="String"></parameter>
-				</initialize>
-				<initialize component="_QuotePrice_L" port="PRICETYPE">
-					<parameter value="L" type="String"></parameter>
-				</initialize>
+				
 				<initialize component="_DataFeeder" port="SCHEDULETYPE">
 					<parameter value="PERIOD_TYPE" type="Configuration"></parameter>
 				</initialize>
@@ -263,54 +197,22 @@
 			</initializations>
 
 			<connections>
+				
 				<connect>
 					<from component="_DataFeeder" port="OUT" no="0" />
-					<to component="_QuotePrice_O" port="TRADEDATA" />
-				</connect>
-				<connect>
-					<from component="_DataFeeder" port="OUT" no="1" />
 					<to component="_QuotePrice_C" port="TRADEDATA" />
 				</connect>
-				<connect>
-					<from component="_DataFeeder" port="OUT" no="2" />
-					<to component="_QuotePrice_H" port="TRADEDATA" />
-				</connect>
-				<connect>
-					<from component="_DataFeeder" port="OUT" no="3" />
-					<to component="_QuotePrice_L" port="TRADEDATA" />
-				</connect>
+				
 				<connect>
 					<from component="_Kicker" port="OUT" no="0" />
-					<to component="_QuotePrice_O" port="KICKOFF" />
+					<to component="_DataFeeder" port="KICKOFF" />
 				</connect>
-				<connect>
-					<from component="_Kicker" port="OUT" no="1" />
-					<to component="_QuotePrice_C" port="KICKOFF" />
-				</connect>
-				<connect>
-					<from component="_Kicker" port="OUT" no="2" />
-					<to component="_QuotePrice_H" port="KICKOFF" />
-				</connect>
-				<connect>
-					<from component="_Kicker" port="OUT" no="3" />
-					<to component="_QuotePrice_L" port="KICKOFF" />
-				</connect>
+				
 				<connect>
 					<from component="_ActionManager" port="CLOCKTICK" no="0" />
-					<to component="_QuotePrice_O" port="CLOCKTICK" />
+					<to component="_DataFeeder" port="CLOCKTICK" />
 				</connect>
-				<connect>
-					<from component="_ActionManager" port="CLOCKTICK" no="1" />
-					<to component="_QuotePrice_C" port="CLOCKTICK" />
-				</connect>
-				<connect>
-					<from component="_ActionManager" port="CLOCKTICK" no="2" />
-					<to component="_QuotePrice_H" port="CLOCKTICK" />
-				</connect>
-				<connect>
-					<from component="_ActionManager" port="CLOCKTICK" no="3" />
-					<to component="_QuotePrice_L" port="CLOCKTICK" />
-				</connect>
+				
 				<connect>
 					<from component="_QuotePrice_C" port="OUT" no="2" />
 					<to component="_SimpleMovingAverage_SHORT" port="DATA" />
@@ -328,23 +230,11 @@
 					<from component="_QuotePrice_C" port="OUT" no="5" />
 					<to component="_ExponentialMovingAverage_LONG" port="DATA" />
 				</connect>
+				<connect>
+					<from component="_DataFeeder" port="OUT" no="1" />
+					<to component="_TradeMultiplexer" port="MARKETDATA"/>
+				</connect>
 				
-				<connect>
-					<from component="_QuotePrice_O" port="OUT" no="0" />
-					<to component="_TradeMultiplexer" port="IN" no="0" />
-				</connect>
-				<connect>
-					<from component="_QuotePrice_C" port="OUT" no="0" />
-					<to component="_TradeMultiplexer" port="IN" no="1" />
-				</connect>
-				<connect>
-					<from component="_QuotePrice_H" port="OUT" no="0" />
-					<to component="_TradeMultiplexer" port="IN" no="2" />
-				</connect>
-				<connect>
-					<from component="_QuotePrice_L" port="OUT" no="0" />
-					<to component="_TradeMultiplexer" port="IN" no="3" />
-				</connect>
 				<connect indicator="SMASHORT">
 					<from component="_SimpleMovingAverage_SHORT" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="4" />
@@ -353,6 +243,7 @@
 					<from component="_SimpleMovingAverage_LONG" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="9" />
 				</connect>
+				
 				
 				<connect indicator="EMASHORT">
 					<from component="_ExponentialMovingAverage_SHORT" port="OUT" no="0"/>

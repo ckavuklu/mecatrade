@@ -1,7 +1,11 @@
 package com.meca.trade.to;
 
+import java.util.Date;
+
 public class PriceData extends MecaObject {
-	
+	String quote;
+	Double volume;
+	Date time;
 	Double open;
 	Double close;
 	Double high;
@@ -9,6 +13,34 @@ public class PriceData extends MecaObject {
 	Double bidPrice;
 	Double askPrice;
 	
+	public Double getVolume() {
+		return volume;
+	}
+
+
+	public void setVolume(Double volume) {
+		this.volume = volume;
+	}
+
+	public String getQuote() {
+		return quote;
+	}
+
+
+	public void setQuote(String quote) {
+		this.quote = quote;
+	}
+
+
+	public Date getTime() {
+		return time;
+	}
+
+
+	public void setTime(Date time) {
+		this.time = time;
+	}
+
 
 	@Override
 	public String toString() {
@@ -31,6 +63,9 @@ public class PriceData extends MecaObject {
 		builder.append(" ");
 		builder.append("askPrice=");
 		builder.append(askPrice);
+		builder.append(" ");
+		builder.append("time=");
+		builder.append(time);
 		
 		
 		return builder.toString();

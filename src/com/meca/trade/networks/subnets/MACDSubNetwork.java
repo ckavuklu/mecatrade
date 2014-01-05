@@ -5,7 +5,6 @@ import com.jpmorrsn.fbp.engine.InPorts;
 import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutPorts;
 import com.jpmorrsn.fbp.engine.SubNet;
-import com.meca.trade.to.MarketData;
 
 @OutPorts({
 		@OutPort(value = "MACDLINE", description = "MACD Line", type = Double.class),

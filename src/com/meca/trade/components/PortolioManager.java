@@ -123,10 +123,6 @@ public class PortolioManager extends Component {
 		    	pArray[i] = inportArray[i].receive();
 		    }
 		    
-		    
-
-		    
-		    
 		    for (int i = 0; i < no; i++) {
 		    
 	    	if (pArray[i] != null) {

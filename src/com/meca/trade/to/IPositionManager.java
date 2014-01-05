@@ -23,6 +23,8 @@ public interface IPositionManager extends IPriceData{
 	public MarketType getMarketType();
 	public void generatePerformanceReport();
 	
+	public void setGraphLog(Boolean graphLog);
+	
 	
 	
 	public Double getFreeMargin();

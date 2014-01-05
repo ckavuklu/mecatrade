@@ -5,11 +5,10 @@ import com.jpmorrsn.fbp.engine.ComponentDescription;
 import com.jpmorrsn.fbp.engine.InPort;
 import com.jpmorrsn.fbp.engine.InPorts;
 import com.jpmorrsn.fbp.engine.InputPort;
-import com.jpmorrsn.fbp.engine.MustRun;
 import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
-import com.meca.trade.to.MarketData;
+import com.meca.trade.to.PriceData;
 
 /** Sort a stream of Packets to an output stream **/
 @ComponentDescription("Filters Messages")
@@ -17,9 +16,7 @@ import com.meca.trade.to.MarketData;
 @OutPort(value = "OUT", arrayPort = true)
 @InPorts({
 		@InPort(value = "PRICETYPE", description = "type", type = String.class),
-		@InPort(value = "KICKOFF", description = "type", type = Double.class),
-		@InPort(value = "CLOCKTICK", description = "type", type = Double.class),
-		@InPort(value = "TRADEDATA", description = "trade data", type = MarketData.class) })
+		@InPort(value = "TRADEDATA", description = "trade data", type = PriceData.class) })
 public class QuotePrice extends Component {
 
 	static final String copyright = "Copyright 2007, 2012, J. Paul Morrison.  At your option, you may copy, "
@@ -28,7 +25,7 @@ public class QuotePrice extends Component {
 			+ "this License may be found at http://www.jpaulmorrison.com/fbp/artistic2.htm. "
 			+ "THERE IS NO WARRANTY; USE THIS PRODUCT AT YOUR OWN RISK.";
 
-	InputPort priceTypePort, tradeDataPort, kickoffPort, clockTickPort;
+	InputPort priceTypePort, tradeDataPort;
 
     OutputPort[] outportArray;
 
@@ -39,11 +36,9 @@ public class QuotePrice extends Component {
 	protected void execute() {
 
 		Packet p = null;
-		Packet c = null;
+		
 		Packet pricePacket = null;
-		Packet kickoffPacket = null;
-		boolean kickOff = false;
-
+		
 		if (priceType == null) {
 			pricePacket = priceTypePort.receive();
 			this.priceType = String.valueOf((String) pricePacket
@@ -53,17 +48,12 @@ public class QuotePrice extends Component {
 			drop(pricePacket);
 		}
 		
-		if (kickoffPacket == null) {
-			kickoffPacket = kickoffPort.receive();
-			kickOff = true;
-			kickoffPort.close();
-			drop(kickoffPacket);
-		}
+		
 		
 
-		while ((p = tradeDataPort.receive()) != null && kickOff) {
+		while ((p = tradeDataPort.receive()) != null ) {
 
-			MarketData dat = (MarketData) p.getContent();
+			PriceData dat = (PriceData) p.getContent();
 						
 			if(priceType.equalsIgnoreCase("O")){
 				result = Double.valueOf(dat.getOpen());
@@ -97,15 +87,11 @@ public class QuotePrice extends Component {
 				e.printStackTrace();
 			}
 
-			//This is to wait for the clock tick
-			c = clockTickPort.receive();
-			
-			drop(c);
 
 		}
 		
 		tradeDataPort.close();
-		clockTickPort.close();
+		
 	}
 
 	@Override
@@ -113,8 +99,7 @@ public class QuotePrice extends Component {
 
 		priceTypePort = openInput("PRICETYPE");
 		tradeDataPort = openInput("TRADEDATA");
-		clockTickPort = openInput("CLOCKTICK");
-		kickoffPort = openInput("KICKOFF");
+		
 
 		outportArray = openOutputArray("OUT");
 

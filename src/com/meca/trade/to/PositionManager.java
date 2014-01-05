@@ -3,6 +3,8 @@ package com.meca.trade.to;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.db4o.monitoring.internal.AveragingTimedReading;
 
 public class PositionManager extends MecaObject implements IPositionManager{
@@ -19,7 +21,15 @@ public class PositionManager extends MecaObject implements IPositionManager{
 	private MarketType marketType;
 	private Double marginLotCount = 0d;
 	private Double weightedAverageEntryPrice = 0d;
+	private Boolean graphLog = false;
 	
+	public void setGraphLog(Boolean graphLog) {
+		this.graphLog = graphLog;
+	}
+
+
+
+
 	public Double getMarginLotCount() {
 		Double result = 0d;
 		for(IPosition pos:positionList){
@@ -117,28 +127,62 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		equity = Constants.getRoundedUpValue(account.getBalance() + getOpenPL());
 	}
 
+	private String getGraphChartData(String delimitChar){
+		StringBuilder builder = new StringBuilder();
+		builder.append(getStringRepresentationOfPositionVariables(false,";"));
+		
+		if(priceData!=null){
+			builder.append(priceData.getOpen());
+			builder.append(delimitChar);
+			builder.append(priceData.getClose());
+			builder.append(delimitChar);
+			builder.append(priceData.getHigh());
+			builder.append(delimitChar);
+			builder.append(priceData.getLow());
+			builder.append(delimitChar);
+			builder.append(priceData.getBidPrice());
+			builder.append(delimitChar);
+			builder.append(priceData.getAskPrice());
+			builder.append(delimitChar);
+		}
+		
+		return builder.toString();
+	}
+	
+	
+	private String getStringRepresentationOfPositionVariables(Boolean parameterDefinitions,String delimitChar){
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append(parameterDefinitions?"equity=":StringUtils.EMPTY);
+		builder.append(equity);
+		builder.append(delimitChar);
+		builder.append(parameterDefinitions?"balance=":StringUtils.EMPTY);
+		builder.append(account.getBalance());
+		builder.append(delimitChar);
+		builder.append(parameterDefinitions?"margin=":StringUtils.EMPTY);
+		builder.append(margin);
+		builder.append(delimitChar);
+		builder.append(parameterDefinitions?"freeMargin=":StringUtils.EMPTY);
+		builder.append(freeMargin);
+		builder.append(delimitChar);
+		builder.append(parameterDefinitions?"marginLevel=":StringUtils.EMPTY);
+		builder.append(marginLevel);
+		builder.append(delimitChar);
+		builder.append(parameterDefinitions?"openPL=":StringUtils.EMPTY);
+		builder.append(openPL);
+		builder.append(delimitChar);
+		
+		
+		
+		return builder.toString();
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		
-		builder.append("equity=");
-		builder.append(equity);
-		builder.append(" ");
-		builder.append("balance=");
-		builder.append(account.getBalance());
-		builder.append(" ");
-		builder.append("margin=");
-		builder.append(margin);
-		builder.append(" ");
-		builder.append("freeMargin=");
-		builder.append(freeMargin);
-		builder.append(" ");
-		builder.append("marginLevel=");
-		builder.append(marginLevel);
-		builder.append(" ");
-		builder.append("openPL=");
-		builder.append(openPL);
-		builder.append(" ");
+		builder.append(getStringRepresentationOfPositionVariables(true," "));
+		
 		builder.append("currentPrice=");
 		builder.append(priceData);
 		builder.append("\r\n");
@@ -199,7 +243,18 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		updateEquity();
 		
 		updateFreeMargin();
+		
+		updateGraphData();
+		
 	}
+
+
+	public void updateGraphData(){
+		if(graphLog){
+			//TODO: Add File Manipulation
+		}
+	}
+
 	
 
 	@Override

@@ -91,19 +91,20 @@ public class OriginalTradeNetwork extends Network {
 		// Trade Data Components
 	    component("_DataFeeder", com.meca.trade.components.DataFeeder.class);
 	    
-	    component("_QuotePrice_O", com.meca.trade.components.QuotePrice.class);
 	    component("_QuotePrice_C", com.meca.trade.components.QuotePrice.class);
+	    /*component("_QuotePrice_O", com.meca.trade.components.QuotePrice.class);
 	    component("_QuotePrice_H", com.meca.trade.components.QuotePrice.class);
-	    component("_QuotePrice_L", com.meca.trade.components.QuotePrice.class);
+	    component("_QuotePrice_L", com.meca.trade.components.QuotePrice.class);*/
 	    
 	    component("_Kicker", com.meca.trade.components.Kicker.class);
 	    
 	    // Trade Data Initializations
-	    initialize("O", component("_QuotePrice_O"), port("PRICETYPE"));
+	    
 	    initialize("C", component("_QuotePrice_C"), port("PRICETYPE"));
-	    initialize("H", component("_QuotePrice_H"), port("PRICETYPE"));
+/*	    initialize("H", component("_QuotePrice_H"), port("PRICETYPE"));
 	    initialize("L", component("_QuotePrice_L"), port("PRICETYPE"));
-	   
+	    initialize("O", component("_QuotePrice_O"), port("PRICETYPE"));
+	   */
 	    //initialize("ALL", component("_DataFeeder"), port("SCHEDULETYPE"));
 	    initialize(config.getPeriodType(), component("_DataFeeder"), port("SCHEDULETYPE"));
 	    initialize(config.getPeriodStepSize(), component("_DataFeeder"), port("SCHEDULEPERIOD"));
@@ -153,21 +154,25 @@ public class OriginalTradeNetwork extends Network {
 	    
 	    //connect(component("_DataSource"), port("OUT"), component("_DataFeeder"), port("TRADEDATA"));
 	    
-	    connect(component("_DataFeeder"), port("OUT",0), component("_QuotePrice_O"), port("TRADEDATA"));
-	    connect(component("_DataFeeder"), port("OUT",1), component("_QuotePrice_C"), port("TRADEDATA"));
+	    connect(component("_DataFeeder"), port("OUT",0), component("_QuotePrice_C"), port("TRADEDATA"));
+	    /*connect(component("_DataFeeder"), port("OUT",1), component("_QuotePrice_O"), port("TRADEDATA"));
 	    connect(component("_DataFeeder"), port("OUT",2), component("_QuotePrice_H"), port("TRADEDATA"));
-	    connect(component("_DataFeeder"), port("OUT",3), component("_QuotePrice_L"), port("TRADEDATA"));
-
-		connect(component("_Kicker"), port("OUT",0), component("_QuotePrice_O"), port("KICKOFF"));
-	    connect(component("_Kicker"), port("OUT",1), component("_QuotePrice_C"), port("KICKOFF"));
-	    connect(component("_Kicker"), port("OUT",2), component("_QuotePrice_H"), port("KICKOFF"));
-	    connect(component("_Kicker"), port("OUT",3), component("_QuotePrice_L"), port("KICKOFF"));
-	    	    
+	    connect(component("_DataFeeder"), port("OUT",3), component("_QuotePrice_L"), port("TRADEDATA"));*/
 	    
-	    connect(component("_ActionManager"), port("CLOCKTICK",0), component("_QuotePrice_O"), port("CLOCKTICK"));
-	    connect(component("_ActionManager"), port("CLOCKTICK",1), component("_QuotePrice_C"), port("CLOCKTICK"));
+	    connect(component("_DataFeeder"), port("OUT",1), component("_TradeMultiplexer"), port("MARKETDATA"));
+
+	    connect(component("_Kicker"), port("OUT",0), component("_DataFeeder"), port("KICKOFF"));
+	    /*connect(component("_Kicker"), port("OUT",0), component("_QuotePrice_C"), port("KICKOFF"));
+		connect(component("_Kicker"), port("OUT",1), component("_QuotePrice_O"), port("KICKOFF"));
+	    connect(component("_Kicker"), port("OUT",2), component("_QuotePrice_H"), port("KICKOFF"));
+	    connect(component("_Kicker"), port("OUT",3), component("_QuotePrice_L"), port("KICKOFF"));*/
+	   
+	    
+	    connect(component("_ActionManager"), port("CLOCKTICK",0), component("_DataFeeder"), port("CLOCKTICK"));
+	    /*connect(component("_ActionManager"), port("CLOCKTICK",0), component("_QuotePrice_C"), port("CLOCKTICK"));
+	    connect(component("_ActionManager"), port("CLOCKTICK",1), component("_QuotePrice_O"), port("CLOCKTICK"));
 	    connect(component("_ActionManager"), port("CLOCKTICK",2), component("_QuotePrice_H"), port("CLOCKTICK"));
-	    connect(component("_ActionManager"), port("CLOCKTICK",3), component("_QuotePrice_L"), port("CLOCKTICK"));
+	    connect(component("_ActionManager"), port("CLOCKTICK",3), component("_QuotePrice_L"), port("CLOCKTICK"));*/
 	    
 	    connect(component("_QuotePrice_C"), port("OUT",2), component("_SimpleMovingAverage_SHORT"), port("DATA"));
 	    connect(component("_QuotePrice_C"), port("OUT",3), component("_SimpleMovingAverage_LONG"), port("DATA"));
@@ -176,12 +181,12 @@ public class OriginalTradeNetwork extends Network {
 	    connect(component("_QuotePrice_C"), port("OUT",5), component("_ExponentialMovingAverage_LONG"), port("DATA"));
 	    
 	    
-	    
+	    /*
 	    connect(component("_QuotePrice_O"), port("OUT",0), component("_TradeMultiplexer"), port("IN",0));
 	    connect(component("_QuotePrice_C"), port("OUT",0), component("_TradeMultiplexer"), port("IN",1));
 	    connect(component("_QuotePrice_H"), port("OUT",0), component("_TradeMultiplexer"), port("IN",2));
 	    connect(component("_QuotePrice_L"), port("OUT",0), component("_TradeMultiplexer"), port("IN",3));
-	  
+	  */
 	    connect(component("_SimpleMovingAverage_SHORT"), port("OUT"), component("_TradeMultiplexer"), port("IN",4));
 	    connect(component("_ExponentialMovingAverage_SHORT"), port("OUT",0), component("_TradeMultiplexer"), port("IN",5));
 	    connect(component("_ExponentialMovingAverage_LONG"), port("OUT",0), component("_TradeMultiplexer"), port("IN",6));

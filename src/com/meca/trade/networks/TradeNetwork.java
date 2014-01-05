@@ -97,8 +97,11 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
     }
 	
 	
-	public Double evaluate() throws Exception {
-   
+	
+	public Double evaluate(Boolean createGraphData) throws Exception {
+		  
+		posManager.setGraphLog(createGraphData);
+		
 		this.go();
 		
         this.setFitnessValue(reportManager.getFitnessValue());

@@ -12,6 +12,7 @@ import com.meca.trade.to.Constants;
 import com.meca.trade.to.IStrategy;
 import com.meca.trade.to.PriceData;
 import com.meca.trade.to.StrategyDecision;
+import com.meca.trade.to.TradeUtils;
 
 /** Sort a stream of Packets to an output stream **/
 @ComponentDescription("Filters Messages")
@@ -20,7 +21,8 @@ import com.meca.trade.to.StrategyDecision;
 
 @InPorts({
 	@InPort(value = "STRATEGY", description = "strategy interface", type = IStrategy.class),
-	@InPort(value = "IN", arrayPort = true)})
+	@InPort(value = "IN", arrayPort = true),
+	@InPort(value = "MARKETDATA", description = "marketdata", type = PriceData.class)})
 
 public class TradeMultiplexer extends Component {
 
@@ -33,6 +35,7 @@ public class TradeMultiplexer extends Component {
 	InputPort[] inportArray;
 	
 	InputPort strategyPort;
+	InputPort marketDataPort;
 	
 	Packet pArray[];
 
@@ -46,10 +49,8 @@ public class TradeMultiplexer extends Component {
 
 		int no = inportArray.length;
 	    pArray = new Packet[no];
-	    Double open = Double.NaN;
-    	Double close = Double.NaN;
-    	Double high = Double.NaN;
-    	Double low = Double.NaN;
+	    Packet marketDataPacket = null;
+	    
 	  
 	    Packet strategyPer = null;
 	    
@@ -64,39 +65,30 @@ public class TradeMultiplexer extends Component {
 	    }
 	    
 	    
-	    
-	    
-	    while((pArray[0] = inportArray[0].receive()) != null){
+	    while((marketDataPacket=marketDataPort.receive())!=null){
 	 
 	    	if(Constants.DEBUG_ENABLED)
 	    		System.out.print("TradeMultData: ");
 
-		    for (int i = 1; i < no; i++) {
+		    for (int i = 0; i < no; i++) {
 		    	pArray[i] = inportArray[i].receive();
 		     
 		    }
 		    
+		    
+		    PriceData marketData = (PriceData)marketDataPacket.getContent();
+		    drop(marketDataPacket);
+		   
 		    for (int i = 0; i < no; i++) {
 	    	if (pArray[i] != null) {
-		    	  Double value = (Double) pArray[i].getContent();
-		    	  if(i == 0)
-		    		  open = value;
-		    	  if(i == 1)
-		    		  close = value;
-		    	  if(i == 2)
-		    		  high = value;
-		    	  if(i == 3)
-		    		  low = value;
-		    	  if(Constants.DEBUG_ENABLED)
-		    		  System.out.print(value + " ");
 		    	  drop(pArray[i]);
 	          }
-	    	  
 		    }
+		    
 		    if(Constants.DEBUG_ENABLED)
 		    	System.out.println("");
 		    
-		    StrategyDecision dec = strategy.execute(pArray, new PriceData(open,close,high,low));
+		    StrategyDecision dec = strategy.execute(pArray, marketData);
 		    
 		    if(Constants.DEBUG_ENABLED)
 		    	System.out.println("Decision: " + dec);
@@ -112,6 +104,8 @@ public class TradeMultiplexer extends Component {
 	protected void openPorts() {
 
 		 strategyPort = openInput("STRATEGY");
+		 
+		 marketDataPort = openInput("MARKETDATA");
 		
 		 inportArray = openInputArray("IN");
 
