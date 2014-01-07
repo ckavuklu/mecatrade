@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.UUID;
 
 import com.jpmorrsn.fbp.engine.Network;
 import com.meca.trade.to.Account;
@@ -80,7 +81,7 @@ public class OriginalTradeNetwork extends Network {
 		StochasticStrategy stochasticStrategy = new StochasticStrategy(stochasticKLine,stochasticDLine,80d,20d);
 		
 			
-		IPositionManager posManager = new PositionManager(null,usdAcc,reportManager,MarketType.EURUSD);
+		IPositionManager posManager = new PositionManager(null,usdAcc,reportManager,MarketType.EURUSD,UUID.randomUUID().toString());
 		TestTradeDataSet dataSet = new TestTradeDataSet(config.getInputTestTradeDataFile());
 		//TurtleStrategy turtleStrategy = new TurtleStrategy(shortSet);
 		

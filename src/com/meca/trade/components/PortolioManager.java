@@ -145,7 +145,6 @@ public class PortolioManager extends Component {
 	          }
 		    }
 		    
-		    
 		    Order order = null;
 		    
 		    if(!endOfMarketData){
@@ -153,6 +152,9 @@ public class PortolioManager extends Component {
 		    }else{
 		    	order = new Order(executeTrades(trader.endOfMarket()));
 		    }
+		    
+		    manager.updateGraphData();
+		  
 		    
 	    	strategyDecisions.clear();
 	    	

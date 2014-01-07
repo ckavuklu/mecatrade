@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 import com.jpmorrsn.fbp.engine.Component;
 import com.jpmorrsn.fbp.engine.Network;
@@ -33,11 +34,14 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 	private IStrategy strategy = null;
 	private List<IndicatorParameter> indicatorParameterList = null;
 	private Double fitnessValue;
+	String uuid = null;
 	
 	public String toString(){
 		StringBuilder builder = new StringBuilder();
 		
 		builder.append(networkName);
+		builder.append(Constants.SEPARATOR);
+		builder.append(uuid);
 		builder.append(Constants.SEPARATOR);
 		
 		for(IndicatorParameter parameter:indicatorParameterList){
@@ -48,6 +52,7 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 		builder.append("fitnessValue");
 		builder.append(Constants.SEPARATOR);
 		builder.append(getFitnessValue());
+		
 		
 		return builder.toString();
 	}
@@ -185,6 +190,8 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 	  
 	  public void init(HashMap<String, Parameter> parameterMap){
 	        this.parameterMap = parameterMap;
+
+	        uuid = UUID.randomUUID().toString();
 	        
 	        indicatorParameterList = new ArrayList<IndicatorParameter>();
 	        
@@ -205,7 +212,7 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 			StochasticStrategy stochasticStrategy = new StochasticStrategy(stochasticKLine,stochasticDLine,80d,20d);
 			*/
 				
-			posManager = new PositionManager(null,account,reportManager,MarketType.EURUSD);
+			posManager = new PositionManager(null,account,reportManager,MarketType.EURUSD,uuid);
 			dataSet = new TestTradeDataSet((String)parameterMap.get("INPUT_TEST_TRADE_DATA_FILE_NAME").getValue());
 			//TurtleStrategy turtleStrategy = new TurtleStrategy(shortSet);
 			

@@ -22,9 +22,14 @@ public class PositionManager extends MecaObject implements IPositionManager{
 	private Double marginLotCount = 0d;
 	private Double weightedAverageEntryPrice = 0d;
 	private Boolean graphLog = false;
+	private String uuid;
 	
 	public void setGraphLog(Boolean graphLog) {
 		this.graphLog = graphLog;
+		
+		if(graphLog){
+			perfReporManager.initializeLogger(uuid);
+		}
 	}
 
 
@@ -197,12 +202,13 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		return builder.toString();
 	}
 
-	public PositionManager(List<IPosition> positionList, IAccount account, IPerformanceReportManager perfReporManager,MarketType marketType) {
+	public PositionManager(List<IPosition> positionList, IAccount account, IPerformanceReportManager perfReporManager,MarketType marketType,String uuid) {
 		super();
 		this.positionList = positionList;
 		this.account = account;
 		this.perfReporManager = perfReporManager;
 		this.marketType = marketType;
+		this.uuid = uuid;
 		
 		if(this.positionList == null){
 			this.positionList = new ArrayList<IPosition>();
@@ -244,14 +250,12 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		
 		updateFreeMargin();
 		
-		updateGraphData();
-		
 	}
 
 
 	public void updateGraphData(){
 		if(graphLog){
-			//TODO: Add File Manipulation
+			perfReporManager.writeGraphLog(priceData,equity,margin,freeMargin,marginLevel,openPL);
 		}
 	}
 
@@ -359,8 +363,6 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		
 		addTrade(trade);
 		
-		/*System.out.println("POSITIONS:");
-		System.out.println(this);*/
 		return trade;
 	}
 
@@ -374,7 +376,13 @@ public class PositionManager extends MecaObject implements IPositionManager{
 
 	@Override
 	public void generatePerformanceReport() {
-		this.perfReporManager.generatePerformanceReport(this, getMarketType());
+		
+		this.perfReporManager.generatePerformanceReport(this, getMarketType(),graphLog);
+		
+		
+		if(graphLog){
+			perfReporManager.finalizeLogger();
+		}
 		
 	}
 	

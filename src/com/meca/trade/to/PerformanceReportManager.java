@@ -11,11 +11,8 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	private IPositionManager positionManager = null;
 	private MarketType type = null;
 	private String generatedReport;
+	private Boolean generateLogReport;
 	
-	public String getGeneratedReport() {
-		return generatedReport;
-	}
-
 	//private RunConfiguration config;
 	private HashMap<String,Parameter> config;
 	private Double netProfitForClosedTrades = 0d;
@@ -47,9 +44,16 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	private Double prom = 0d;
 	private Double annTotalNumberOfWinningTrades  = 0d;
 	private Double annTotalNumberOfLosingTrades = 0d;
-
-
 	
+	private IReportLogger  graphData = null;
+	private IReportLogger  performanceData = null;
+
+
+
+	public String getGeneratedReport() {
+		return generatedReport;
+	}
+
 	
 	public PerformanceReportManager(HashMap<String,Parameter> config) {
 		super();
@@ -57,13 +61,17 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		this.annualizationCoefficient = 365d * 24d * 60d * 60d * 1000 / (((Date)config.get("PERIOD_END").getValue()).getTime() -  ((Date)config.get("PERIOD_START").getValue()).getTime());
 		this.margin = (Double)config.get("ACCOUNT_BALANCE").getValue();
 		
+		this.graphData = new FileGraphDataGenerator();
+		this.performanceData = new FileGraphDataGenerator();
+		
 	}
 
 
 	@Override
-	public void generatePerformanceReport(IPositionManager positionManager,MarketType type) {
+	public void generatePerformanceReport(IPositionManager positionManager,MarketType type,Boolean generateLogReport) {
 		this.positionManager = positionManager;
 		this.type = type;
+		this.generateLogReport = generateLogReport;
 		
 		
 		calculatePositionPerformance();
@@ -149,6 +157,10 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 			System.out
 				.println(builder.toString());
 		
+		if(generateLogReport){
+			performanceData.writeStringLog(generatedReport);
+		}
+		
 	}
 	
 	private void calculatePositionPerformance(){
@@ -219,6 +231,31 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	 * */
 	public Double getFitnessValue(){
 		return prom;
+	}
+
+
+	@Override
+	public void initializeLogger(String name) {
+		graphData.initializeLogger(name + "_Graph");
+		performanceData.initializeLogger(name+ "_Performance");
+	}
+
+
+	@Override
+	public void writeGraphLog(PriceData priceData,Double equity, Double margin,Double freeMargin,Double marginLevel,Double openPL) {
+		graphData.writeGraphLog(priceData,equity,margin,freeMargin,marginLevel,openPL);
+	}
+
+
+	@Override
+	public void finalizeLogger() {
+		graphData.finalizeLogger();
+		performanceData.finalizeLogger();
+	}
+	
+	@Override
+	public void writeStringLog(String log){
+		performanceData.writeStringLog(log);
 	}
 
 }
