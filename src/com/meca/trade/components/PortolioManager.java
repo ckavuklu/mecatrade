@@ -153,7 +153,7 @@ public class PortolioManager extends Component {
 		    	order = new Order(executeTrades(trader.endOfMarket()));
 		    }
 		    
-		    manager.updateGraphData();
+		    manager.updateGraphData(endOfMarketData);
 		  
 		    
 	    	strategyDecisions.clear();

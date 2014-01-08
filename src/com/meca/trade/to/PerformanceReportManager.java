@@ -49,6 +49,12 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	private IReportLogger  performanceData = null;
 
 
+	@Override
+	public IReportLogger getGraphLogger() {
+		
+		return graphData;
+	}
+
 
 	public String getGeneratedReport() {
 		return generatedReport;
@@ -61,8 +67,8 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		this.annualizationCoefficient = 365d * 24d * 60d * 60d * 1000 / (((Date)config.get("PERIOD_END").getValue()).getTime() -  ((Date)config.get("PERIOD_START").getValue()).getTime());
 		this.margin = (Double)config.get("ACCOUNT_BALANCE").getValue();
 		
-		this.graphData = new FileGraphDataGenerator();
-		this.performanceData = new FileGraphDataGenerator();
+		this.graphData = new GraphDataGenerator();
+		this.performanceData = new FileReportGenerator();
 		
 	}
 
@@ -158,7 +164,7 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 				.println(builder.toString());
 		
 		if(generateLogReport){
-			performanceData.writeStringLog(generatedReport);
+			performanceData.writeLog(generatedReport);
 		}
 		
 	}
@@ -242,20 +248,10 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 
 
 	@Override
-	public void writeGraphLog(PriceData priceData,Double equity, Double margin,Double freeMargin,Double marginLevel,Double openPL) {
-		graphData.writeGraphLog(priceData,equity,margin,freeMargin,marginLevel,openPL);
-	}
-
-
-	@Override
 	public void finalizeLogger() {
 		graphData.finalizeLogger();
 		performanceData.finalizeLogger();
 	}
-	
-	@Override
-	public void writeStringLog(String log){
-		performanceData.writeStringLog(log);
-	}
 
+	
 }

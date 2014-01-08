@@ -11,15 +11,13 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+
+import com.meca.trade.to.MarketDataGenerator;
 
 public class Optimizer {
 	
@@ -47,6 +45,10 @@ public class Optimizer {
 			
 			
 			populateParameterList();
+			
+
+			MarketDataGenerator generator = new MarketDataGenerator(paramMap);
+			
 			
 			populateGeneticParameterList();
 			

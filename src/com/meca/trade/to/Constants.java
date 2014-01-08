@@ -1,5 +1,6 @@
 package com.meca.trade.to;
 
+import java.io.File;
 import java.math.BigDecimal;
 
 public final class Constants {
@@ -25,6 +26,16 @@ public final class Constants {
 	public final static String SEPARATOR = ":";
 	
 	public final static Boolean DEBUG_ENABLED = false;
+	
+	public final static String GRAPH_DATA_JSON_START_STRING = "[";
+	public final static String GRAPH_DATA_JSON_END_STRING = "]";
+	public final static String GRAPH_DATA_JSON_SEPARATOR_STRING = ",";
+	
+	public final static String GENERATION_DIRECTORY = "report";
+	
+	public final static String REPORT_GENERATION_DIRECTORY = GENERATION_DIRECTORY + File.separator +"generated";
+	
+	public final static String GRAPH_TEMPLATE_DIRECTORY = GENERATION_DIRECTORY + File.separator +"templates";
 	
 	public static Double getRoundedUpValue(Double val){
 		BigDecimal result = new BigDecimal(val);

@@ -29,6 +29,6 @@ public interface IPositionManager extends IPriceData{
 	
 	public Double getFreeMargin();
 	
-	public void updateGraphData();
+	public void updateGraphData(boolean endOfMarket);
 	
 }

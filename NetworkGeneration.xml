@@ -1,10 +1,10 @@
 <optimization>
 
 	<configuration>
-		<param name="PERIOD_TYPE" type="String" value="Day"></param>
+		<param name="PERIOD_TYPE" type="String" value="minute"></param>
 		<param name="PERIOD_STEP_SIZE" type="Integer" value="1"></param>
-		<param name="PERIOD_START" type="Date" value="20010110-204500"></param>
-		<param name="PERIOD_END" type="Date"   value="20010212-204500"></param>
+		<param name="PERIOD_START" type="Date" value="20010110-100000"></param>
+		<param name="PERIOD_END" type="Date"   value="20010111-100000"></param>
 		<param name="INPUT_MARKET_DATA_FILE_NAME" type="String" value="EURUSD.txt"></param>
 		<param name="ACCOUNT_BALANCE" type="Double" value="100000d"></param>
 		<param name="INPUT_TEST_TRADE_DATA_FILE_NAME" type="String" value="TestTradeSet-1"></param>
@@ -12,7 +12,7 @@
 
     <genetic-configuration>
 		<param name="ELITISM_K" type="Integer" value="2"></param>
-		<param name="POP_SIZE" type="Integer" value="20"></param>
+		<param name="POP_SIZE" type="Integer" value="4"></param>
 		<param name="MAX_ITER" type="Integer" value="1"></param>
 		<param name="MUTATION_RATE" type="Double" value="0.02"></param>
 		<param name="CROSSOVER_RATE" type="Double" value="0.7"></param>

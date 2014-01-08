@@ -253,9 +253,30 @@ public class PositionManager extends MecaObject implements IPositionManager{
 	}
 
 
-	public void updateGraphData(){
+	public void updateGraphData(boolean endOfMarket){
 		if(graphLog){
-			perfReporManager.writeGraphLog(priceData,equity,margin,freeMargin,marginLevel,openPL);
+			StringBuilder log = new StringBuilder();
+			
+			log.append(Constants.GRAPH_DATA_JSON_START_STRING);
+			log.append(priceData.getTime().getTime());
+			log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			log.append(priceData.getOpen());
+			log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			log.append(priceData.getHigh());
+			log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			log.append(priceData.getLow());
+			log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			log.append(priceData.getClose());
+			log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			log.append(priceData.getVolume());
+			log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			log.append(equity.toString());
+			log.append(Constants.GRAPH_DATA_JSON_END_STRING);
+			
+			if(! endOfMarket)
+				log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			
+			perfReporManager.getGraphLogger().writeLog(log.toString());
 		}
 	}
 

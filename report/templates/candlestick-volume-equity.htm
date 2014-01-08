@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+            <title>MECA TRADE REPORT</title>
+            
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+            <script src="../js/highstock.js"></script>
+            <script src="../js/exporting.js"></script>
+            
+            </head>
+	<body>
+        <div id="container" style="height: 600px; min-width: 500px"></div>
+        <iframe id='iframe' src='$FILENAME' onload='readfile()' style="display:none"> </iframe>
+        
+        
+		<script type="text/javascript">
+            
+            
+            function readfile() {
+                var data = eval(document.getElementById('iframe').contentDocument.body.firstChild.innerHTML);
+                
+                
+                // split the data set into ohlc and volume
+                var ohlc = [],
+                volume = [],
+                equity = [],
+                dataLength = data.length;
+                
+                for (i = 0; i < dataLength; i++) {
+                    ohlc.push([
+                               data[i][0], // the date
+                               data[i][1], // open
+                               data[i][2], // high
+                               data[i][3], // low
+                               data[i][4] // close
+                               ]);
+                    
+                    volume.push([
+                                 data[i][0], // the date
+                                 data[i][5] // the volume
+                                 ])
+                    equity.push([
+                                 data[i][0], // the date
+                                 data[i][6] // the volume
+                                 ])
+                }
+                
+                // set the allowed units for data grouping
+                var groupingUnits = [[
+                                      'minute',                         // unit name
+                                      [1,5,10,15,30]                             // allowed multiples
+                                      ],[
+                                          'hour',
+                                          [1, 2, 3, 4, 6, 8, 9, 12]
+                                          ], [
+                                          'day',
+                                          [1, 2, 3, 4, 5]
+                                          ]];
+                
+                // create the chart
+                $('#container').highcharts('StockChart', {
+                                           
+                                           rangeSelector: {
+                                           selected: 1
+                                           },
+                                           
+                                           title: {
+                                           text: 'EURUSD Trade History'
+                                           },
+                                           
+                                           yAxis: [{
+                                                   title: {
+                                                   text: 'OHLC'
+                                                   },
+                                                   height: 200,
+                                                   lineWidth: 2
+                                                   }, {
+                                                   title: {
+                                                   text: 'Volume'
+                                                   },
+                                                   top: 400,
+                                                   height: 100,
+                                                   offset: 0,
+                                                   lineWidth: 2
+                                                   },
+                                                   {
+                                                   title: {
+                                                   text: 'Equity'
+                                                   },
+                                                   top: 280,
+                                                   height: 100,
+                                                   offset: 0,
+                                                   lineWidth: 2
+                                                   }],
+                                           
+                                           series: [{
+                                                    type: 'candlestick',
+                                                    name: 'EURUSD',
+                                                    data: ohlc,
+                                                    dataGrouping: {
+                                                    units: groupingUnits
+                                                    }
+                                                    },
+                                                    {
+                                                    name: 'EQUITY',
+                                                    data: equity,
+                                                    yAxis: 2,
+                                                    dataGrouping: {
+                                                    units: groupingUnits
+                                                    }
+                                                    },{
+                                                    type: 'column',
+                                                    name: 'VOLUME',
+                                                    data: volume,
+                                                    yAxis: 1,
+                                                    dataGrouping: {
+                                                    units: groupingUnits
+                                                    }
+                                                    }]
+                                           });
+            }
+            
+            
+            </script>
+        
+        
+	</body>
+</html>
