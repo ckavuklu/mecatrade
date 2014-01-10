@@ -13,6 +13,7 @@ import com.meca.trade.to.BaseTrader;
 import com.meca.trade.to.CurrencyType;
 import com.meca.trade.to.IPositionManager;
 import com.meca.trade.to.IndicatorSet;
+import com.meca.trade.to.MarketDataGenerator;
 import com.meca.trade.to.MarketType;
 import com.meca.trade.to.PerformanceReportManager;
 import com.meca.trade.to.PositionManager;
@@ -25,7 +26,7 @@ import com.meca.trade.to.TradeUtils;
 public class OriginalTradeNetwork extends Network {
 
 	@Override
-	  protected void define() {
+	  protected void define() throws IOException {
 	    //component("_Discard", com.jpmorrsn.fbp.components.Discard.class);
 	    //component("_Write_text_to_pane", com.jpmorrsn.fbp.components.ShowText.class);
 		
@@ -55,8 +56,12 @@ public class OriginalTradeNetwork extends Network {
         map.put("ACCOUNT_BALANCE", new Parameter("ACCOUNT_BALANCE","Double",prop.getProperty("usd_account_balance")));
         map.put("INPUT_MARKET_DATA_FILE_NAME", new Parameter("INPUT_MARKET_DATA_FILE_NAME","String",prop.getProperty("input_market_data_file_name")));
         map.put("INPUT_TEST_TRADE_DATA_FILE_NAME", new Parameter("INPUT_TEST_TRADE_DATA_FILE_NAME","String",prop.getProperty("input_test_trade_data_file_name")));
+        map.put("PERIOD_STEP_SIZE", new Parameter("PERIOD_STEP_SIZE","Integer",prop.getProperty("trading_period_step_size")));
+        map.put("PERIOD_TYPE", new Parameter("PERIOD_TYPE","String",prop.getProperty("trading_period_type")));
         
   
+        MarketDataGenerator generator = new MarketDataGenerator(map);
+        
         //stochastic_overbought_level
 		PerformanceReportManager reportManager = new PerformanceReportManager(map);
 		
@@ -107,13 +112,13 @@ public class OriginalTradeNetwork extends Network {
 	    initialize("O", component("_QuotePrice_O"), port("PRICETYPE"));
 	   */
 	    //initialize("ALL", component("_DataFeeder"), port("SCHEDULETYPE"));
-	    initialize(config.getPeriodType(), component("_DataFeeder"), port("SCHEDULETYPE"));
+	    /*initialize(config.getPeriodType(), component("_DataFeeder"), port("SCHEDULETYPE"));
 	    initialize(config.getPeriodStepSize(), component("_DataFeeder"), port("SCHEDULEPERIOD"));
 	    
 	    
 	    
 	    initialize(config.getPeriodStart(), component("_DataFeeder"), port("PERIODSTART"));
-	    initialize(config.getPeriodEnd(), component("_DataFeeder"), port("PERIODEND"));
+	    initialize(config.getPeriodEnd(), component("_DataFeeder"), port("PERIODEND"));*/
 	    
 	    
 	    initialize(config.getInputMarketDataFile(), component("_DataFeeder"), port("FILENAME"));

@@ -38,8 +38,8 @@ public class MarketDataGenerator {
 		schedulePeriod = (Integer)parameterMap.get("PERIOD_STEP_SIZE").getValue();
 		schedule = (String)parameterMap.get("PERIOD_TYPE").getValue();
 		
-		cycleStart = periodStart;
-		cycleEnd = nextDate(periodStart, schedulePeriod, schedule);
+		cycleStart 	= periodStart;
+		cycleEnd 	= nextDate(periodStart, schedulePeriod, schedule);
 		
 		
 		BufferedReader br = null;
@@ -54,15 +54,17 @@ public class MarketDataGenerator {
 			
 		}
 
+		String cycleMarketData;	
 		String line = null;
 		try {
 			line = br.readLine();
 
 			while ((line = br.readLine()) != null) {
 
+				
 				String[] trade = line.split(",");
 
-				boolean data = false;
+				boolean endOfData = false;
 				boolean result = false;
 
 				if (!schedule.equalsIgnoreCase("ALL")) {
@@ -70,8 +72,15 @@ public class MarketDataGenerator {
 					Date date = TradeUtils.getTime(trade[1] + "-" + trade[2]);
 					
 					if (cycleEnd.compareTo(periodEnd) > 0) {
-						data = true;
+						endOfData = true;
 						result = true;
+						
+						String time = TradeUtils.convertStringDate(cycleStart) + "," + TradeUtils.convertStringTime(cycleStart);
+						
+						cycleMarketData = trade[0] + "," + time + ",-1,-1,-1,-1," + trade[7];
+						
+						wr.println(cycleMarketData);
+						
 					}
 					
 
@@ -86,6 +95,12 @@ public class MarketDataGenerator {
 
 								result = true;
 								
+								String time = TradeUtils.convertStringDate(cycleStart) + "," + TradeUtils.convertStringTime(cycleStart);
+								
+								cycleMarketData = trade[0] + "," + time + "," + periodOpen + "," + periodHigh + "," + periodLow  + "," + periodClose + "," + trade[7];
+								
+								wr.println(cycleMarketData);
+
 								clearIntervalParameters();
 								
 								do {
@@ -105,6 +120,9 @@ public class MarketDataGenerator {
 
 				} else {
 					result = true;
+					cycleMarketData = line;
+					wr.println(cycleMarketData);
+					
 				}
 
 				try {
@@ -113,15 +131,13 @@ public class MarketDataGenerator {
 						if(Constants.DEBUG_ENABLED)
 							System.out.println("DataFeeder-2: " + result);
 						
-						//SEND
-						wr.println(line);
 					}
 
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
 					
-					if (result && data) {
+					if (result && endOfData) {
 						break;
 					}
 
@@ -177,11 +193,15 @@ public class MarketDataGenerator {
 		if (period.equalsIgnoreCase("Minute")) {
 
 			cal.add(Calendar.MINUTE, interval);
+			
 		} else if (period.equalsIgnoreCase("Hour")) {
-			cal.add(Calendar.HOUR, interval);
+			cal.add(Calendar.HOUR_OF_DAY, interval);
 
 		} else if (period.equalsIgnoreCase("Day")) {
 			cal.add(Calendar.DATE, interval);
+
+		} else if (period.equalsIgnoreCase("Week")) {
+			cal.add(Calendar.WEEK_OF_YEAR, interval);
 
 		} else if (period.equalsIgnoreCase("Month")) {
 			cal.add(Calendar.MONTH, interval);
