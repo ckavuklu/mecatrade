@@ -2,6 +2,8 @@
 
 	
 	<networks>
+	
+	<!-- 
 		<network name="TradeNetwork-1">
 			<components>
 				<component name="_DataFeeder"
@@ -29,21 +31,8 @@
 				<initialize component="_QuotePrice_C" port="PRICETYPE">
 					<parameter value="C" type="String"></parameter>
 				</initialize>
-				
-				<initialize component="_DataFeeder" port="SCHEDULETYPE">
-					<parameter value="PERIOD_TYPE" type="Configuration"></parameter>
-				</initialize>
-				<initialize component="_DataFeeder" port="SCHEDULEPERIOD">
-					<parameter value="PERIOD_STEP_SIZE" type="Configuration"></parameter>
-				</initialize>
-				<initialize component="_DataFeeder" port="PERIODSTART">
-					<parameter value="PERIOD_START" type="Configuration"></parameter>
-				</initialize>
-				<initialize component="_DataFeeder" port="PERIODEND">
-					<parameter value="PERIOD_END" type="Configuration"></parameter>
-				</initialize>
-				<initialize component="_DataFeeder" port="FILENAME">
-					<parameter value="INPUT_MARKET_DATA_FILE_NAME" type="Configuration"></parameter>
+				<initialize component="_DataFeeder" port="ITERATOR">
+					<parameter value="dataIterator" type="Static"></parameter>
 				</initialize>
 				<initialize component="_PortolioManager" port="MANAGER">
 					<parameter value="posManager" type="Static"></parameter>
@@ -117,7 +106,7 @@
 		</network>
 		
 		
-		
+		 -->
 		
 		
 		<network name="TradeNetwork-2">
@@ -160,21 +149,8 @@
 				<initialize component="_QuotePrice_C" port="PRICETYPE">
 					<parameter value="C" type="String"></parameter>
 				</initialize>
-				
-				<initialize component="_DataFeeder" port="SCHEDULETYPE">
-					<parameter value="PERIOD_TYPE" type="Configuration"></parameter>
-				</initialize>
-				<initialize component="_DataFeeder" port="SCHEDULEPERIOD">
-					<parameter value="PERIOD_STEP_SIZE" type="Configuration"></parameter>
-				</initialize>
-				<initialize component="_DataFeeder" port="PERIODSTART">
-					<parameter value="PERIOD_START" type="Configuration"></parameter>
-				</initialize>
-				<initialize component="_DataFeeder" port="PERIODEND">
-					<parameter value="PERIOD_END" type="Configuration"></parameter>
-				</initialize>
-				<initialize component="_DataFeeder" port="FILENAME">
-					<parameter value="INPUT_MARKET_DATA_FILE_NAME" type="Configuration"></parameter>
+				<initialize component="_DataFeeder" port="ITERATOR">
+					<parameter value="dataIterator" type="Static"></parameter>
 				</initialize>
 				<initialize component="_PortolioManager" port="MANAGER">
 					<parameter value="posManager" type="Static"></parameter>

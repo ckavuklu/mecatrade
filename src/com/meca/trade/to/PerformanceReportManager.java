@@ -2,6 +2,7 @@ package com.meca.trade.to;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import com.meca.trade.networks.Parameter;
 
@@ -48,6 +49,11 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	private IReportLogger  graphData = null;
 	private IReportLogger  performanceData = null;
 
+	private Double mdd;
+	private Date MaxDate; 
+	private Date MinDate;
+
+	private Double strategyStopLimit = 0d;
 
 	@Override
 	public IReportLogger getGraphLogger() {
@@ -82,6 +88,8 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		
 		calculatePositionPerformance();
 		evaluatePROM();
+		calculateMDM(positionManager.getExecutionHistory());
+		calculateStrategyStopLimit();
 		
 		StringBuilder builder = new StringBuilder();
 		builder.append("PerformanceReportManager.generatePerformanceReport()");
@@ -155,6 +163,20 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		builder.append("annualizedGrossLoss=");
 		builder.append(annualizedGrossLoss);
 		builder.append(Constants.FORMAT);
+		builder.append("MDD(%)=");
+		builder.append(mdd);
+		
+		builder.append(Constants.FORMAT);
+
+		if (MaxDate != null) {
+			builder.append("MaxDate=");
+			builder.append(MaxDate.toString());
+			builder.append(Constants.FORMAT);
+			builder.append("MinDate=");
+			builder.append(MinDate.toString());
+			builder.append(Constants.FORMAT);
+		}
+		
 		builder.append(Constants.ENDLN);
 		
 		generatedReport = builder.toString();
@@ -168,6 +190,59 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		}
 		
 	}
+	
+	private void calculateStrategyStopLimit() {
+		this.strategyStopLimit = (mdd*margin/100d)*Constants.SAFETY_FACTOR; 	
+	}
+
+
+	private void calculateMDM(List<ExecutionRecord> executionHistory){
+		
+		
+		if (executionHistory.size()>0){
+			
+			Double Max = 0d;
+			Date MaxDateTemp = null;
+			Date MaxDate = null;
+			Date minMaxDate = null;
+			
+			Double PctMaxDrawDown = 0d;
+			
+			for(ExecutionRecord record:executionHistory){
+				
+				if (record.getEquity() > Max) 
+				{
+					Max = record.getEquity();
+					MaxDateTemp = record.getPriceData().getTime();
+				}
+				else 
+				{
+					Double drawdown = (Max-record.getEquity());
+					
+					if (drawdown > PctMaxDrawDown) {
+						PctMaxDrawDown = drawdown;
+						minMaxDate = record.getPriceData().getTime();
+						MaxDate = MaxDateTemp;
+					}
+					
+				}
+					
+			}
+			
+			this.mdd = PctMaxDrawDown;
+			this.MinDate = minMaxDate;
+			this.MaxDate = MaxDate;
+			
+		}
+		
+		else this.mdd = Double.NaN;
+		
+		
+		this.mdd = (this.mdd / margin)*100d;
+		
+	}
+	
+
 	
 	private void calculatePositionPerformance(){
 		

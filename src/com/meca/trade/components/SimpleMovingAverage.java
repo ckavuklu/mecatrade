@@ -91,7 +91,7 @@ public class SimpleMovingAverage extends Indicator {
 		
 		for(Double data:window){
 			// System.out.print(data + " ");
-			result += Double.valueOf(data); 
+			result += data; 
 		} 
 		
 		return result/windowSize;

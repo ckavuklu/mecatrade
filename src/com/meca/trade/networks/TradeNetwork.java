@@ -2,6 +2,7 @@ package com.meca.trade.networks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -20,6 +21,7 @@ import com.meca.trade.to.ITrader;
 import com.meca.trade.to.MarketType;
 import com.meca.trade.to.PerformanceReportManager;
 import com.meca.trade.to.PositionManager;
+import com.meca.trade.to.PriceData;
 import com.meca.trade.to.TestTradeDataSet;
 
 public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
@@ -34,6 +36,7 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 	private IStrategy strategy = null;
 	private List<IndicatorParameter> indicatorParameterList = null;
 	private Double fitnessValue;
+	
 	String uuid = null;
 	
 	public String toString(){
@@ -190,6 +193,7 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 	  
 	  public void init(HashMap<String, Parameter> parameterMap){
 	        this.parameterMap = parameterMap;
+	       
 
 	        uuid = UUID.randomUUID().toString();
 	        

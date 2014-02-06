@@ -81,7 +81,9 @@ public class PriceData extends MecaObject {
 		return askPrice;
 	}
 
-	
+	public PriceData() {
+		super();
+	}
 
 	/**
 	 * 
@@ -92,12 +94,10 @@ public class PriceData extends MecaObject {
 	 */
 	public PriceData(Double open, Double close, Double high, Double low) {
 		super();
-		this.open = open;
-		this.close = close;
-		this.high = high;
-		this.low = low;
-		this.bidPrice = close;
-		this.askPrice = bidPrice + Constants.EURUSD_SPREAD;
+		setOpen(open);
+		setHigh(high);
+		setLow(low);
+		setClose(close);
 	}
 
 	public Double getOpen() {
@@ -114,6 +114,9 @@ public class PriceData extends MecaObject {
 
 	public void setClose(Double close) {
 		this.close = close;
+		
+		this.bidPrice = close;
+		this.askPrice = bidPrice + Constants.EURUSD_SPREAD;
 	}
 
 	public Double getHigh() {

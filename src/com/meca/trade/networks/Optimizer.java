@@ -18,6 +18,7 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
 import com.meca.trade.to.MarketDataGenerator;
+import com.meca.trade.to.PriceData;
 
 public class Optimizer {
 	
@@ -30,6 +31,8 @@ public class Optimizer {
 	Double crossover_rate,mutation_rate;
 	Mankind mankind = null;
 	Document doc = null;
+	
+	Long marketDataCreationDuration = null;
 	
 	
 	public Optimizer(String fileName) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -46,9 +49,11 @@ public class Optimizer {
 			
 			populateParameterList();
 			
-
+			marketDataCreationDuration = System.currentTimeMillis();
+			
 			MarketDataGenerator generator = new MarketDataGenerator(paramMap);
 			
+			marketDataCreationDuration = System.currentTimeMillis() - marketDataCreationDuration;
 			
 			populateGeneticParameterList();
 			
@@ -60,8 +65,13 @@ public class Optimizer {
 			tournament_size = (Integer)geneticParamMap.get("TOURNAMENT_SIZE").getValue();
 			individuals_size = (Integer)geneticParamMap.get("INDIVIDUALS_SIZE").getValue();
 
+			Iterator<PriceData> data = generator.getMarketDataIterator();
+			while(data.hasNext()){
+				System.out.println("Data:" + data.next() );
+			}
 			
-			mankind = new Mankind("NetworkDefinition.xml",paramMap);
+			
+			mankind = new Mankind("NetworkDefinition.xml",paramMap,generator);
 			m_population = mankind.populateRaceIndividuals(pop_size);
 			
 			populateIndicators(m_population);
@@ -472,6 +482,11 @@ public class Optimizer {
 	public static void main(String[] args) throws Exception {
 		
 		try {
+			Long optimizerStart = System.currentTimeMillis();
+			Long averageIterationDuration = 0l;
+			Long iterationDuration;
+			Long averageEvaluationDuration = 0l;
+			Long evaluationDuration;
 
 			Optimizer optimizer = new Optimizer("NetworkGeneration.xml");
 
@@ -482,6 +497,8 @@ public class Optimizer {
 			
 			int count;
 			for (int iter = 0; iter < optimizer.max_iteration; iter++) {
+				
+				iterationDuration = System.currentTimeMillis();
 				count = 0;
 				
 				System.out.println("ITERATION - " + iter);
@@ -531,10 +548,22 @@ public class Optimizer {
 
 				optimizer.m_population = newPop;
 
+				
+				evaluationDuration = System.currentTimeMillis();
+
 				optimizer.evaluate();
 
+				evaluationDuration = System.currentTimeMillis() - evaluationDuration;
+				averageEvaluationDuration +=  evaluationDuration;
+
+				
 				System.out.println("BEST INDIVIDUALS");
 				optimizer.printBestIndividuals();
+				
+				iterationDuration = System.currentTimeMillis() - iterationDuration;
+				averageIterationDuration +=  iterationDuration;
+				
+				
 			}
 
 			System.out.println("RESULTING MASTER POPULATION");
@@ -546,6 +575,13 @@ public class Optimizer {
 			System.out.println("RERUN BEST INDIVIDUALS");
 			optimizer.reRunBestIndividuals();
 
+			
+			System.out.println("Total Execution Time of Optimizer.main() : " + String.valueOf(System.currentTimeMillis()-optimizerStart)  + " milliseconds");
+			System.out.println("Market Data Creation Time                : " + String.valueOf(optimizer.marketDataCreationDuration)  + " milliseconds");
+			System.out.println("Average Iteration Exec Time              : " + String.valueOf(averageIterationDuration / optimizer.max_iteration)  + " milliseconds");
+			System.out.println("Average Evaluation Exec Time             : " + String.valueOf(averageEvaluationDuration / optimizer.max_iteration)  + " milliseconds");
+
+			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

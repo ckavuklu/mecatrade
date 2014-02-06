@@ -24,6 +24,8 @@ import com.meca.trade.to.TestTradeDataSet;
 import com.meca.trade.to.TradeUtils;
 
 public class OriginalTradeNetwork extends Network {
+	
+	MarketDataGenerator generator = null;
 
 	@Override
 	  protected void define() throws IOException {
@@ -60,7 +62,7 @@ public class OriginalTradeNetwork extends Network {
         map.put("PERIOD_TYPE", new Parameter("PERIOD_TYPE","String",prop.getProperty("trading_period_type")));
         
   
-        MarketDataGenerator generator = new MarketDataGenerator(map);
+        generator = new MarketDataGenerator(map);
         
         //stochastic_overbought_level
 		PerformanceReportManager reportManager = new PerformanceReportManager(map);
@@ -121,7 +123,7 @@ public class OriginalTradeNetwork extends Network {
 	    initialize(config.getPeriodEnd(), component("_DataFeeder"), port("PERIODEND"));*/
 	    
 	    
-	    initialize(config.getInputMarketDataFile(), component("_DataFeeder"), port("FILENAME"));
+	    initialize(generator.getMarketDataIterator(), component("_DataFeeder"), port("ITERATOR"));
 
 	    
 	    // Indicator Components

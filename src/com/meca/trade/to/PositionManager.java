@@ -1,7 +1,9 @@
 package com.meca.trade.to;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -9,6 +11,7 @@ import com.db4o.monitoring.internal.AveragingTimedReading;
 
 public class PositionManager extends MecaObject implements IPositionManager{
 
+	
 	private List<IPosition> positionList;
 	private List<Trade> tradeHistory;
 	private PriceData priceData;
@@ -23,7 +26,15 @@ public class PositionManager extends MecaObject implements IPositionManager{
 	private Double weightedAverageEntryPrice = 0d;
 	private Boolean graphLog = false;
 	private String uuid;
+	private List<ExecutionRecord> executionHistory = null; 
 	
+	public List<ExecutionRecord> getExecutionHistory() {
+		return executionHistory;
+	}
+
+
+
+
 	public void setGraphLog(Boolean graphLog) {
 		this.graphLog = graphLog;
 		
@@ -213,6 +224,7 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		if(this.positionList == null){
 			this.positionList = new ArrayList<IPosition>();
 			this.tradeHistory = new ArrayList<Trade>();
+			this.executionHistory = new ArrayList<ExecutionRecord>();
 		}
 	}
 	
@@ -272,6 +284,8 @@ public class PositionManager extends MecaObject implements IPositionManager{
 			log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
 			log.append(equity.toString());
 			log.append(Constants.GRAPH_DATA_JSON_END_STRING);
+			
+			executionHistory.add(new ExecutionRecord(priceData, equity));
 			
 			if(! endOfMarket)
 				log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);

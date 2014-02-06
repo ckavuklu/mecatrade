@@ -1,11 +1,7 @@
 package com.meca.trade.components;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Iterator;
 
 import com.jpmorrsn.fbp.engine.Component;
 import com.jpmorrsn.fbp.engine.ComponentDescription;
@@ -17,7 +13,6 @@ import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
 import com.meca.trade.to.Constants;
 import com.meca.trade.to.PriceData;
-import com.meca.trade.to.TradeUtils;
 
 /** Sort a stream of Packets to an output stream **/
 @ComponentDescription("Filters Messages")
@@ -25,7 +20,7 @@ import com.meca.trade.to.TradeUtils;
 @InPorts({
 	@InPort(value = "KICKOFF", description = "type", type = Double.class),
 	@InPort(value = "CLOCKTICK", description = "type", type = Double.class),
-		@InPort(value = "FILENAME", description = "FileName", type = String.class)
+		@InPort(value = "ITERATOR", description = "Iterator", type = Iterator.class)
 })
 public class DataFeeder extends Component {
 
@@ -38,7 +33,7 @@ public class DataFeeder extends Component {
 	InputPort tradeDataPort, kickoffPort, clockTickPort;
 
 	OutputPort[] outportArray;
-	InputPort fileName;
+	InputPort iteratorPort;
 	
 
 	@Override
@@ -46,14 +41,14 @@ public class DataFeeder extends Component {
 
 		Packet kickoffPacket = null;
 		boolean kickOff = false;
-		String inputFilename = null;
+		Iterator<PriceData> iterator = null;
 		Packet ctp = null;
 		Packet c = null;
 
 		if (ctp == null) {	
-			ctp = fileName.receive();
-			inputFilename = ((String) ctp.getContent()).trim();
-		    fileName.close();
+			ctp = iteratorPort.receive();
+			iterator = ((Iterator<PriceData>) ctp.getContent());
+		    iteratorPort.close();
 			drop(ctp);
 		}
 		
@@ -64,10 +59,36 @@ public class DataFeeder extends Component {
 			drop(kickoffPacket);
 		}
 
+		
+		try{
+			while(iterator.hasNext()){
+				PriceData data = iterator.next();
+				
+				if(Constants.DEBUG_ENABLED)
+					System.out.println("DataFeeder: " + data);
+				
+				for (int i = 0; i < outportArray.length; i++) {
+					
+					if (outportArray[i].isConnected()) {
+						outportArray[i].send(create(data));
+					}
+				}
+				
+				//This is to wait for the clock tick
+				c = clockTickPort.receive();
+				drop(c);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		} 
+		finally {
+			clockTickPort.close();
+		}
+		/*
 		BufferedReader br = null;
 
 		try {
-			br = new BufferedReader(new FileReader(inputFilename));
+			br = new BufferedReader(new FileReader(iterator));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} 
@@ -114,12 +135,14 @@ public class DataFeeder extends Component {
 		} finally {
 			clockTickPort.close();
 		}
+		
+		*/
 
 	}
 
 	@Override
 	protected void openPorts() {
-		fileName = openInput("FILENAME");
+		iteratorPort = openInput("ITERATOR");
 		clockTickPort = openInput("CLOCKTICK");
 		kickoffPort = openInput("KICKOFF");
 

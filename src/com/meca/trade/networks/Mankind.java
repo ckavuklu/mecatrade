@@ -15,9 +15,13 @@ import org.jdom2.input.SAXBuilder;
 import com.meca.trade.to.IPositionManager;
 import com.meca.trade.to.IStrategy;
 import com.meca.trade.to.ITrader;
+import com.meca.trade.to.MarketDataGenerator;
+import com.meca.trade.to.PriceData;
 
 public class Mankind {
 	HashMap<String, Parameter> paramMap;
+	
+	MarketDataGenerator marketDataGenerator;
 	
 	Document doc = null;
 
@@ -131,6 +135,9 @@ public class Mankind {
 				} else if (value.equalsIgnoreCase("dataSet")) {
 					network.addInitialization(network.getDataSet(),
 							componentName, portName);
+				} else if (value.equalsIgnoreCase("dataIterator")) {
+					network.addInitialization(marketDataGenerator.getMarketDataIterator(),
+							componentName, portName);
 				}
 			} else if (paramType.equalsIgnoreCase("Strategy")) {
 
@@ -189,9 +196,9 @@ public class Mankind {
 	}
 	*/
 	
-	public Mankind(String fileName, HashMap<String, Parameter> paramMap) {
+	public Mankind(String fileName, HashMap<String, Parameter> paramMap,MarketDataGenerator marketDataGenerator) {
 		this.paramMap = paramMap;
-		
+		this.marketDataGenerator = marketDataGenerator;
 		//networkList = new ArrayList<TradeNetwork>();
 		SAXBuilder builder = new SAXBuilder();
 		

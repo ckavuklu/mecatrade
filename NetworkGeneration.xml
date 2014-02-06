@@ -3,15 +3,15 @@
 	<configuration>
 		<param name="PERIOD_TYPE" type="String" value="Hour"></param>
 		<param name="PERIOD_STEP_SIZE" type="Integer" value="1"></param>
-		<param name="PERIOD_START" type="Date" value="20010105-190000"></param>
-		<param name="PERIOD_END" type="Date"   value="20010107-190000"></param>
+		<param name="PERIOD_START" type="Date" value="20010310-190000"></param>
+		<param name="PERIOD_END" type="Date"   value="20010320-190000"></param>
 		<param name="INPUT_MARKET_DATA_FILE_NAME" type="String" value="EURUSD.txt"></param>
 		<param name="ACCOUNT_BALANCE" type="Double" value="100000d"></param>
 		<param name="INPUT_TEST_TRADE_DATA_FILE_NAME" type="String" value="TestTradeSet-1"></param>
 	</configuration>
 
     <genetic-configuration>
-		<param name="ELITISM_K" type="Integer" value="2"></param>
+		<param name="ELITISM_K" type="Integer" value="0"></param>
 		<param name="POP_SIZE" type="Integer" value="4"></param>
 		<param name="MAX_ITER" type="Integer" value="1"></param>
 		<param name="MUTATION_RATE" type="Double" value="0.02"></param>
@@ -21,13 +21,14 @@
 	</genetic-configuration>
 	
 	<indicators>
+	<!-- 
 		<indicator network="TradeNetwork-1" name="_SimpleMovingAverage_SHORT" port="WINDOW">
 			<interval start="2"  end="5" type="Double"></interval>
 		</indicator>
 		<indicator network="TradeNetwork-1" name="_SimpleMovingAverage_LONG" port="WINDOW">
 			<interval start="6"  end="9" type="Double"></interval>
-		</indicator>
-		
+		</indicator>	
+		 -->	
 		<indicator network="TradeNetwork-2" name="_SimpleMovingAverage_SHORT" port="WINDOW">
 			<interval start="2"  end="60" type="Double"></interval>
 		</indicator>
@@ -39,8 +40,7 @@
 		</indicator>
 		<indicator network="TradeNetwork-2" name="_ExponentialMovingAverage_LONG" port="WINDOW">
 			<interval start="61"  end="180" type="Double"></interval>
-		</indicator>
-				
+		</indicator>				
 	</indicators>
 	
 

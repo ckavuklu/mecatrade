@@ -1,5 +1,7 @@
 package com.meca.trade.to;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public interface IPositionManager extends IPriceData{
@@ -30,5 +32,7 @@ public interface IPositionManager extends IPriceData{
 	public Double getFreeMargin();
 	
 	public void updateGraphData(boolean endOfMarket);
-	
+
+	public List<ExecutionRecord> getExecutionHistory();
+
 }

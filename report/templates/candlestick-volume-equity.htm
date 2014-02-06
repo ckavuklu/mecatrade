@@ -15,7 +15,12 @@
         
         
 		<script type="text/javascript">
-            
+             
+            Highcharts.setOptions({
+				global: {
+					useUTC: false
+				}
+			});
             
             function readfile() {
                 var data = eval(document.getElementById('iframe').contentDocument.body.firstChild.innerHTML);
