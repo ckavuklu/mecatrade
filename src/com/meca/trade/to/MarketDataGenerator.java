@@ -84,23 +84,15 @@ public class MarketDataGenerator {
 						endOfData = true;
 						result = true;
 						
-						/*
-						String time = TradeUtils.convertStringDate(cycleStart) + "," + TradeUtils.convertStringTime(cycleStart);
 						
-						cycleMarketData = trade[0] + "," + time + ",-1,-1,-1,-1," + trade[7];
-						
-						wr.println(cycleMarketData);
-						*/
-						
-						
-						PriceData data = new PriceData();
+						/*PriceData data = new PriceData();
 						data.setTime(cycleStart);
 						data.setVolume(TradeUtils.getDouble(trade[7]));
 						data.setClose(-1d);
 						data.setOpen(-1d);
 						data.setHigh(-1d);
 						data.setLow(-1d);
-						marketData.add(data);
+						marketData.add(data);*/
 						
 					}
 					
@@ -116,15 +108,6 @@ public class MarketDataGenerator {
 
 								result = true;
 								
-								/*
-								String time = TradeUtils.convertStringDate(cycleStart) + "," + TradeUtils.convertStringTime(cycleStart);
-								
-								cycleMarketData = trade[0] + "," + time + "," + periodOpen + "," + periodHigh + "," + periodLow  + "," + periodClose + "," + trade[7];
-								
-								wr.println(cycleMarketData);
-								*/
-								
-								
 								PriceData data = new PriceData();
 								data.setTime(cycleStart);
 								data.setVolume(TradeUtils.getDouble(trade[7]));
@@ -137,7 +120,6 @@ public class MarketDataGenerator {
 								clearIntervalParameters();
 								
 							} 
-							
 							
 
 							do {
@@ -155,10 +137,6 @@ public class MarketDataGenerator {
 
 				} else {
 					result = true;
-					/*cycleMarketData = line;
-					
-					wr.println(cycleMarketData);
-					*/
 					
 					PriceData data = new PriceData(TradeUtils.getDouble(trade[3]),TradeUtils.getDouble(trade[6]),TradeUtils.getDouble(trade[4]),TradeUtils.getDouble(trade[5]));
 					Date date = TradeUtils.getTime(trade[1] + "-" + trade[2]);

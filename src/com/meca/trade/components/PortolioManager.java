@@ -135,8 +135,7 @@ public class PortolioManager extends Component {
 	    			  manager.updatePriceData(value.getPrice());
 	    			  trader.updatePriceData(value.getPrice());
 	    			  
-	    			  //TODO: We assumed that margin level is 100% of equity for margin call
-	    			  if(manager.getFreeMargin()  <= 0d)
+	    			  if(manager.getMarginLevel()  <= Constants.MARGIN_CALL_LEVEL)
 	    				  endOfMarketData = true;
 	    		  }
 	    		  strategyDecisions.add(value);

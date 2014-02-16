@@ -18,7 +18,7 @@ public class PositionManager extends MecaObject implements IPositionManager{
 	private Double equity = 0d;
 	private Double margin = 0d;
 	private Double freeMargin = 0d;
-	private Double marginLevel = 0d;
+	private Double marginLevel = 100d;
 	private Double openPL = 0d;
 	private IAccount account;
 	private MarketType marketType;
@@ -136,11 +136,11 @@ public class PositionManager extends MecaObject implements IPositionManager{
 	}
 
 	private void updateFreeMargin() {
-		freeMargin = Constants.getRoundedUpValue(getEquity() - getMargin());
+		freeMargin = TradeUtils.getRoundedUpValue(getEquity() - getMargin());
 	}
 
 	private void updateEquity() {
-		equity = Constants.getRoundedUpValue(account.getBalance() + getOpenPL());
+		equity = TradeUtils.getRoundedUpValue(account.getBalance() + getOpenPL());
 	}
 
 	private String getGraphChartData(String delimitChar){
@@ -262,8 +262,14 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		
 		updateFreeMargin();
 		
+		updateMarginLevel();
+		
 	}
 
+
+	private void updateMarginLevel() {
+		marginLevel = TradeUtils.getRoundedUpValue((equity/(margin<=0?equity:margin))*100d);
+	}
 
 	public void updateGraphData(boolean endOfMarket){
 		if(graphLog){
@@ -316,11 +322,11 @@ public class PositionManager extends MecaObject implements IPositionManager{
 
 
 	private void updateBalance(Trade trade) {
-		account.setBalance(Constants.getRoundedUpValue(account.getBalance() + trade.getProfitLoss()));
+		account.setBalance(TradeUtils.getRoundedUpValue(account.getBalance() + trade.getProfitLoss()));
 	}
 
 	private void updateMargin() {
-		margin = Constants.getRoundedUpValue(((getMarginLotCount()*getWeightedAverageEntryPrice()*getMarketType().getLotSize()) / getMarketType().getLeverage()));
+		margin = TradeUtils.getRoundedUpValue(((getMarginLotCount()*getWeightedAverageEntryPrice()*getMarketType().getLotSize()) / getMarketType().getLeverage()));
 	}
 
 	

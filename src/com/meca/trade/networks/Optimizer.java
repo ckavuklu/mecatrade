@@ -24,6 +24,8 @@ public class Optimizer {
 	
 	HashMap<String, Parameter> paramMap;
 	HashMap<String, Parameter> geneticParamMap;
+	
+	
 	HashMap<String,List<TradeNetwork>> m_population;
 	HashMap<String,Double> totalFitness;
 	private static Random m_rand = new Random();  
@@ -40,6 +42,7 @@ public class Optimizer {
 		
 		paramMap = new HashMap<String,Parameter>();
 		geneticParamMap = new HashMap<String,Parameter>();
+		
 		
 		SAXBuilder builder = new SAXBuilder();
 		
@@ -71,7 +74,7 @@ public class Optimizer {
 			}
 			
 			
-			mankind = new Mankind("NetworkDefinition.xml",paramMap,generator);
+			mankind = new Mankind("NetworkDefinition.xml",paramMap, generator, doc);
 			m_population = mankind.populateRaceIndividuals(pop_size);
 			
 			populateIndicators(m_population);
@@ -155,6 +158,7 @@ public class Optimizer {
 
 	}
 	
+	
 	private void populateGeneticParameterList() {
 		Element geneticConfiguration = doc.getRootElement().getChildren("genetic-configuration").get(0);
 		Iterator itr = geneticConfiguration.getChildren().iterator();
@@ -167,6 +171,8 @@ public class Optimizer {
 		 
 	}
 
+	
+	
 	
 	private void populateParameterList(){
 		Element configuration = doc.getRootElement().getChildren("configuration").get(0);
@@ -284,6 +290,10 @@ public class Optimizer {
 			bestIndividuals.get(best.getNetworkName()).get(0).initializeByIndicatorParameterValues();
 			bestIndividuals.get(best.getNetworkName()).get(0).evaluate(true);
 			System.out.println("\t\tPerformance Report: " + bestIndividuals.get(best.getNetworkName()).get(0).getReportManager().getGeneratedReport());	
+	    	System.out.println("POSITIONS:");
+			System.out.println(bestIndividuals.get(best.getNetworkName()).get(0).getPosManager());
+			
+			
 		}
 	
 		

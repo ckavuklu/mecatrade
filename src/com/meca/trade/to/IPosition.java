@@ -1,5 +1,7 @@
 package com.meca.trade.to;
 
+import java.util.List;
+
 public interface IPosition extends IPriceData{
 
 	public Double getCurrentRisk();
@@ -37,4 +39,9 @@ public interface IPosition extends IPriceData{
 	public TradeStatusType getStatus();
 	
 	public Double getEntryPrice();
+		
+	public Double getStopLoss();
+
+	public Double getTakeProfit();
+
 }

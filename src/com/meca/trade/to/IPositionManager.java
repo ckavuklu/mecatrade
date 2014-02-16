@@ -28,8 +28,9 @@ public interface IPositionManager extends IPriceData{
 	public void setGraphLog(Boolean graphLog);
 	
 	
-	
+	public Double getEquity();
 	public Double getFreeMargin();
+	public Double getMarginLevel();
 	
 	public void updateGraphData(boolean endOfMarket);
 

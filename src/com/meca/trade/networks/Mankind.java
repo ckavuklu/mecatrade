@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -23,7 +25,9 @@ public class Mankind {
 	
 	MarketDataGenerator marketDataGenerator;
 	
-	Document doc = null;
+	Document definitionDoc = null;
+	
+	Document generationDoc = null;
 
 	
 	private IStrategy createStrategy(Class strategyClass) throws InstantiationException, IllegalAccessException{
@@ -159,9 +163,40 @@ public class Mankind {
 	}
 	
 	
+	private void setTraderParameterList(TradeNetwork network){
+		Element configurations = generationDoc.getRootElement().getChildren("strategy-configuration").get(0);
+			
+		List<Parameter> strategyParam = new ArrayList<Parameter>();
+		
+		Iterator itr = configurations.getChildren("trade-configuration").iterator();
+
+		while (itr.hasNext()) {
+			Element traderConfig =  (Element) itr.next();
+			String networkName = traderConfig.getAttribute("network").getValue();
+			
+			if(networkName.equalsIgnoreCase(network.getNetworkName())){
+				
+				Iterator paramIterator = traderConfig.getChildren().iterator();
+				while (paramIterator.hasNext()) {
+					Element param =  (Element) paramIterator.next();
+					
+					String name = param.getAttribute("name").getValue();
+					String type = param.getAttribute("type").getValue();
+					String value = param.getAttribute("value").getValue();
+					
+					strategyParam.add(new Parameter(name, type, value));
+				}
+				
+			}
+			
+		}
+		
+		network.getTrader().setConfiguration(strategyParam);
+	
+	}
 	
 	public HashMap<String,List<TradeNetwork>> populateRaceIndividuals(Integer PopSize) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException{
-		Element networksNode = doc.getRootElement().getChildren("networks").get(0);
+		Element networksNode = definitionDoc.getRootElement().getChildren("networks").get(0);
 		
 		HashMap<String,List<TradeNetwork>> newProp = new HashMap<String,List<TradeNetwork>>();
 		
@@ -172,6 +207,7 @@ public class Mankind {
  
             for(int i=0;i<PopSize;i++){
             	TradeNetwork network = populateNetwork(elem);
+            	setTraderParameterList(network);
             	List<TradeNetwork> networkList = newProp.get(network.getNetworkName());
             	
             	if(networkList==null){
@@ -196,14 +232,16 @@ public class Mankind {
 	}
 	*/
 	
-	public Mankind(String fileName, HashMap<String, Parameter> paramMap,MarketDataGenerator marketDataGenerator) {
+	public Mankind(String fileName, HashMap<String, Parameter> paramMap,MarketDataGenerator marketDataGenerator, Document generationDoc) {
 		this.paramMap = paramMap;
 		this.marketDataGenerator = marketDataGenerator;
+		this.generationDoc = generationDoc;
+		
 		//networkList = new ArrayList<TradeNetwork>();
 		SAXBuilder builder = new SAXBuilder();
 		
         try {
-			doc = builder.build(fileName);
+			definitionDoc = builder.build(fileName);
 			
 		} catch (JDOMException e) {
 			

@@ -44,16 +44,27 @@ public final class TradeUtils {
 	}
 	
 	
-	public static Double roundToTwoDigits(Double lot){
-		//System.out.println("BaseTrader.evaluateProperLot() before:" + lot);
-		BigDecimal value = new BigDecimal(lot);
-		BigDecimal roundOff = value.setScale(2, BigDecimal.ROUND_DOWN);
+	public static Double roundDownDigits(Double param, Integer digitCount){
+		BigDecimal value = new BigDecimal(param);
+		BigDecimal roundOff = value.setScale(digitCount, BigDecimal.ROUND_DOWN);
 		
-		//System.out.println("BaseTrader.evaluateProperLot() after:" + roundOff.doubleValue());
+		return roundOff.doubleValue();
+	}
+	
+	
+	public static Double roundUpDigits(Double param, Integer digitCount){
+		BigDecimal value = new BigDecimal(param);
+		BigDecimal roundOff = value.setScale(digitCount, BigDecimal.ROUND_HALF_UP);
+		
 		return roundOff.doubleValue();
 	}
 
 	public static Double getDouble(String value){
 		return Double.valueOf(value);
+	}
+	
+	public static Double getRoundedUpValue(Double val){
+		
+		return roundUpDigits(val,Constants.MARKET_LOT_PRECISION);
 	}
 }

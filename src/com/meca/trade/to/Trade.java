@@ -3,6 +3,8 @@ package com.meca.trade.to;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.meca.trade.networks.TradeNetwork;
+
 /**
  * This is the realized trade order
  * 
@@ -10,9 +12,26 @@ import java.util.Date;
  * @author ACER
  *
  */
-public class Trade extends MecaObject{
+public class Trade extends MecaObject {
 
-	
+	@Override
+    public boolean equals(Object object)
+    {
+        boolean sameSame = false;
+
+        if (this !=null && object != null && object instanceof Trade)
+        {
+        	
+            Trade arg0 = ((Trade) object);
+        
+            sameSame =  (this.getPositionNo() == arg0.getPositionNo()) && this.getLot()==arg0.getLot() && this.tradeType==arg0.getTradeType() && this.status==arg0.getStatus();
+        
+        }
+
+        return sameSame;
+    }
+
+
 	private TradeType tradeType;
 	private SignalType signal;
 	private Double lot;
@@ -149,6 +168,9 @@ public class Trade extends MecaObject{
 		builder.append("entryPrice=");
 		builder.append(entryPrice);
 		builder.append(" ");
+		builder.append("stopLoss=");
+		builder.append(stopLoss);
+		builder.append(" ");
 		builder.append("exitPrice=");
 		builder.append(exitPrice);
 		builder.append(" ");
@@ -163,9 +185,6 @@ public class Trade extends MecaObject{
 		builder.append(" ");
 		builder.append("profitLoss=");
 		builder.append(profitLoss);
-		builder.append(" ");
-		builder.append("stopLoss=");
-		builder.append(stopLoss);
 		builder.append(" ");
 		builder.append("takeProfit=");
 		builder.append(takeProfit);
@@ -277,7 +296,7 @@ public class Trade extends MecaObject{
 				
 				
 				
-				setProfitLoss(Constants.getRoundedUpValue(val));
+				setProfitLoss(TradeUtils.getRoundedUpValue(val));
 			}else{
 				setProfitLoss(0d);
 			}

@@ -165,6 +165,11 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		builder.append(Constants.FORMAT);
 		builder.append("MDD(%)=");
 		builder.append(mdd);
+		builder.append(Constants.FORMAT);
+		builder.append("strategyStopLimit(%)=");
+		builder.append(strategyStopLimit);
+		
+		
 		
 		builder.append(Constants.FORMAT);
 
@@ -298,9 +303,9 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		annTotalNumberOfLosingTrades = totalNumberOfLosingTrades * annualizationCoefficient;
 		
 		
-		prom = TradeUtils.roundToTwoDigits(((((annualizedGrossProfit/(annTotalNumberOfWinningTrades==0d?1:annTotalNumberOfWinningTrades)) * (annTotalNumberOfWinningTrades - Math.sqrt(annTotalNumberOfWinningTrades)))
+		prom = TradeUtils.roundDownDigits(((((annualizedGrossProfit/(annTotalNumberOfWinningTrades==0d?1:annTotalNumberOfWinningTrades)) * (annTotalNumberOfWinningTrades - Math.sqrt(annTotalNumberOfWinningTrades)))
 				 +
-				 ((annualizedGrossLoss/(annTotalNumberOfLosingTrades==0d?1:annTotalNumberOfLosingTrades)) * (annTotalNumberOfLosingTrades + Math.sqrt(annTotalNumberOfLosingTrades)))) / margin)*100);
+				 ((annualizedGrossLoss/(annTotalNumberOfLosingTrades==0d?1:annTotalNumberOfLosingTrades)) * (annTotalNumberOfLosingTrades + Math.sqrt(annTotalNumberOfLosingTrades)))) / margin)*100,2);
 		
 		return;
 	}

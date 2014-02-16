@@ -21,6 +21,8 @@ public final class Constants {
 	
 	public final static Integer USDTRY_LEVERAGE = 100;
 	
+	public final static Integer MARGIN_CALL_LEVEL = 20;
+	
 	public final static String ENDLN = "\r\n";
 	
 	public final static String FORMAT = ENDLN;
@@ -29,11 +31,21 @@ public final class Constants {
 	
 	public final static String SEPARATOR = ":";
 	
-	public final static Boolean DEBUG_ENABLED = true;
+	public final static Boolean DEBUG_ENABLED = false;
 	
 	public final static String GRAPH_DATA_JSON_START_STRING = "[";
 	public final static String GRAPH_DATA_JSON_END_STRING = "]";
 	public final static String GRAPH_DATA_JSON_SEPARATOR_STRING = ",";
+	
+	
+	public final static String STOP_LOSS_VALUE_TYPE_EQUITY_PERCENTAGE = "equity-percentage";
+	public final static String STOP_LOSS_VALUE_TYPE_POSITION_PERCENTAGE = "position-percentage";
+	public final static String STOP_LOSS_VALUE_TYPE_POINT_TYPE = "point";
+	
+	public final static String STOP_LOSS_TYPE_POSITION_STOP_LOSS = "position-stop-loss";
+	public final static String STOP_LOSS_TYPE_POSITION_TAKE_PROFIT = "position-take-profit";
+	public final static String STOP_LOSS_TYPE_STRATEGY_STOP_LOSS = "strategy-stop-loss";
+	
 	
 	public final static String GENERATION_DIRECTORY = "report";
 	
@@ -41,9 +53,9 @@ public final class Constants {
 	
 	public final static String GRAPH_TEMPLATE_DIRECTORY = GENERATION_DIRECTORY + File.separator +"templates";
 	
-	public static Double getRoundedUpValue(Double val){
-		BigDecimal result = new BigDecimal(val);
-		
-		return result.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-	}
+	public final static Integer MARKET_PRICE_PRECISION = 4;
+	
+	public final static Integer MARKET_LOT_PRECISION = 2;
+	
+	
 }
