@@ -32,7 +32,9 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		return executionHistory;
 	}
 
-
+	public Double getBalance(){
+		return account.getBalance();
+	}
 
 
 	public void setGraphLog(Boolean graphLog) {

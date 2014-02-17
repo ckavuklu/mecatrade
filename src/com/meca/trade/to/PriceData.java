@@ -12,7 +12,14 @@ public class PriceData extends MecaObject {
 	Double low;
 	Double bidPrice;
 	Double askPrice;
+	MarketType marketType;
 	
+	public PriceData(MarketType marketType) {
+		super();
+		this.marketType = marketType;
+	}
+
+
 	public Double getVolume() {
 		return volume;
 	}
@@ -92,12 +99,14 @@ public class PriceData extends MecaObject {
 	 * @param high
 	 * @param low
 	 */
-	public PriceData(Double open, Double close, Double high, Double low) {
+	public PriceData(Double open, Double close, Double high, Double low, MarketType marketType) {
 		super();
 		setOpen(open);
 		setHigh(high);
 		setLow(low);
 		setClose(close);
+		
+		this.marketType = marketType;
 	}
 
 	public Double getOpen() {
@@ -116,7 +125,7 @@ public class PriceData extends MecaObject {
 		this.close = close;
 		
 		this.bidPrice = close;
-		this.askPrice = bidPrice + Constants.EURUSD_SPREAD;
+		this.askPrice = TradeUtils.roundUpDigits(bidPrice + marketType.getSpread(),marketType.getPricePrecision());
 	}
 
 	public Double getHigh() {

@@ -244,6 +244,146 @@
 		</network>
 		
 		
+		
+		
+		<network name="TradeNetwork-1">
+			<components>
+				<component name="_DataFeeder"
+					class="com.meca.trade.components.DataFeeder"></component>
+				
+				<component name="_QuotePrice_C"
+					class="com.meca.trade.components.QuotePrice"></component>
+				
+				<component name="_Kicker" class="com.meca.trade.components.Kicker"></component>
+
+				<component name="_SimpleMovingAverage_SHORT"
+					class="com.meca.trade.components.SimpleMovingAverage">
+				</component>
+				<component name="_SimpleMovingAverage_LONG"
+					class="com.meca.trade.components.SimpleMovingAverage">
+				</component>
+				
+				
+				<component name="_ExponentialMovingAverage_SHORT"
+					class="com.meca.trade.components.ExponentialMovingAverage">
+				</component>
+				<component name="_ExponentialMovingAverage_LONG"
+					class="com.meca.trade.components.ExponentialMovingAverage">
+				</component>
+				
+				
+				
+				<component name="_TradeMultiplexer"
+					class="com.meca.trade.components.TradeMultiplexer"></component>
+				<component name="_PortolioManager"
+					class="com.meca.trade.components.PortolioManager"></component>
+				<component name="_ActionManager"
+					class="com.meca.trade.components.ActionManager"></component>
+			</components>
+
+			<initializations>
+				
+				<initialize component="_QuotePrice_C" port="PRICETYPE">
+					<parameter value="C" type="String"></parameter>
+				</initialize>
+				<initialize component="_DataFeeder" port="ITERATOR">
+					<parameter value="dataIterator" type="Static"></parameter>
+				</initialize>
+				<initialize component="_PortolioManager" port="MANAGER">
+					<parameter value="posManager" type="Static"></parameter>
+				</initialize>
+				<initialize component="_PortolioManager" port="TRADER">
+					<parameter value="com.meca.trade.to.BaseTrader" type="Trader"></parameter>
+				</initialize>
+				<initialize component="_PortolioManager" port="TESTTRADEDATASET">
+					<parameter value="dataSet" type="Static"></parameter>
+				</initialize>
+				
+				<initialize component="_ActionManager" port="MANAGER">
+					<parameter value="posManager" type="Static"></parameter>
+				</initialize>
+				<initialize component="_TradeMultiplexer" port="STRATEGY">
+					<parameter value="com.meca.trade.to.SMAStrategy" type="Strategy"></parameter>
+				</initialize>
+
+
+			</initializations>
+
+			<connections>
+				
+				<connect>
+					<from component="_DataFeeder" port="OUT" no="0" />
+					<to component="_QuotePrice_C" port="TRADEDATA" />
+				</connect>
+				
+				<connect>
+					<from component="_Kicker" port="OUT" no="0" />
+					<to component="_DataFeeder" port="KICKOFF" />
+				</connect>
+				
+				<connect>
+					<from component="_ActionManager" port="CLOCKTICK" no="0" />
+					<to component="_DataFeeder" port="CLOCKTICK" />
+				</connect>
+				
+				<connect>
+					<from component="_QuotePrice_C" port="OUT" no="2" />
+					<to component="_SimpleMovingAverage_SHORT" port="DATA" />
+				</connect>
+				<connect>
+					<from component="_QuotePrice_C" port="OUT" no="3" />
+					<to component="_SimpleMovingAverage_LONG" port="DATA" />
+				</connect>
+				
+				<connect>
+					<from component="_QuotePrice_C" port="OUT" no="4" />
+					<to component="_ExponentialMovingAverage_SHORT" port="DATA" />
+				</connect>
+				<connect>
+					<from component="_QuotePrice_C" port="OUT" no="5" />
+					<to component="_ExponentialMovingAverage_LONG" port="DATA" />
+				</connect>
+				<connect>
+					<from component="_DataFeeder" port="OUT" no="1" />
+					<to component="_TradeMultiplexer" port="MARKETDATA"/>
+				</connect>
+				
+				<connect indicator="SMASHORT">
+					<from component="_SimpleMovingAverage_SHORT" port="OUT" />
+					<to component="_TradeMultiplexer" port="IN" no="4" />
+				</connect>
+				<connect indicator="SMALONG">
+					<from component="_SimpleMovingAverage_LONG" port="OUT" />
+					<to component="_TradeMultiplexer" port="IN" no="9" />
+				</connect>
+				
+				
+				<connect indicator="EMASHORT">
+					<from component="_ExponentialMovingAverage_SHORT" port="OUT" no="0"/>
+					<to component="_TradeMultiplexer" port="IN" no="5" />
+				</connect>
+				<connect indicator="EMALONG">
+					<from component="_ExponentialMovingAverage_LONG" port="OUT" no="0"/>
+					<to component="_TradeMultiplexer" port="IN" no="6" />
+				</connect>
+				
+				
+				<connect>
+					<from component="_TradeMultiplexer" port="OUT" />
+					<to component="_PortolioManager" port="IN" no="0" />
+				</connect>
+				<connect>
+					<from component="_PortolioManager" port="OUT" />
+					<to component="_ActionManager" port="IN" />
+				</connect>
+			</connections>
+
+		</network>
+		
+		
+		
+		
+		
 	</networks>
 
 </optimization>

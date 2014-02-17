@@ -21,29 +21,46 @@
 	</genetic-configuration>
 	
 	<strategy-configuration>
-		<trade-configuration network="TradeNetwork-1" >
+		<!--  trade-configuration network="TradeNetwork-1" >
 			<param name="position-stop-loss" type="equity-percentage" value="10"></param>
 			<param name="position-take-profit" type="equity-percentage" value="10"></param>
-			<param name="strategy-stop-loss" type="point" value="10"></param>
-		</trade-configuration>
+			
+		</trade-configuration-->
 		
 		<trade-configuration network="TradeNetwork-2" >
-			<param name="position-stop-loss" type="equity-percentage" value="1"></param>
-			<param name="position-take-profit" type="point" value="5"></param>
-			<param name="strategy-stop-loss" type="point" value="5"></param>
+			<param name="position-stop-loss" type="point" value="0.0005"></param>
+			<param name="position-take-profit" type="point" value="0.001"></param>
+			
 		</trade-configuration>
 	</strategy-configuration>
 	
 	
 	<indicators>
-	<!-- 
-		<indicator network="TradeNetwork-1" name="_SimpleMovingAverage_SHORT" port="WINDOW">
+	
+		<!-- indicator network="TradeNetwork-1" name="_SimpleMovingAverage_SHORT" port="WINDOW">
 			<interval start="2"  end="5" type="Double"></interval>
 		</indicator>
 		<indicator network="TradeNetwork-1" name="_SimpleMovingAverage_LONG" port="WINDOW">
 			<interval start="6"  end="9" type="Double"></interval>
-		</indicator>	
-		 -->	
+		</indicator-->	
+		 	
+		 	
+		 	<indicator network="TradeNetwork-1" name="_SimpleMovingAverage_SHORT" port="WINDOW">
+			<interval start="15"  end="15" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-1" name="_SimpleMovingAverage_LONG" port="WINDOW">
+			<interval start="60"  end="60" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-1" name="_ExponentialMovingAverage_SHORT" port="WINDOW">
+			<interval start="15"  end="15" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-1" name="_ExponentialMovingAverage_LONG" port="WINDOW">
+			<interval start="60"  end="60" type="Double"></interval>
+		</indicator>		
+		 	
+		 	
+		 	
+		 	
 		<indicator network="TradeNetwork-2" name="_SimpleMovingAverage_SHORT" port="WINDOW">
 			<interval start="15"  end="15" type="Double"></interval>
 		</indicator>

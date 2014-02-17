@@ -33,6 +33,7 @@ public class MarketDataGenerator {
 	private Integer schedulePeriod = null;
 	private String schedule = null;
 	private List<PriceData> marketData = null;
+	MarketType marketType = null;
 	
 	public Iterator<PriceData> getMarketDataIterator(){
 		return marketData.iterator();
@@ -75,6 +76,13 @@ public class MarketDataGenerator {
 
 				boolean endOfData = false;
 				boolean result = false;
+				
+				
+				if(trade[0].equalsIgnoreCase(MarketType.EURUSD.toString())){
+					marketType = MarketType.EURUSD;
+				} else if(trade[0].equalsIgnoreCase(MarketType.USDTRY.toString())){
+					marketType = MarketType.USDTRY;
+				}
 
 				if (!schedule.equalsIgnoreCase("ALL")) {
 
@@ -108,9 +116,9 @@ public class MarketDataGenerator {
 
 								result = true;
 								
-								PriceData data = new PriceData();
+								PriceData data = new PriceData(marketType);
 								data.setTime(cycleStart);
-								data.setVolume(TradeUtils.getDouble(trade[7]));
+								data.setVolume(TradeUtils.convertStringToDouble(trade[7],marketType.getPricePrecision()));
 								data.setClose(periodClose);
 								data.setOpen(periodOpen);
 								data.setHigh(periodHigh);
@@ -138,11 +146,11 @@ public class MarketDataGenerator {
 				} else {
 					result = true;
 					
-					PriceData data = new PriceData(TradeUtils.getDouble(trade[3]),TradeUtils.getDouble(trade[6]),TradeUtils.getDouble(trade[4]),TradeUtils.getDouble(trade[5]));
+					PriceData data = new PriceData(TradeUtils.convertStringToDouble(trade[3],marketType.getPricePrecision()),TradeUtils.convertStringToDouble(trade[6],marketType.getPricePrecision()),TradeUtils.convertStringToDouble(trade[4],marketType.getPricePrecision()),TradeUtils.convertStringToDouble(trade[5],marketType.getPricePrecision()),marketType);
 					Date date = TradeUtils.getTime(trade[1] + "-" + trade[2]);
 					data.setQuote(trade[0]);	
 					data.setTime(date);
-					data.setVolume(TradeUtils.getDouble(trade[7]));
+					data.setVolume(TradeUtils.convertStringToDouble(trade[7],marketType.getPricePrecision()));
 					
 					marketData.add(data);
 					
@@ -173,10 +181,10 @@ public class MarketDataGenerator {
 	
 	
 	private void setIntervalParameters(String highParam, String lowParam, String openParam, String closeParam) {
-		Double high = Double.valueOf(highParam);
-		Double low = Double.valueOf(lowParam);
-		Double open = Double.valueOf(openParam);
-		Double close = Double.valueOf(closeParam);
+		Double high = TradeUtils.convertStringToDouble(highParam,marketType.getPricePrecision());
+		Double low = TradeUtils.convertStringToDouble(lowParam,marketType.getPricePrecision());
+		Double open = TradeUtils.convertStringToDouble(openParam,marketType.getPricePrecision());
+		Double close = TradeUtils.convertStringToDouble(closeParam,marketType.getPricePrecision());
 
 		if (periodHigh == null || (periodHigh < high)) {
 			periodHigh = high;

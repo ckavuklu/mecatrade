@@ -52,15 +52,21 @@ public final class TradeUtils {
 	}
 	
 	
-	public static Double roundUpDigits(Double param, Integer digitCount){
-		BigDecimal value = new BigDecimal(param);
-		BigDecimal roundOff = value.setScale(digitCount, BigDecimal.ROUND_HALF_UP);
-		
-		return roundOff.doubleValue();
+	public static Double roundUpDigits(Double param, Integer digitCount) {
+
+		if (param != null & param != Double.NaN) {
+			BigDecimal value = new BigDecimal(param);
+			BigDecimal roundOff = value.setScale(digitCount,
+					BigDecimal.ROUND_HALF_UP);
+
+			return roundOff.doubleValue();
+		} else
+			return null;
 	}
 
-	public static Double getDouble(String value){
-		return Double.valueOf(value);
+	public static Double convertStringToDouble(String value,Integer precision){
+		
+		return roundUpDigits(Double.valueOf(value),precision);
 	}
 	
 	public static Double getRoundedUpValue(Double val){

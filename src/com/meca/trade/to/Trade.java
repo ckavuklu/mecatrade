@@ -171,6 +171,9 @@ public class Trade extends MecaObject {
 		builder.append("stopLoss=");
 		builder.append(stopLoss);
 		builder.append(" ");
+		builder.append("takeProfit=");
+		builder.append(takeProfit);
+		builder.append(" ");
 		builder.append("exitPrice=");
 		builder.append(exitPrice);
 		builder.append(" ");
@@ -186,9 +189,7 @@ public class Trade extends MecaObject {
 		builder.append("profitLoss=");
 		builder.append(profitLoss);
 		builder.append(" ");
-		builder.append("takeProfit=");
-		builder.append(takeProfit);
-		builder.append(" ");
+		
 		builder.append("tradeNo=");
 		builder.append(tradeNo);
 		builder.append(" ");

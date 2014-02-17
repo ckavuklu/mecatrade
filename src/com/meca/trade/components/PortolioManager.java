@@ -16,6 +16,7 @@ import com.meca.trade.to.IPositionManager;
 import com.meca.trade.to.ITestTradeDataSet;
 import com.meca.trade.to.ITrader;
 import com.meca.trade.to.Order;
+import com.meca.trade.to.SignalType;
 import com.meca.trade.to.StrategyDecision;
 import com.meca.trade.to.Trade;
 
@@ -60,6 +61,8 @@ public class PortolioManager extends Component {
 	List<Trade> tradeList = new ArrayList<Trade>();
 	
 	boolean endOfMarketData = false;
+	
+	SignalType signalType = SignalType.Ex;
 	
 	@Override
 	protected void execute() {
@@ -131,12 +134,22 @@ public class PortolioManager extends Component {
 	    		  if(value.getPrice().getClose() < 0 || value.getPrice().getOpen() < 0
 	    				  || value.getPrice().getHigh() < 0 || value.getPrice().getLow() < 0){
 	    			  endOfMarketData = true;
+	    			  signalType = SignalType.Em;
 	    		  }else{
 	    			  manager.updatePriceData(value.getPrice());
 	    			  trader.updatePriceData(value.getPrice());
 	    			  
-	    			  if(manager.getMarginLevel()  <= Constants.MARGIN_CALL_LEVEL)
+	    			  if(manager.getMarginLevel()  <= Constants.MARGIN_CALL_LEVEL){
 	    				  endOfMarketData = true;
+	    				  signalType = SignalType.Mc;
+	    			  }
+	    				  
+	    			  /*if(((manager.getEquity()/manager.getBalance())*100d <= Constants.STRATEGY_STOP_LEVEL*Constants.SAFETY_FACTOR)){
+	    				  endOfMarketData = true;
+	    				  signalType = SignalType.Ss;
+	    			  }*/
+	    			  
+	    			  
 	    		  }
 	    		  strategyDecisions.add(value);
 		    	  
@@ -149,7 +162,7 @@ public class PortolioManager extends Component {
 		    if(!endOfMarketData){
 		    	order = new Order(executeTrades(evaluateStrategyDecisions(strategyDecisions)));
 		    }else{
-		    	order = new Order(executeTrades(trader.endOfMarket()));
+		    	order = new Order(executeTrades(trader.endOfMarket(signalType)));
 		    }
 		    
 		    manager.updateGraphData(endOfMarketData);

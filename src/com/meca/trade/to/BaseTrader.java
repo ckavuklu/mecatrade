@@ -17,13 +17,14 @@ public class BaseTrader implements ITrader {
 	protected Double bidPrice;
 	
 	protected Boolean positionStopLossEnabled = Boolean.FALSE;
-	protected Boolean strategyStopLossEnabled = Boolean.FALSE;
+	protected Boolean positionTakeProfitEnabled = Boolean.FALSE;
+	
 	
 	protected String positionStopLossType;
 	protected Double positionStopLossValue;
 	
-	private String strategyStopLossType;
-	private Double strategyStopLossValue;
+	private String positionTakeProfitType;
+	private Double positionTakeProfitValue;
 	
 	public BaseTrader(IPositionManager positionManager) {
 
@@ -36,18 +37,18 @@ public class BaseTrader implements ITrader {
 		
 		if(data.getTradeType()==TradeType.SELL || data.getTradeType()==TradeType.BUY){
 			if(positionStopLossEnabled){
-				if(positionStopLossType.equalsIgnoreCase(Constants.STOP_LOSS_VALUE_TYPE_EQUITY_PERCENTAGE)){
+				if(positionStopLossType.equalsIgnoreCase(Constants.VALUE_TYPE_EQUITY_PERCENTAGE)){
 					Double difference = ((positionManager.getEquity()*positionStopLossValue/100d) / (positionManager.getMarketType().getLotSize()*data.getLot()));
 					difference = ((data.getTradeType()==TradeType.SELL)?1d:-1d) * difference;
 					result = data.getEntryPrice() +  difference ;
 					
-				}else if(positionStopLossType.equalsIgnoreCase(Constants.STOP_LOSS_VALUE_TYPE_POSITION_PERCENTAGE)){
+				}else if(positionStopLossType.equalsIgnoreCase(Constants.VALUE_TYPE_POSITION_PERCENTAGE)){
 					
 					Double difference = ((data.getEntryPrice()*positionStopLossValue/100d) / positionManager.getMarketType().getLeverage());
 					difference = ((data.getTradeType()==TradeType.SELL)?1d:-1d) * difference;
 					result = data.getEntryPrice() +  difference;
 					
-				}else if(positionStopLossType.equalsIgnoreCase(Constants.STOP_LOSS_VALUE_TYPE_POINT_TYPE)){
+				}else if(positionStopLossType.equalsIgnoreCase(Constants.VALUE_TYPE_POINT_TYPE)){
 					Double difference = ((data.getTradeType()==TradeType.SELL)?1d:-1d) * positionStopLossValue;
 					result = data.getEntryPrice() +  difference;
 				}
@@ -55,14 +56,43 @@ public class BaseTrader implements ITrader {
 			}
 		}
 		
-		return result!=null & result!=result.NaN? TradeUtils.roundUpDigits(result, Constants.MARKET_PRICE_PRECISION):result;
+		return TradeUtils.roundUpDigits(result, positionManager.getMarketType().getPricePrecision());
 	}
 	
-	protected Double calculatePositionSize(Trade data){
+	
+	protected Double calculatePositionTakeProfit(Trade data){
+		Double result = null;
+		
+		if(data.getTradeType()==TradeType.SELL || data.getTradeType()==TradeType.BUY){
+			if(positionTakeProfitEnabled){
+				if(positionTakeProfitType.equalsIgnoreCase(Constants.VALUE_TYPE_EQUITY_PERCENTAGE)){
+					Double difference = ((positionManager.getEquity()*positionTakeProfitValue/100d) / (positionManager.getMarketType().getLotSize()*data.getLot()));
+					difference = ((data.getTradeType()==TradeType.SELL)?-1d:1d) * difference;
+					result = data.getEntryPrice() +  difference ;
+					
+				}else if(positionTakeProfitType.equalsIgnoreCase(Constants.VALUE_TYPE_POSITION_PERCENTAGE)){
+					
+					Double difference = ((data.getEntryPrice()*positionTakeProfitValue/100d) / positionManager.getMarketType().getLeverage());
+					difference = ((data.getTradeType()==TradeType.SELL)?-1d:1d) * difference;
+					result = data.getEntryPrice() +  difference;
+					
+				}else if(positionTakeProfitType.equalsIgnoreCase(Constants.VALUE_TYPE_POINT_TYPE)){
+					Double difference = ((data.getTradeType()==TradeType.SELL)?-1d:1d) * positionTakeProfitValue;
+					result = data.getEntryPrice() +  difference;
+				}
+				
+			}
+		}
+		
+		return TradeUtils.roundUpDigits(result, positionManager.getMarketType().getPricePrecision());
+	}
+	
+	
+	protected Double calculatePositionSize(TradeType tradeType){
 		Double result = null;
 		Double freeMargin = positionManager.getFreeMargin();
 		
-		result = TradeUtils.roundDownDigits(((freeMargin*positionManager.getMarketType().getLeverage()) / (data.getTradeType()==TradeType.BUY?askPrice:bidPrice)) / positionManager.getMarketType().getLotSize(),Constants.MARKET_LOT_PRECISION);
+		result = TradeUtils.roundDownDigits(((freeMargin*positionManager.getMarketType().getLeverage()) / (tradeType==TradeType.BUY?askPrice:bidPrice)) / positionManager.getMarketType().getLotSize(),Constants.MARKET_LOT_PRECISION);
 		
 		return result;
 	}
@@ -114,9 +144,54 @@ public class BaseTrader implements ITrader {
 		}
 	}
 	
-	protected void evaluateProfit(){
+	
+	protected void evaluateProfit(List<Trade> tradeList){
+		List<IPosition> positions = positionManager.getPositions();
 		
+		for(IPosition p:positions){
+			if(p.getStatus() == TradeStatusType.OPEN){
+				
+				if(p.getTradeType() == TradeType.SELL){
+					
+					if(askPrice <= p.getTakeProfit()){
+						
+						Trade tradeData = new Trade();
+						tradeData.setDate(new Date());
+						tradeData.setStatus(TradeStatusType.OPEN);
+						tradeData.setPositionNo(p.getPositionNo());
+						tradeData.setStatus(TradeStatusType.OPEN);
+						tradeData.setTradeType(TradeType.SEXIT);
+						tradeData.setSignal(SignalType.Pt);
+						tradeData.setLot(p.getOpenLotCount());
+						tradeData.setEntryPrice(p.getEntryPrice());
+						tradeData.setExitPrice(askPrice);
+						tradeData.setMarketType(positionManager.getMarketType());
+						addToTradeList(tradeList,tradeData);
+						
+					}
+				}else if(p.getTradeType() == TradeType.BUY){
+					if(bidPrice >= p.getTakeProfit()){
+						
+						Trade tradeData = new Trade();
+						tradeData.setDate(new Date());
+						tradeData.setStatus(TradeStatusType.OPEN);
+						tradeData.setPositionNo(p.getPositionNo());
+						tradeData.setStatus(TradeStatusType.OPEN);
+						tradeData.setTradeType(TradeType.LEXIT);
+						tradeData.setSignal(SignalType.Pt);
+						tradeData.setLot(p.getOpenLotCount());
+						tradeData.setExitPrice(bidPrice);
+						tradeData.setEntryPrice(p.getEntryPrice());
+						tradeData.setMarketType(positionManager.getMarketType());
+						addToTradeList(tradeList,tradeData);
+						
+					}
+				}
+
+			}
+		}
 	}
+	
 	
 	private void addToTradeList(List<Trade> tradeList, Trade tradeData){
 		if(!isTradeShouldBeFiltered(tradeList, tradeData)){
@@ -164,25 +239,33 @@ public class BaseTrader implements ITrader {
 		List<IPosition> positions = positionManager.getPositions();
 		Double freeMargin = positionManager.getFreeMargin();
 		
-		evaluateRisk(tradeList);
+		if(positionStopLossEnabled)
+			evaluateRisk(tradeList);
 		
-		evaluateProfit();
+		if(positionTakeProfitEnabled)
+			evaluateProfit(tradeList);
 		
 		for(StrategyDecision decision : decisionList){
 
 			if(decision.getDecision() == DecisionType.LONG){
 	
-				if(freeMargin > 0){
+				if(freeMargin > 0 && calculatePositionSize(TradeType.BUY)>0d){
 					
 					Trade tradeData = new Trade();
 					tradeData.setDate(new Date());
 					tradeData.setStatus(TradeStatusType.OPEN);
 					tradeData.setTradeType(TradeType.BUY);
 					tradeData.setSignal(SignalType.En);
-					tradeData.setLot(calculatePositionSize(tradeData));
+					tradeData.setLot(calculatePositionSize(TradeType.BUY));
 					tradeData.setEntryPrice(askPrice);
 					tradeData.setMarketType(positionManager.getMarketType());
-					tradeData.setStopLoss(calculatePositionStopLoss(tradeData));
+					
+					if(positionStopLossEnabled)
+						tradeData.setStopLoss(calculatePositionStopLoss(tradeData));
+					
+					if(positionTakeProfitEnabled)
+						tradeData.setTakeProfit(calculatePositionTakeProfit(tradeData));
+					
 					
 					addToTradeList(tradeList,tradeData);
 					
@@ -207,17 +290,23 @@ public class BaseTrader implements ITrader {
 				
 			}else if(decision.getDecision() == DecisionType.SHORT){
 				
-				if(freeMargin > 0){
+				if(freeMargin > 0 && calculatePositionSize(TradeType.SELL)>0d){
 
 					Trade tradeData = new Trade();
 					tradeData.setDate(new Date());
 					tradeData.setStatus(TradeStatusType.OPEN);
 					tradeData.setTradeType(TradeType.SELL);
 					tradeData.setSignal(SignalType.En);
-					tradeData.setLot(calculatePositionSize(tradeData));
+					tradeData.setLot(calculatePositionSize(TradeType.SELL));
 					tradeData.setEntryPrice(bidPrice);
 					tradeData.setMarketType(positionManager.getMarketType());
-					tradeData.setStopLoss(calculatePositionStopLoss(tradeData));
+					
+					if(positionStopLossEnabled)
+						tradeData.setStopLoss(calculatePositionStopLoss(tradeData));
+					
+					if(positionTakeProfitEnabled)
+						tradeData.setTakeProfit(calculatePositionTakeProfit(tradeData));
+					
 					addToTradeList(tradeList,tradeData);
 				}
 				
@@ -251,17 +340,16 @@ public class BaseTrader implements ITrader {
 	@Override
 	public void setConfiguration(List<Parameter> paramList) {
 		
-		
 		for(Parameter param:paramList){
-			if(param.getName().equalsIgnoreCase(Constants.STOP_LOSS_TYPE_POSITION_STOP_LOSS)){
+			if(param.getName().equalsIgnoreCase(Constants.TYPE_POSITION_STOP_LOSS)){
 				positionStopLossEnabled = Boolean.TRUE;
 				positionStopLossType = param.getType();
 				positionStopLossValue = (Double)param.getValue();
 				
-			}else if(param.getName().equalsIgnoreCase(Constants.STOP_LOSS_TYPE_STRATEGY_STOP_LOSS)){
-				strategyStopLossEnabled = Boolean.TRUE;
-				strategyStopLossType = param.getType();
-				strategyStopLossValue = (Double)param.getValue();
+			}else if(param.getName().equalsIgnoreCase(Constants.TYPE_POSITION_TAKE_PROFIT)){
+				positionTakeProfitEnabled = Boolean.TRUE;
+				positionTakeProfitType = param.getType();
+				positionTakeProfitValue = (Double)param.getValue();
 			}
 		}
 		
@@ -271,12 +359,12 @@ public class BaseTrader implements ITrader {
 
 
 	@Override
-	public List<Trade> endOfMarket() {
+	public List<Trade> endOfMarket(SignalType signalType) {
 		ArrayList<Trade> tradeList = new ArrayList<Trade>();
 		
 		List<IPosition> positions = positionManager.getPositions();
 
-		/*
+		
 		for(IPosition p:positions){
 
 			if(p.getStatus() == TradeStatusType.OPEN){
@@ -286,7 +374,7 @@ public class BaseTrader implements ITrader {
 				tradeData.setPositionNo(p.getPositionNo());
 				tradeData.setStatus(TradeStatusType.OPEN);
 				tradeData.setTradeType(p.getTradeType()==TradeType.SELL?TradeType.SEXIT:TradeType.LEXIT);
-				tradeData.setSignal(SignalType.Ex);
+				tradeData.setSignal(signalType);
 				tradeData.setLot(p.getOpenLotCount());
 				tradeData.setEntryPrice(p.getEntryPrice());
 				tradeData.setExitPrice(p.getTradeType()==TradeType.SELL?askPrice:bidPrice);
@@ -294,7 +382,7 @@ public class BaseTrader implements ITrader {
 				tradeList.add(tradeData);
 			}
 		}
-		*/
+		
 		
 		return tradeList;
 	}

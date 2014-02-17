@@ -33,6 +33,8 @@ public interface IPositionManager extends IPriceData{
 	public Double getMarginLevel();
 	
 	public void updateGraphData(boolean endOfMarket);
+	
+	public Double getBalance();
 
 	public List<ExecutionRecord> getExecutionHistory();
 

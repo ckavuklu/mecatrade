@@ -36,6 +36,27 @@ public enum MarketType implements Serializable{
 
     }
     
+    
+    public Integer getPricePrecision(){
+    	Integer result = 0;
+    	switch(this){
+	    	case EURUSD : {
+	    		result = Constants.EURUSD_MARKET_PRICE_PRECISION;
+	    		break;
+	    	}
+	    	
+	    	case USDTRY : {
+	    		result = Constants.USDTRY_MARKET_PRICE_PRECISION;
+	    		break;
+	    	}
+	    	default:{
+	    		break;
+	    	}
+		}
+    	return result;
+    }
+    
+    
     public Integer getLotSize(){
     	Integer result = 0;
     	switch(this){
@@ -95,5 +116,26 @@ public enum MarketType implements Serializable{
     	
     	return result;
     	
+    }
+    
+    
+    public Double getSpread(){
+    	Double result = null;
+    	switch(this){
+	    	case EURUSD : {
+	    		result = Constants.EURUSD_SPREAD;
+	    		break;
+	    	}
+	    	
+	    	case USDTRY : {
+	    		result = Constants.USDTRY_SPREAD;
+	    		break;
+	    	}
+	    	default:{
+	    		break;
+	    	}
+    	}
+    	
+    	return result;
     }
 }

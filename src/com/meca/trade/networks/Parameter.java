@@ -35,11 +35,11 @@ public class Parameter {
 			result = Integer.valueOf(value);
 		}else if(type.equalsIgnoreCase("Date")){
 			result = TradeUtils.getTime(value);
-		}else if(type.equalsIgnoreCase(Constants.STOP_LOSS_VALUE_TYPE_EQUITY_PERCENTAGE)){
+		}else if(type.equalsIgnoreCase(Constants.VALUE_TYPE_EQUITY_PERCENTAGE)){
 			result = Double.valueOf(value);
-		}else if(type.equalsIgnoreCase(Constants.STOP_LOSS_VALUE_TYPE_POSITION_PERCENTAGE)){
+		}else if(type.equalsIgnoreCase(Constants.VALUE_TYPE_POSITION_PERCENTAGE)){
 			result = Double.valueOf(value);
-		}else if(type.equalsIgnoreCase(Constants.STOP_LOSS_VALUE_TYPE_POINT_TYPE)){
+		}else if(type.equalsIgnoreCase(Constants.VALUE_TYPE_POINT_TYPE)){
 			result = Double.valueOf(value);
 		}else
 			result = "Not Yet";

@@ -8,7 +8,7 @@ import com.meca.trade.networks.Parameter;
 public interface ITrader extends Serializable, IPriceData {
 	List<Trade> evaluateStrategyDecisions(List<StrategyDecision> decisionList);
 	
-	List<Trade> endOfMarket();
+	List<Trade> endOfMarket(SignalType signalType);
 	
 	void setConfiguration(List<Parameter> paramList);
 }

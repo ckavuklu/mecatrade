@@ -7,7 +7,13 @@ public enum SignalType implements Serializable{
 	Ex(1d),
 	Pt(2d),
 	Rs(3d),
-	Ps(4d);
+	Ps(4d),
+	/* Margin call */
+	Mc(5d),
+	/* Strategy Stop */
+	Ss(6d),
+	/* End of Market Signal */
+	Em(7d);
 	
 	private final Double value;
 
