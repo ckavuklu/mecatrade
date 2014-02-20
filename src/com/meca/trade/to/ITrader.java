@@ -11,4 +11,8 @@ public interface ITrader extends Serializable, IPriceData {
 	List<Trade> endOfMarket(SignalType signalType);
 	
 	void setConfiguration(List<Parameter> paramList);
+	
+	public IPositionManager getPositionManager();
+	public Double getAskPrice();
+	public Double getBidPrice();
 }

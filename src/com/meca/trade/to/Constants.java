@@ -27,6 +27,8 @@ public final class Constants {
 	
 	public final static Double STRATEGY_STOP_LEVEL = 10d;
 	
+	public final static Double DEFAULT_POSITION_SIZE_PERCENTAGE = 100d;
+	
 	public final static String ENDLN = "\r\n";
 	
 	public final static String FORMAT = ENDLN;
@@ -49,6 +51,10 @@ public final class Constants {
 	public final static String TYPE_POSITION_STOP_LOSS = "position-stop-loss";
 	public final static String TYPE_POSITION_TAKE_PROFIT = "position-take-profit";
 	
+	
+	public final static String TYPE_POSITION_SIZER = "position-sizer";
+	public final static String VALUE_TYPE_POSITION_SIZER_VOLATILITY_ADJUSTED = "volatility-adjusted";
+	public final static String VALUE_TYPE_POSITION_SIZER_KELLY = "kelly";
 	
 	public final static String GENERATION_DIRECTORY = "report";
 	

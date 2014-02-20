@@ -295,8 +295,7 @@ public class PositionManager extends MecaObject implements IPositionManager{
 			
 			executionHistory.add(new ExecutionRecord(priceData, equity));
 			
-			if(! endOfMarket)
-				log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
 			
 			perfReporManager.getGraphLogger().writeLog(log.toString());
 		}

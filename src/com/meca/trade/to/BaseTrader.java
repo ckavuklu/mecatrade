@@ -1,18 +1,28 @@
 package com.meca.trade.to;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import com.meca.trade.networks.Parameter;
 
 public class BaseTrader implements ITrader {
 	
 	protected IPositionManager positionManager;
+	public IPositionManager getPositionManager() {
+		return positionManager;
+	}
+
+
+	public Double getAskPrice() {
+		return askPrice;
+	}
+
+
+	public Double getBidPrice() {
+		return bidPrice;
+	}
+
 	protected Double askPrice;
 	protected Double bidPrice;
 	
@@ -26,9 +36,12 @@ public class BaseTrader implements ITrader {
 	private String positionTakeProfitType;
 	private Double positionTakeProfitValue;
 	
+	private IPositionSizer positionSizer;
+	
 	public BaseTrader(IPositionManager positionManager) {
 
 		this.positionManager = positionManager;
+		this.positionSizer = new VolatilityAdjustedPositionSizer(Constants.DEFAULT_POSITION_SIZE_PERCENTAGE,this);
 	}
 	
 	
@@ -88,15 +101,6 @@ public class BaseTrader implements ITrader {
 	}
 	
 	
-	protected Double calculatePositionSize(TradeType tradeType){
-		Double result = null;
-		Double freeMargin = positionManager.getFreeMargin();
-		
-		result = TradeUtils.roundDownDigits(((freeMargin*positionManager.getMarketType().getLeverage()) / (tradeType==TradeType.BUY?askPrice:bidPrice)) / positionManager.getMarketType().getLotSize(),Constants.MARKET_LOT_PRECISION);
-		
-		return result;
-	}
-
 	protected void evaluateRisk(List<Trade> tradeList){
 		List<IPosition> positions = positionManager.getPositions();
 		
@@ -248,15 +252,17 @@ public class BaseTrader implements ITrader {
 		for(StrategyDecision decision : decisionList){
 
 			if(decision.getDecision() == DecisionType.LONG){
+				
+				Double lotSize = positionSizer.getLotSize(TradeType.BUY);
 	
-				if(freeMargin > 0 && calculatePositionSize(TradeType.BUY)>0d){
+				if(lotSize>0d){
 					
 					Trade tradeData = new Trade();
 					tradeData.setDate(new Date());
 					tradeData.setStatus(TradeStatusType.OPEN);
 					tradeData.setTradeType(TradeType.BUY);
 					tradeData.setSignal(SignalType.En);
-					tradeData.setLot(calculatePositionSize(TradeType.BUY));
+					tradeData.setLot(lotSize);
 					tradeData.setEntryPrice(askPrice);
 					tradeData.setMarketType(positionManager.getMarketType());
 					
@@ -290,14 +296,16 @@ public class BaseTrader implements ITrader {
 				
 			}else if(decision.getDecision() == DecisionType.SHORT){
 				
-				if(freeMargin > 0 && calculatePositionSize(TradeType.SELL)>0d){
+				Double lotSize = positionSizer.getLotSize(TradeType.SELL);
+				
+				if(lotSize>0d){
 
 					Trade tradeData = new Trade();
 					tradeData.setDate(new Date());
 					tradeData.setStatus(TradeStatusType.OPEN);
 					tradeData.setTradeType(TradeType.SELL);
 					tradeData.setSignal(SignalType.En);
-					tradeData.setLot(calculatePositionSize(TradeType.SELL));
+					tradeData.setLot(lotSize);
 					tradeData.setEntryPrice(bidPrice);
 					tradeData.setMarketType(positionManager.getMarketType());
 					
@@ -350,6 +358,10 @@ public class BaseTrader implements ITrader {
 				positionTakeProfitEnabled = Boolean.TRUE;
 				positionTakeProfitType = param.getType();
 				positionTakeProfitValue = (Double)param.getValue();
+			}else if(param.getName().equalsIgnoreCase(Constants.TYPE_POSITION_SIZER)){
+				if(param.getType().equalsIgnoreCase(Constants.VALUE_TYPE_POSITION_SIZER_VOLATILITY_ADJUSTED))
+					positionSizer = new VolatilityAdjustedPositionSizer((Double)param.getValue(),this);
+				
 			}
 		}
 		
