@@ -39,7 +39,6 @@ public class Trade extends MecaObject {
 	private Double realizedPrice;
 	private Double exitPrice;
 	private Date entryDate;
-	private Date exitDate;
 	private Date realizedDate;
 	private Double profitLoss;
 	private Integer tradeNo;
@@ -72,14 +71,6 @@ public class Trade extends MecaObject {
 
 	public void setEntryDate(Date entryDate) {
 		this.entryDate = entryDate;
-	}
-
-	public Date getExitDate() {
-		return exitDate;
-	}
-
-	public void setExitDate(Date exitDate) {
-		this.exitDate = exitDate;
 	}
 
 	public Double getTakeProfit() {
@@ -220,6 +211,7 @@ public class Trade extends MecaObject {
 	public Double getRealizedPrice() {
 		return realizedPrice;
 	}
+	
 	public void setRealizedPrice(Double realizedPrice) {
 		this.realizedPrice = realizedPrice;
 	}
@@ -227,6 +219,7 @@ public class Trade extends MecaObject {
 	public Date getRealizedDate() {
 		return realizedDate;
 	}
+	
 	public void setRealizedDate(Date realizedDate) {
 		this.realizedDate = realizedDate;
 	}
@@ -244,12 +237,8 @@ public class Trade extends MecaObject {
 		this.status = status;
 	}
 	
-	public Date getDate() {
-		return entryDate;
-	}
-	public void setDate(Date date) {
-		this.entryDate = date;
-	}
+	
+	
 	public TradeType getTradeType() {
 		return tradeType;
 	}

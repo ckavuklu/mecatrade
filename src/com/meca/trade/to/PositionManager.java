@@ -354,18 +354,69 @@ public class PositionManager extends MecaObject implements IPositionManager{
 	}
 	
 	
-	public Integer getConsecutiveWinningTrades(){
+	public Integer getTotalNumberOfOpenPositionCount(Date startDate, Date endDate){
+		Integer result = 0;
+		
+		for (IPosition pos : positionList) {
+		
+			if (pos.getStatus() == TradeStatusType.OPEN && startDate==null && endDate==null) {
+				result += 1;
+				
+			}else{
+				if(pos.getStatus() == TradeStatusType.OPEN && startDate!=null && endDate==null && pos.getEntryDate().compareTo(startDate) >=0){
+					result += 1;
+					
+				} else if(endDate!=null && startDate==null && (pos.getEntryDate().compareTo(endDate) < 0 && ( pos.getExitDate()==null || pos.getExitDate().compareTo(endDate) > 0) )){
+					result += 1;
+					
+				} else if(startDate!=null && endDate!=null && pos.getEntryDate().compareTo(startDate) >=0 && ( pos.getExitDate()==null || pos.getExitDate().compareTo(endDate) > 0) ){
+					result += 1;
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	
+	public Integer getConsecutiveWinningTrades(Date startDate, Date endDate){
 	
 		Integer result = 0;
 		Integer rally = 0;
 		
+		
 		for (Trade tr : tradeHistory) {
 		
-			if (tr.getStatus() == TradeStatusType.CLOSE && !(tr.getTradeType() == TradeType.BUY || tr.getTradeType() == TradeType.SELL)) {
+			if (tr.getStatus() == TradeStatusType.CLOSE && !(tr.getTradeType() == TradeType.BUY || tr.getTradeType() == TradeType.SELL) && startDate==null && endDate==null) {
 				
 				if(tr.getProfitLoss()>0) rally++;
 				if(tr.getProfitLoss()<0) rally=0;
 				if (rally>result) result = rally;
+				
+			}else{
+				if(tr.getStatus() == TradeStatusType.CLOSE && !(tr.getTradeType() == TradeType.BUY || tr.getTradeType() == TradeType.SELL)){
+					if(startDate!=null && endDate==null){
+						if(tr.getRealizedDate().compareTo(startDate) >= 0){
+							if(tr.getProfitLoss()>0) rally++;
+							if(tr.getProfitLoss()<0) rally=0;
+							if (rally>result) result = rally;
+						}
+						
+					} else if(endDate!=null && startDate==null){
+						if(tr.getRealizedDate().compareTo(endDate) < 0){
+							if(tr.getProfitLoss()>0) rally++;
+							if(tr.getProfitLoss()<0) rally=0;
+							if (rally>result) result = rally;
+						}
+						
+					} else if(startDate!=null && endDate!=null){
+						if(tr.getRealizedDate().compareTo(endDate) < 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+							if(tr.getProfitLoss()>0) rally++;
+							if(tr.getProfitLoss()<0) rally=0;
+							if (rally>result) result = rally;
+						}
+					}
+				}
 				
 			}
 		}
@@ -373,21 +424,48 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		return result;
 	}
 	
-	public Integer getConsecutiveLosingTrades(){
-	
+	public Integer getConsecutiveLosingTrades(Date startDate, Date endDate){
 		Integer result = 0;
 		Integer rally = 0;
 		
-		for (Trade tr : tradeHistory) {
 		
-			if (tr.getStatus() == TradeStatusType.CLOSE && !(tr.getTradeType() == TradeType.BUY || tr.getTradeType() == TradeType.SELL)) {
+		for (Trade tr : tradeHistory) {
+			
+			if (tr.getStatus() == TradeStatusType.CLOSE && !(tr.getTradeType() == TradeType.BUY || tr.getTradeType() == TradeType.SELL) && startDate==null && endDate==null) {
 				
 				if(tr.getProfitLoss()<0) rally++;
 				if(tr.getProfitLoss()>0) rally=0;
 				if (rally>result) result = rally;
 				
+			}else{
+				if(tr.getStatus() == TradeStatusType.CLOSE && !(tr.getTradeType() == TradeType.BUY || tr.getTradeType() == TradeType.SELL)){
+					if(startDate!=null && endDate==null){
+						if(tr.getRealizedDate().compareTo(startDate) >= 0){
+							if(tr.getProfitLoss()<0) rally++;
+							if(tr.getProfitLoss()>0) rally=0;
+							if (rally>result) result = rally;
+						}
+						
+					} else if(endDate!=null && startDate==null){
+						if(tr.getRealizedDate().compareTo(endDate) < 0){
+							if(tr.getProfitLoss()<0) rally++;
+							if(tr.getProfitLoss()>0) rally=0;
+							if (rally>result) result = rally;
+						}
+						
+					} else if(startDate!=null && endDate!=null){
+						if(tr.getRealizedDate().compareTo(endDate) < 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+							if(tr.getProfitLoss()<0) rally++;
+							if(tr.getProfitLoss()>0) rally=0;
+							if (rally>result) result = rally;
+						}
+					}
+				}
+				
 			}
 		}
+		
+		
 		
 		return result;
 	}

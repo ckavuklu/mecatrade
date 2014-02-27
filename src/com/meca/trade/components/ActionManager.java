@@ -98,7 +98,7 @@ public class ActionManager extends Component {
 		//TODO: Market Interface Implementation for Order. We will get market data as realized price
 		
 		for(Trade trade : order.getTradeList()){
-			trade.setRealizedDate(new Date());
+			trade.setRealizedDate(trade.getEntryDate());
 			trade.setRealizedPrice((trade.getTradeType() == TradeType.LEXIT || trade.getTradeType() == TradeType.SEXIT)?trade.getExitPrice():trade.getEntryPrice());
 			trade.setStatus(TradeStatusType.CLOSE);
 			manager.realizeTrade(trade);

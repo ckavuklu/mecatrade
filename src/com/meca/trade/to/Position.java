@@ -1,6 +1,7 @@
 package com.meca.trade.to;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -18,6 +19,8 @@ public class Position extends MecaObject implements IPosition {
 	private Double stopLoss;
 	private Double takeProfit;
 	private Double profitLoss;
+	private Date entryDate;
+	private Date exitDate;
 	
 	
 	
@@ -172,6 +175,26 @@ public class Position extends MecaObject implements IPosition {
 		this.openLotCount = 0d;
 	}
 
+	public Date getEntryDate() {
+		return entryDate;
+	}
+
+
+	public void setEntryDate(Date entryDate) {
+		this.entryDate = entryDate;
+	}
+
+
+	public Date getExitDate() {
+		return exitDate;
+	}
+
+
+	public void setExitDate(Date exitDate) {
+		this.exitDate = exitDate;
+	}
+
+
 	public Double getOpenLotCount() {
 		return openLotCount;
 	}
@@ -200,6 +223,7 @@ public class Position extends MecaObject implements IPosition {
 				stopLoss = trade.getStopLoss();
 				takeProfit = trade.getTakeProfit();
 				status = TradeStatusType.OPEN;
+				entryDate = trade.getRealizedDate();
 				
 			}
 			else if(trade.getStatus()== TradeStatusType.CANCEL){
@@ -212,8 +236,10 @@ public class Position extends MecaObject implements IPosition {
 			
 			openLotCount -= trade.getLot();
 			
-			if (openLotCount == 0d)
+			if (openLotCount == 0d){
 				status = TradeStatusType.CLOSE;
+				exitDate = trade.getRealizedDate();
+			}
 			
 			
 		}
@@ -245,12 +271,31 @@ public class Position extends MecaObject implements IPosition {
 	}
 
 	@Override
-	public Double getRealizedProfitLoss() {
+	public Double getRealizedProfitLoss(Date startDate, Date endDate) {
 		Double result = 0d;
+		
+		
 		for (Trade tr : tradeList) {
-			if (tr.getStatus() == TradeStatusType.CLOSE) {
-				
+			if (tr.getStatus() == TradeStatusType.CLOSE && startDate==null && endDate==null) {
 				result += tr.getProfitLoss();
+			}else{
+				if (tr.getStatus() == TradeStatusType.CLOSE){
+					if(startDate!=null && endDate==null){
+						if(tr.getRealizedDate().compareTo(startDate) >= 0){
+							result += tr.getProfitLoss();
+						}
+						
+					} else if(endDate!=null && startDate==null){
+						if(tr.getRealizedDate().compareTo(endDate) < 0){
+							result += tr.getProfitLoss();
+						}
+						
+					} else if(startDate!=null && endDate!=null){
+						if(tr.getRealizedDate().compareTo(endDate) < 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+							result += tr.getProfitLoss();
+						}
+					}
+				}
 			}
 		}
 		
@@ -258,25 +303,63 @@ public class Position extends MecaObject implements IPosition {
 	}
 
 	@Override
-	public Double getRealizedGrossProfit() {
+	public Double getRealizedGrossProfit(Date startDate, Date endDate) {
 		Double result = 0d;
+		
 		for (Trade tr : tradeList) {
-			if (tr.getStatus() == TradeStatusType.CLOSE) {
-				
+			if (tr.getStatus() == TradeStatusType.CLOSE && startDate==null && endDate==null) {
 				if(tr.getProfitLoss() > 0)
 					result += tr.getProfitLoss();
+			}else{
+				if (tr.getStatus() == TradeStatusType.CLOSE){
+					if(startDate!=null && endDate==null){
+						if(tr.getProfitLoss() > 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+							result += tr.getProfitLoss();
+						}
+						
+					} else if(endDate!=null && startDate==null){
+						if(tr.getProfitLoss() > 0 && tr.getRealizedDate().compareTo(endDate) < 0){
+							result += tr.getProfitLoss();
+						}
+						
+					} else if(startDate!=null && endDate!=null){
+						if(tr.getProfitLoss() > 0 && tr.getRealizedDate().compareTo(endDate) < 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+							result += tr.getProfitLoss();
+						}
+					}
+				}
 			}
 		}
+		
 		
 		return result;
 	}
 	
 	@Override
-	public Integer getTotalNumberOfEntryTrades() {
+	public Integer getTotalNumberOfEntryTrades(Date startDate, Date endDate) {
 		Integer result = 0;
+		
 		for (Trade tr : tradeList) {
-			if (tr.getStatus() == TradeStatusType.CLOSE && (tr.getTradeType() == TradeType.BUY || tr.getTradeType() == TradeType.SELL)) {
+			if (tr.getStatus() == TradeStatusType.CLOSE && (tr.getTradeType() == TradeType.BUY || tr.getTradeType() == TradeType.SELL) && startDate==null && endDate==null) {
 				result += 1;
+			}else{
+				if (tr.getStatus() == TradeStatusType.CLOSE && (tr.getTradeType() == TradeType.BUY || tr.getTradeType() == TradeType.SELL)){
+					if(startDate!=null && endDate==null){
+						if(tr.getRealizedDate().compareTo(startDate) >= 0){
+							result += 1;
+						}
+						
+					} else if(endDate!=null && startDate==null){
+						if(tr.getRealizedDate().compareTo(endDate) < 0){
+							result += 1;
+						}
+						
+					} else if(startDate!=null && endDate!=null){
+						if(tr.getRealizedDate().compareTo(endDate) < 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+							result += 1;
+						}
+					}
+				}
 			}
 		}
 		
@@ -284,51 +367,130 @@ public class Position extends MecaObject implements IPosition {
 	}
 
 	@Override
-	public Integer getTotalNumberOfTrades() {
+	public Integer getTotalNumberOfTrades(Date startDate, Date endDate) {
 		Integer result = 0;
+		
 		for (Trade tr : tradeList) {
-			if (tr.getStatus() == TradeStatusType.CLOSE) {
+			if (tr.getStatus() == TradeStatusType.CLOSE && startDate==null && endDate==null) {
 				result += 1;
+			}else{
+				if (tr.getStatus() == TradeStatusType.CLOSE){
+					if(startDate!=null && endDate==null){
+						if(tr.getRealizedDate().compareTo(startDate) >= 0){
+							result += 1;
+						}
+						
+					} else if(endDate!=null && startDate==null){
+						if(tr.getRealizedDate().compareTo(endDate) < 0){
+							result += 1;
+						}
+						
+					} else if(startDate!=null && endDate!=null){
+						if(tr.getRealizedDate().compareTo(endDate) < 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+							result += 1;
+						}
+					}
+				}
 			}
 		}
 		
 		return result;
 	}
 	
-	public Double getLargestWinningTrade(){
+	public Double getLargestWinningTrade(Date startDate, Date endDate){
 		Double result = 0d;
+		
+		
 		for (Trade tr : tradeList) {
-			if (tr.getStatus() == TradeStatusType.CLOSE) {
-				
+			if (tr.getStatus() == TradeStatusType.CLOSE && startDate==null && endDate==null) {
 				if(result < tr.getProfitLoss())
 					result = tr.getProfitLoss();
+			}else{
+				if (tr.getStatus() == TradeStatusType.CLOSE){
+					if(startDate!=null && endDate==null){
+						if(result < tr.getProfitLoss() && tr.getRealizedDate().compareTo(startDate) >= 0){
+							result = tr.getProfitLoss();
+						}
+						
+					} else if(endDate!=null && startDate==null){
+						if(result < tr.getProfitLoss() && tr.getRealizedDate().compareTo(endDate) < 0){
+							result = tr.getProfitLoss();
+						}
+						
+					} else if(startDate!=null && endDate!=null){
+						if(result < tr.getProfitLoss() && tr.getRealizedDate().compareTo(endDate) < 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+							result = tr.getProfitLoss();
+						}
+					}
+				}
 			}
 		}
+		
+		
+		
 		
 		return result;
 		
 	}
 	
-	public Double getLargestLosingTrade(){
+	public Double getLargestLosingTrade(Date startDate, Date endDate){
 		Double result = 0d;
+		
+		
 		for (Trade tr : tradeList) {
-			if (tr.getStatus() == TradeStatusType.CLOSE) {
-				
+			if (tr.getStatus() == TradeStatusType.CLOSE && startDate==null && endDate==null) {
 				if(result > tr.getProfitLoss())
 					result = tr.getProfitLoss();
+			}else{
+				if (tr.getStatus() == TradeStatusType.CLOSE){
+					if(startDate!=null && endDate==null){
+						if(result > tr.getProfitLoss() && tr.getRealizedDate().compareTo(startDate) >= 0){
+							result = tr.getProfitLoss();
+						}
+						
+					} else if(endDate!=null && startDate==null){
+						if(result > tr.getProfitLoss() && tr.getRealizedDate().compareTo(endDate) < 0){
+							result = tr.getProfitLoss();
+						}
+						
+					} else if(startDate!=null && endDate!=null){
+						if(result > tr.getProfitLoss() && tr.getRealizedDate().compareTo(endDate) < 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+							result = tr.getProfitLoss();
+						}
+					}
+				}
 			}
 		}
+		
 		
 		return result;
 	}
 
 	@Override
-	public Integer getTotalNumberOfWinningTrades() {
+	public Integer getTotalNumberOfWinningTrades(Date startDate, Date endDate) {
 		Integer result = 0;
 		for (Trade tr : tradeList) {
-			if (tr.getStatus() == TradeStatusType.CLOSE) {
+			if (tr.getStatus() == TradeStatusType.CLOSE && startDate==null && endDate==null) {
 				if(tr.getProfitLoss() > 0)
 					result += 1;
+			}else{
+				if (tr.getStatus() == TradeStatusType.CLOSE){
+					if(startDate!=null && endDate==null){
+						if(tr.getProfitLoss() > 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+							result += 1;
+						}
+						
+					} else if(endDate!=null && startDate==null){
+						if(tr.getProfitLoss() > 0 && tr.getRealizedDate().compareTo(endDate) < 0){
+							result += 1;
+						}
+						
+					} else if(startDate!=null && endDate!=null){
+						if(tr.getProfitLoss() > 0 && tr.getRealizedDate().compareTo(endDate) < 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+							result += 1;
+						}
+					}
+				}
 			}
 		}
 		
@@ -336,12 +498,30 @@ public class Position extends MecaObject implements IPosition {
 	}
 
 	@Override
-	public Integer getTotalNumberOfLosingTrades() {
+	public Integer getTotalNumberOfLosingTrades(Date startDate, Date endDate) {
 		Integer result = 0;
 		for (Trade tr : tradeList) {
-			if (tr.getStatus() == TradeStatusType.CLOSE) {
+			if (tr.getStatus() == TradeStatusType.CLOSE && startDate==null && endDate==null) {
 				if(tr.getProfitLoss() < 0)
 					result += 1;
+			}else{
+				if (tr.getStatus() == TradeStatusType.CLOSE){
+					if(startDate!=null && endDate==null){
+						if(tr.getProfitLoss() < 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+							result += 1;
+						}
+						
+					} else if(endDate!=null && startDate==null){
+						if(tr.getProfitLoss() < 0 && tr.getRealizedDate().compareTo(endDate) < 0){
+							result += 1;
+						}
+						
+					} else if(startDate!=null && endDate!=null){
+						if(tr.getProfitLoss() < 0 && tr.getRealizedDate().compareTo(endDate) < 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+							result += 1;
+						}
+					}
+				}
 			}
 		}
 		
@@ -349,16 +529,34 @@ public class Position extends MecaObject implements IPosition {
 	}
 
 	@Override
-	public Double getRealizedGrossLoss() {
+	public Double getRealizedGrossLoss(Date startDate, Date endDate) {
 		Double result = 0d;
+		
 		for (Trade tr : tradeList) {
-			if (tr.getStatus() == TradeStatusType.CLOSE) {
-				
+			if (tr.getStatus() == TradeStatusType.CLOSE && startDate==null && endDate==null) {
 				if(tr.getProfitLoss() < 0)
 					result += tr.getProfitLoss();
+			}else{
+				if (tr.getStatus() == TradeStatusType.CLOSE){
+					if(startDate!=null && endDate==null){
+						if(tr.getProfitLoss() < 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+							result += tr.getProfitLoss();
+						}
+						
+					} else if(endDate!=null && startDate==null){
+						if(tr.getProfitLoss() < 0 && tr.getRealizedDate().compareTo(endDate) < 0){
+							result += tr.getProfitLoss();
+						}
+						
+					} else if(startDate!=null && endDate!=null){
+						if(tr.getProfitLoss() < 0 && tr.getRealizedDate().compareTo(endDate) < 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+							result += tr.getProfitLoss();
+						}
+					}
+				}
 			}
 		}
-		
+	
 		return result;
 	}
 	

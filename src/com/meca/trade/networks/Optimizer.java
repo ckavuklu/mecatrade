@@ -268,7 +268,7 @@ public class Optimizer {
 				result.put(e.getKey(), e.getValue().get(e.getValue().size()-1));
 				System.out.println("Network: " + e.getKey());
 				System.out.println("\tBest Individual: " + e.getValue().get(e.getValue().size()-1));
-				System.out.println("\t\tPerformance Report: " + e.getValue().get(e.getValue().size()-1).getReportManager().getGeneratedReport());
+				System.out.println("\t\tPerformance Report: \n" + e.getValue().get(e.getValue().size()-1).getReportManager().getGeneratedReport());
 			}
 			return result;
 	        
@@ -289,7 +289,7 @@ public class Optimizer {
 			System.out.println("Re-Running Best Child For Network: " +best.getNetworkName());
 			bestIndividuals.get(best.getNetworkName()).get(0).initializeByIndicatorParameterValues();
 			bestIndividuals.get(best.getNetworkName()).get(0).evaluate(true);
-			System.out.println("\t\tPerformance Report: " + bestIndividuals.get(best.getNetworkName()).get(0).getReportManager().getGeneratedReport());	
+			System.out.println("\t\tPerformance Report: \n" + bestIndividuals.get(best.getNetworkName()).get(0).getReportManager().getGeneratedReport());	
 	    	System.out.println("POSITIONS:");
 			System.out.println(bestIndividuals.get(best.getNetworkName()).get(0).getPosManager());
 			

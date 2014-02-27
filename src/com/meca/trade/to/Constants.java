@@ -35,6 +35,8 @@ public final class Constants {
 	
 	public final static String SPACE = " ";
 	
+	public final static String CSV_SEPARATOR = "\t";
+	
 	public final static String SEPARATOR = ":";
 	
 	public final static Boolean DEBUG_ENABLED = false;

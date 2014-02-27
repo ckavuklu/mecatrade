@@ -9,6 +9,8 @@ import com.meca.trade.networks.Parameter;
 public class BaseTrader implements ITrader {
 	
 	protected IPositionManager positionManager;
+	protected PriceData priceData;
+	
 	public IPositionManager getPositionManager() {
 		return positionManager;
 	}
@@ -112,7 +114,7 @@ public class BaseTrader implements ITrader {
 					if(askPrice >= p.getStopLoss()){
 						
 						Trade tradeData = new Trade();
-						tradeData.setDate(new Date());
+						tradeData.setEntryDate(priceData.getTime());
 						tradeData.setStatus(TradeStatusType.OPEN);
 						tradeData.setPositionNo(p.getPositionNo());
 						tradeData.setStatus(TradeStatusType.OPEN);
@@ -129,7 +131,7 @@ public class BaseTrader implements ITrader {
 					if(bidPrice <= p.getStopLoss()){
 						
 						Trade tradeData = new Trade();
-						tradeData.setDate(new Date());
+						tradeData.setEntryDate(priceData.getTime());
 						tradeData.setStatus(TradeStatusType.OPEN);
 						tradeData.setPositionNo(p.getPositionNo());
 						tradeData.setStatus(TradeStatusType.OPEN);
@@ -160,7 +162,7 @@ public class BaseTrader implements ITrader {
 					if(askPrice <= p.getTakeProfit()){
 						
 						Trade tradeData = new Trade();
-						tradeData.setDate(new Date());
+						tradeData.setEntryDate(priceData.getTime());
 						tradeData.setStatus(TradeStatusType.OPEN);
 						tradeData.setPositionNo(p.getPositionNo());
 						tradeData.setStatus(TradeStatusType.OPEN);
@@ -177,7 +179,7 @@ public class BaseTrader implements ITrader {
 					if(bidPrice >= p.getTakeProfit()){
 						
 						Trade tradeData = new Trade();
-						tradeData.setDate(new Date());
+						tradeData.setEntryDate(priceData.getTime());
 						tradeData.setStatus(TradeStatusType.OPEN);
 						tradeData.setPositionNo(p.getPositionNo());
 						tradeData.setStatus(TradeStatusType.OPEN);
@@ -258,7 +260,7 @@ public class BaseTrader implements ITrader {
 				if(lotSize>0d){
 					
 					Trade tradeData = new Trade();
-					tradeData.setDate(new Date());
+					tradeData.setEntryDate(priceData.getTime());
 					tradeData.setStatus(TradeStatusType.OPEN);
 					tradeData.setTradeType(TradeType.BUY);
 					tradeData.setSignal(SignalType.En);
@@ -280,7 +282,7 @@ public class BaseTrader implements ITrader {
 				for(IPosition p:positions){
 					if(p.getStatus() == TradeStatusType.OPEN && p.getTradeType()==TradeType.SELL){
 						Trade tradeData = new Trade();
-						tradeData.setDate(new Date());
+						tradeData.setEntryDate(priceData.getTime());
 						tradeData.setStatus(TradeStatusType.OPEN);
 						tradeData.setPositionNo(p.getPositionNo());
 						tradeData.setStatus(TradeStatusType.OPEN);
@@ -301,7 +303,7 @@ public class BaseTrader implements ITrader {
 				if(lotSize>0d){
 
 					Trade tradeData = new Trade();
-					tradeData.setDate(new Date());
+					tradeData.setEntryDate(priceData.getTime());
 					tradeData.setStatus(TradeStatusType.OPEN);
 					tradeData.setTradeType(TradeType.SELL);
 					tradeData.setSignal(SignalType.En);
@@ -322,7 +324,7 @@ public class BaseTrader implements ITrader {
 
 					if(p.getStatus() == TradeStatusType.OPEN && p.getTradeType()==TradeType.BUY){
 						Trade tradeData = new Trade();
-						tradeData.setDate(new Date());
+						tradeData.setEntryDate(priceData.getTime());
 						tradeData.setStatus(TradeStatusType.OPEN);
 						tradeData.setPositionNo(p.getPositionNo());
 						tradeData.setStatus(TradeStatusType.OPEN);
@@ -381,7 +383,7 @@ public class BaseTrader implements ITrader {
 
 			if(p.getStatus() == TradeStatusType.OPEN){
 				Trade tradeData = new Trade();
-				tradeData.setDate(new Date());
+				tradeData.setEntryDate(priceData.getTime());
 				tradeData.setStatus(TradeStatusType.OPEN);
 				tradeData.setPositionNo(p.getPositionNo());
 				tradeData.setStatus(TradeStatusType.OPEN);
@@ -403,6 +405,7 @@ public class BaseTrader implements ITrader {
 	public void updatePriceData(PriceData data) {
 		this.askPrice = data.getAskPrice();
 		this.bidPrice = data.getBidPrice();
+		this.priceData = data;
 	}
 
 }

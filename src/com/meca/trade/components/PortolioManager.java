@@ -139,10 +139,12 @@ public class PortolioManager extends Component {
 	    			  manager.updatePriceData(value.getPrice());
 	    			  trader.updatePriceData(value.getPrice());
 	    			  
+	    			  
 	    			  if(manager.getMarginLevel()  <= Constants.MARGIN_CALL_LEVEL){
 	    				  endOfMarketData = true;
 	    				  signalType = SignalType.Mc;
 	    			  }
+	    			  
 	    				  
 	    			  /*if(((manager.getEquity()/manager.getBalance())*100d <= Constants.STRATEGY_STOP_LEVEL*Constants.SAFETY_FACTOR)){
 	    				  endOfMarketData = true;

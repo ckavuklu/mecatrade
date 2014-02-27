@@ -34,7 +34,7 @@ public class TestTradeDataSet extends MecaObject implements ITestTradeDataSet {
 				String[] trade = line.split(",");
 
 				tradeData = new Trade();
-				tradeData.setDate(new Date());
+				tradeData.setEntryDate(new Date());
 				tradeData.setStatus(TradeStatusType.OPEN);
 
 				if (StringUtils.isNotEmpty(trade[0])

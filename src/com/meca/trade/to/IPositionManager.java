@@ -12,9 +12,11 @@ public interface IPositionManager extends IPriceData{
 	
 	public Double getOpenPL();
 	
-	public Integer getConsecutiveWinningTrades();
+	public Integer getConsecutiveWinningTrades(Date startDate,Date endDate);
 	
-	public Integer getConsecutiveLosingTrades();
+	public Integer getConsecutiveLosingTrades(Date startDate,Date endDate);
+	
+	public Integer getTotalNumberOfOpenPositionCount(Date startDate,Date endDate);
 	
 	public String toString();
 	

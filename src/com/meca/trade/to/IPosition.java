@@ -1,6 +1,6 @@
 package com.meca.trade.to;
 
-import java.util.List;
+import java.util.Date;
 
 public interface IPosition extends IPriceData{
 
@@ -14,23 +14,23 @@ public interface IPosition extends IPriceData{
 	
 	public Double getOpenPL();
 	
-	public Double getRealizedProfitLoss();
+	public Double getRealizedProfitLoss(Date startDate, Date endDate);
 	
-	public Double getRealizedGrossProfit();
+	public Double getRealizedGrossProfit(Date startDate, Date endDate);
 	
-	public Double getRealizedGrossLoss();
+	public Double getRealizedGrossLoss(Date startDate, Date endDate);
 	
-	public Integer getTotalNumberOfTrades();
+	public Integer getTotalNumberOfTrades(Date startDate, Date endDate);
 	
-	public Integer getTotalNumberOfWinningTrades();
+	public Integer getTotalNumberOfWinningTrades(Date startDate, Date endDate);
 	
-	public Integer getTotalNumberOfLosingTrades();
+	public Integer getTotalNumberOfLosingTrades(Date startDate, Date endDate);
 	
-	public Integer getTotalNumberOfEntryTrades();
+	public Integer getTotalNumberOfEntryTrades(Date startDate, Date endDate);
 	
-	public Double getLargestWinningTrade();
+	public Double getLargestWinningTrade(Date startDate, Date endDate);
 	
-	public Double getLargestLosingTrade();
+	public Double getLargestLosingTrade(Date startDate, Date endDate);
 	
 	public Trade addTrade(Trade trade);
 	
@@ -43,5 +43,9 @@ public interface IPosition extends IPriceData{
 	public Double getStopLoss();
 
 	public Double getTakeProfit();
+	
+	public Date getEntryDate();
+	
+	public Date getExitDate();
 
 }

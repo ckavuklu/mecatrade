@@ -3,8 +3,8 @@
 	<configuration>
 		<param name="PERIOD_TYPE" type="String" value="Hour"></param>
 		<param name="PERIOD_STEP_SIZE" type="Integer" value="1"></param>
-		<param name="PERIOD_START" type="Date" value="20020310-190000"></param>
-		<param name="PERIOD_END" type="Date"   value="20030310-190000"></param>
+		<param name="PERIOD_START" type="Date" value="20030110-190000"></param>
+		<param name="PERIOD_END" type="Date"   value="20030701-190000"></param>
 		<param name="INPUT_MARKET_DATA_FILE_NAME" type="String" value="EURUSD.txt"></param>
 		<param name="ACCOUNT_BALANCE" type="Double" value="10000d"></param>
 		<param name="INPUT_TEST_TRADE_DATA_FILE_NAME" type="String" value="TestTradeSet-1"></param>
@@ -12,11 +12,11 @@
 
     <genetic-configuration>
 		<param name="ELITISM_K" type="Integer" value="2"></param>
-		<param name="POP_SIZE" type="Integer" value="20"></param>
-		<param name="MAX_ITER" type="Integer" value="50"></param>
+		<param name="POP_SIZE" type="Integer" value="2"></param>
+		<param name="MAX_ITER" type="Integer" value="1"></param>
 		<param name="MUTATION_RATE" type="Double" value="0.02"></param>
 		<param name="CROSSOVER_RATE" type="Double" value="0.7"></param>
-		<param name="TOURNAMENT_SIZE" type="Integer" value="4"></param>
+		<param name="TOURNAMENT_SIZE" type="Integer" value="2"></param>
 		<param name="INDIVIDUALS_SIZE" type="Integer" value="2"></param>
 	</genetic-configuration>
 	
@@ -28,9 +28,9 @@
 		</trade-configuration-->
 		
 		<trade-configuration network="TradeNetwork-2" >
-			<param name="position-stop-loss" type="point" value="0.0005"></param>
-			<param name="position-take-profit" type="point" value="0.001"></param>
-			<param name="position-sizer" type="volatility-adjusted" value="0.1"></param>
+			<param name="position-stop-loss" type="point" value="0.5"></param>
+			<param name="position-take-profit" type="point" value="0.5"></param>
+			<param name="position-sizer" type="volatility-adjusted" value="0.5"></param>
 		</trade-configuration>
 	</strategy-configuration>
 	

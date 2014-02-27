@@ -1,5 +1,7 @@
 package com.meca.trade.to;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +15,9 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	private MarketType type = null;
 	private String generatedReport;
 	private Boolean generateLogReport;
+	private Date periodStartDate;
+	private Date periodEndDate;
+	
 	
 	//private RunConfiguration config;
 	private HashMap<String,Parameter> config;
@@ -48,6 +53,8 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	
 	private IReportLogger  graphData = null;
 	private IReportLogger  performanceData = null;
+	private IReportLogger  periodBasedPerformanceData = null;
+
 
 	private Double mdd;
 	private Date MaxDate; 
@@ -70,11 +77,16 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	public PerformanceReportManager(HashMap<String,Parameter> config) {
 		super();
 		this.config = config;
+		
+		periodStartDate = (Date)config.get("PERIOD_START").getValue();
+		periodEndDate = (Date)config.get("PERIOD_END").getValue();
+		
 		this.annualizationCoefficient = 365d * 24d * 60d * 60d * 1000 / (((Date)config.get("PERIOD_END").getValue()).getTime() -  ((Date)config.get("PERIOD_START").getValue()).getTime());
 		this.margin = (Double)config.get("ACCOUNT_BALANCE").getValue();
 		
 		this.graphData = new GraphDataGenerator();
 		this.performanceData = new FileReportGenerator();
+		this.periodBasedPerformanceData = new FileReportGenerator();
 		
 	}
 
@@ -85,115 +97,190 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		this.type = type;
 		this.generateLogReport = generateLogReport;
 		
+		PerformanceKPIS performanceKPIs = new PerformanceKPIS(null,null);
 		
-		calculatePositionPerformance();
+		calculatePositionPerformance(null,null);
 		evaluatePROM();
 		calculateMDM(positionManager.getExecutionHistory());
 		calculateStrategyStopLimit();
 		
-		StringBuilder builder = new StringBuilder();
-		builder.append("PerformanceReportManager.generatePerformanceReport()");
-		builder.append(Constants.ENDLN);
-		builder.append("inputMarketDataFileName=");
-		builder.append(config.get("INPUT_MARKET_DATA_FILE_NAME").getValue());
-		builder.append(Constants.FORMAT);
-		builder.append("inputTestTradeDataFileName=");
-		builder.append(config.get("INPUT_TEST_TRADE_DATA_FILE_NAME").getValue());
-		builder.append(Constants.FORMAT);
-		builder.append("netProfitForClosedTrades=");
-		builder.append(netProfitForClosedTrades);
-		builder.append(Constants.FORMAT);
-		builder.append("grossProfitForClosedTrades=");
-		builder.append(grossProfitForClosedTrades);
-		builder.append(Constants.FORMAT);
-		builder.append("grossLossForClosedTrades=");
-		builder.append(grossLossForClosedTrades);
-		builder.append(Constants.FORMAT);
-		builder.append("totalNumberOfTrades=");
-		builder.append(totalNumberOfTrades);
-		builder.append(Constants.FORMAT);
-		builder.append("totalNumberOfWinningTrades=");
-		builder.append(totalNumberOfWinningTrades);
-		builder.append(Constants.FORMAT);
-		builder.append("totalNumberOfLosingTrades=");
-		builder.append(totalNumberOfLosingTrades);
-		builder.append(Constants.FORMAT);
-		builder.append("totalNumberOfEntryTrades=");
-		builder.append(totalNumberOfEntryTrades);
-		builder.append(Constants.FORMAT);
-		builder.append("percentProfitable=");
-		builder.append(percentProfitable);
-		builder.append(Constants.FORMAT);
-		builder.append("largestWinningTrade=");
-		builder.append(largestWinningTrade);
-		builder.append(Constants.FORMAT);
-		builder.append("largestLosingTrade=");
-		builder.append(largestLosingTrade);
-		builder.append(Constants.FORMAT);
-		builder.append("averageWinningTrade=");
-		builder.append(averageWinningTrade);
-		builder.append(Constants.FORMAT);
-		builder.append("averageLosingTrade=");
-		builder.append(averageLosingTrade);
-		builder.append(Constants.FORMAT);
-		builder.append("ratioAverageWinAverageLoss=");
-		builder.append(ratioAverageWinAverageLoss);
-		builder.append(Constants.FORMAT);
-		builder.append("averageTrade=");
-		builder.append(averageTrade);
-		builder.append(Constants.FORMAT);
-		builder.append("maxConsecutiveWinners=");
-		builder.append(maxConsecutiveWinners);
-		builder.append(Constants.FORMAT);
-		builder.append("maxConsecutiveLosers=");
-		builder.append(maxConsecutiveLosers);
-		builder.append(Constants.FORMAT);
-		builder.append("PROM=");
-		builder.append(prom);
-		builder.append(Constants.FORMAT);
-		builder.append("annTotalNumberOfWinningTrades=");
-		builder.append(annTotalNumberOfWinningTrades);
-		builder.append(Constants.FORMAT);
-		builder.append("annTotalNumberOfLosingTrades=");
-		builder.append(annTotalNumberOfLosingTrades);
-		builder.append(Constants.FORMAT);
-		builder.append("annualizedGrossProfit=");
-		builder.append(annualizedGrossProfit);
-		builder.append(Constants.FORMAT);
-		builder.append("annualizedGrossLoss=");
-		builder.append(annualizedGrossLoss);
-		builder.append(Constants.FORMAT);
-		builder.append("MDD(%)=");
-		builder.append(mdd);
-		builder.append(Constants.FORMAT);
-		builder.append("strategyStopLimit(%)=");
-		builder.append(strategyStopLimit);
+		performanceKPIs.setPeriodStartDate(periodStartDate);
+		performanceKPIs.setPeriodEndDate(periodEndDate);
+		
+		performanceKPIs.setAnnTotalNumberOfLosingTrades(annTotalNumberOfLosingTrades);
+		performanceKPIs.setAnnTotalNumberOfWinningTrades(annTotalNumberOfWinningTrades);
+		performanceKPIs.setAnnualizedGrossLoss(annualizedGrossLoss);
+		performanceKPIs.setAnnualizedGrossProfit(annualizedGrossProfit);
+		
+		performanceKPIs.setAverageLosingTrade(averageLosingTrade);
+		performanceKPIs.setAverageTrade(averageTrade);
+		performanceKPIs.setAverageWinningTrade(averageWinningTrade);
+		performanceKPIs.setGrossLossForClosedTrades(grossLossForClosedTrades);
+		performanceKPIs.setGrossProfitForClosedTrades(grossProfitForClosedTrades);
+		performanceKPIs.setLargestLosingTrade(largestLosingTrade);
+		performanceKPIs.setLargestWinningTrade(largestWinningTrade);
+		performanceKPIs.setMaxConsecutiveLosers(maxConsecutiveLosers);
+		performanceKPIs.setMaxConsecutiveWinners(maxConsecutiveWinners);
+		performanceKPIs.setMdd(mdd);
+		performanceKPIs.setNetProfitForClosedTrades(netProfitForClosedTrades);
+		performanceKPIs.setPercentProfitable(percentProfitable);
+		performanceKPIs.setProm(prom);
+		performanceKPIs.setRatioAverageWinAverageLoss(ratioAverageWinAverageLoss);
+		performanceKPIs.setStrategyStopLimit(strategyStopLimit);
+		performanceKPIs.setTotalNumberOfEntryTrades(totalNumberOfEntryTrades);
+		performanceKPIs.setTotalNumberOfLosingTrades(totalNumberOfLosingTrades);
+		performanceKPIs.setTotalNumberOfTrades(totalNumberOfTrades);
+		performanceKPIs.setTotalNumberOfWinningTrades(totalNumberOfWinningTrades);
+		performanceKPIs.setMddMaxDate(MaxDate);
+		performanceKPIs.setMddMinDate(MinDate);
 		
 		
 		
-		builder.append(Constants.FORMAT);
-
-		if (MaxDate != null) {
-			builder.append("MaxDate=");
-			builder.append(MaxDate.toString());
-			builder.append(Constants.FORMAT);
-			builder.append("MinDate=");
-			builder.append(MinDate.toString());
-			builder.append(Constants.FORMAT);
+		String headers = performanceKPIs.getHeaders();
+		String body = performanceKPIs.getData();
+		
+		
+		String consoleData = performanceKPIs.getPerformanceData();
+		
+		generatedReport = consoleData;
+		
+		
+		if(Constants.DEBUG_ENABLED){
+			System.out.println(headers);
+			System.out.println(body);
 		}
-		
-		builder.append(Constants.ENDLN);
-		
-		generatedReport = builder.toString();
-		
-		if(Constants.DEBUG_ENABLED)
-			System.out
-				.println(builder.toString());
 		
 		if(generateLogReport){
-			performanceData.writeLog(generatedReport);
+
+			performanceData.writeLog(headers);
+			performanceData.writeLog(body);
+			
+			
+			List<PerformanceKPIS> listOfKPIs = generatePeriodicPerformanceReport(periodStartDate, periodEndDate);
+			
+			if(listOfKPIs.size() > 0){
+				periodBasedPerformanceData.writeLog(listOfKPIs.get(0).getHeaders());
+				
+				for(PerformanceKPIS kpi : listOfKPIs){
+					periodBasedPerformanceData.writeLog(kpi.getData());
+				}
+				
+				periodBasedPerformanceData.writeLog(body);
+			}
+			
+			
+			
 		}
 		
+	}
+
+	
+	
+	private List<PerformanceKPIS> generatePeriodicPerformanceReport(Date periodStartDate, Date periodEndDate){
+		Date quarterStartDate = TradeUtils.getQuarterStartDate(periodStartDate);
+		Date quarterEndDate = TradeUtils.getQuarterEndDate(periodStartDate);
+		
+		List<PerformanceKPIS> result = new ArrayList<PerformanceKPIS>();
+		
+		while(quarterStartDate.compareTo(periodEndDate) < 0)
+		
+		{
+			result.add(calculatePeriodBasedPerformanceData(quarterStartDate,quarterEndDate));
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(quarterEndDate);
+			cal.add(Calendar.DAY_OF_MONTH, 1);
+			
+			quarterStartDate = TradeUtils.getQuarterStartDate(cal.getTime());
+			quarterEndDate = TradeUtils.getQuarterEndDate(cal.getTime());
+		}
+		
+		return result;
+	}
+	
+	private PerformanceKPIS calculatePeriodBasedPerformanceData(Date startDate, Date endDate){
+		PerformanceKPIS performanceKPIs = new PerformanceKPIS(startDate,endDate);
+		
+		Double periodicNetProfitForClosedTrades = 0d;
+		Double periodicGrossProfitForClosedTrades = 0d;
+		Double periodicGrossLossForClosedTrades = 0d;
+		Integer periodicTotalNumberOfTrades = 0;
+		Integer periodicTotalNumberOfWinningTrades = 0;
+		Integer periodicTotalNumberOfLosingTrades = 0;
+		Integer periodicTotalNumberOfEntryTrades = 0;
+		Double periodicLargestWinningTrade = 0d;
+		Double periodicLargestLosingTrade = 0d;
+		Double periodicPercentProfitable = 0d;
+		Double periodicAverageWinningTrade = 0d;
+		Double periodicAverageLosingTrade = 0d;
+		Double periodicRatioAverageWinAverageLoss = 0d;
+		Double periodicAverageTrade = 0d;
+		Integer periodicMaxConsecutiveWinners = 0;
+		Integer periodicMaxConsecutiveLosers = 0;
+		Integer totalNumberOfOpenPositions = 0;
+		
+		for(IPosition pos:positionManager.getPositions()){
+			
+			periodicNetProfitForClosedTrades += pos.getRealizedProfitLoss(startDate,endDate);
+			periodicGrossProfitForClosedTrades += pos.getRealizedGrossProfit(startDate,endDate);
+			periodicGrossLossForClosedTrades += pos.getRealizedGrossLoss(startDate,endDate);
+			
+			periodicTotalNumberOfTrades += pos.getTotalNumberOfTrades(startDate,endDate);
+			periodicTotalNumberOfWinningTrades += pos.getTotalNumberOfWinningTrades(startDate,endDate);
+			periodicTotalNumberOfLosingTrades += pos.getTotalNumberOfLosingTrades(startDate,endDate);
+			periodicTotalNumberOfEntryTrades += pos.getTotalNumberOfEntryTrades(startDate,endDate);
+			
+			if(periodicLargestWinningTrade < pos.getLargestWinningTrade(startDate,endDate))
+				periodicLargestWinningTrade = pos.getLargestWinningTrade(startDate,endDate);
+			
+			if(periodicLargestLosingTrade > pos.getLargestLosingTrade(startDate,endDate))
+				periodicLargestLosingTrade = pos.getLargestLosingTrade(startDate,endDate);
+
+			
+		}
+		
+		
+		periodicPercentProfitable = (periodicTotalNumberOfWinningTrades*1d / ((periodicTotalNumberOfTrades - periodicTotalNumberOfEntryTrades)==0?1:(periodicTotalNumberOfTrades - periodicTotalNumberOfEntryTrades) ))*100;
+
+		periodicAverageWinningTrade = periodicGrossProfitForClosedTrades / (periodicTotalNumberOfWinningTrades==0?1:periodicTotalNumberOfWinningTrades);
+		
+		periodicAverageLosingTrade = periodicGrossLossForClosedTrades / (periodicTotalNumberOfLosingTrades==0?1:periodicTotalNumberOfLosingTrades);
+		
+		periodicRatioAverageWinAverageLoss = periodicAverageWinningTrade / (periodicAverageLosingTrade==0?periodicAverageWinningTrade:periodicAverageLosingTrade);
+		
+		periodicAverageTrade = periodicNetProfitForClosedTrades / ((periodicTotalNumberOfTrades - periodicTotalNumberOfEntryTrades)==0?1:(periodicTotalNumberOfTrades - periodicTotalNumberOfEntryTrades));
+		
+		totalNumberOfOpenPositions = positionManager.getTotalNumberOfOpenPositionCount(startDate, endDate);
+		
+		periodicMaxConsecutiveWinners = positionManager.getConsecutiveWinningTrades(startDate,endDate);
+		periodicMaxConsecutiveLosers = positionManager.getConsecutiveLosingTrades(startDate,endDate);
+		
+
+		performanceKPIs.setAverageLosingTrade(periodicAverageLosingTrade);
+		performanceKPIs.setAverageTrade(periodicAverageTrade);
+		performanceKPIs.setAverageWinningTrade(periodicAverageWinningTrade);
+		performanceKPIs.setGrossLossForClosedTrades(periodicGrossLossForClosedTrades);
+		performanceKPIs.setGrossProfitForClosedTrades(periodicGrossProfitForClosedTrades);
+		performanceKPIs.setLargestLosingTrade(periodicLargestLosingTrade);
+		performanceKPIs.setLargestWinningTrade(periodicLargestWinningTrade);
+		performanceKPIs.setMaxConsecutiveLosers(periodicMaxConsecutiveLosers);
+		performanceKPIs.setMaxConsecutiveWinners(periodicMaxConsecutiveWinners);
+		performanceKPIs.setTotalNumberOfOpenPositions(totalNumberOfOpenPositions);
+		
+		/*performanceKPIs.setMdd(mdd);*/
+		performanceKPIs.setNetProfitForClosedTrades(periodicNetProfitForClosedTrades);
+		performanceKPIs.setPercentProfitable(periodicPercentProfitable);
+		//performanceKPIs.setProm(prom);
+		performanceKPIs.setRatioAverageWinAverageLoss(periodicRatioAverageWinAverageLoss);
+		//performanceKPIs.setStrategyStopLimit(strategyStopLimit);
+		performanceKPIs.setTotalNumberOfEntryTrades(periodicTotalNumberOfEntryTrades);
+		performanceKPIs.setTotalNumberOfLosingTrades(periodicTotalNumberOfLosingTrades);
+		performanceKPIs.setTotalNumberOfTrades(periodicTotalNumberOfTrades);
+		performanceKPIs.setTotalNumberOfWinningTrades(periodicTotalNumberOfWinningTrades);
+		
+	
+		
+		return performanceKPIs;
+			
 	}
 	
 	private void calculateStrategyStopLimit() {
@@ -249,7 +336,9 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	
 
 	
-	private void calculatePositionPerformance(){
+	private void calculatePositionPerformance(Date startDate, Date endDate){
+		
+		Date intervalDate = null;
 		
 		for(IPosition pos:positionManager.getPositions()){
 			
@@ -261,24 +350,24 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 			}
 			*/
 			
-			netProfitForClosedTrades += pos.getRealizedProfitLoss();
-			grossProfitForClosedTrades += pos.getRealizedGrossProfit();
-			grossLossForClosedTrades += pos.getRealizedGrossLoss();
+			netProfitForClosedTrades += pos.getRealizedProfitLoss(startDate,endDate);
+			grossProfitForClosedTrades += pos.getRealizedGrossProfit(startDate,endDate);
+			grossLossForClosedTrades += pos.getRealizedGrossLoss(startDate,endDate);
 			
-			totalNumberOfTrades += pos.getTotalNumberOfTrades();
-			totalNumberOfWinningTrades += pos.getTotalNumberOfWinningTrades();
-			totalNumberOfLosingTrades += pos.getTotalNumberOfLosingTrades();
-			totalNumberOfEntryTrades += pos.getTotalNumberOfEntryTrades();
+			totalNumberOfTrades += pos.getTotalNumberOfTrades(startDate,endDate);
+			totalNumberOfWinningTrades += pos.getTotalNumberOfWinningTrades(startDate,endDate);
+			totalNumberOfLosingTrades += pos.getTotalNumberOfLosingTrades(startDate,endDate);
+			totalNumberOfEntryTrades += pos.getTotalNumberOfEntryTrades(startDate,endDate);
 			
-			if(largestWinningTrade < pos.getLargestWinningTrade())
-				largestWinningTrade = pos.getLargestWinningTrade();
+			if(largestWinningTrade < pos.getLargestWinningTrade(startDate,endDate))
+				largestWinningTrade = pos.getLargestWinningTrade(startDate,endDate);
 			
-			if(largestLosingTrade > pos.getLargestLosingTrade())
-				largestLosingTrade = pos.getLargestLosingTrade();
+			if(largestLosingTrade > pos.getLargestLosingTrade(startDate,endDate))
+				largestLosingTrade = pos.getLargestLosingTrade(startDate,endDate);
 
 		}
 		
-		percentProfitable = (totalNumberOfWinningTrades*1d / (totalNumberOfTrades - totalNumberOfEntryTrades) )*100;
+		percentProfitable = (totalNumberOfWinningTrades*1d / ((totalNumberOfTrades - totalNumberOfEntryTrades)==0?1:(totalNumberOfTrades - totalNumberOfEntryTrades) ))*100;
 
 		averageWinningTrade = grossProfitForClosedTrades / (totalNumberOfWinningTrades==0?1:totalNumberOfWinningTrades);
 		
@@ -286,10 +375,10 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		
 		ratioAverageWinAverageLoss = averageWinningTrade / (averageLosingTrade==0?averageWinningTrade:averageLosingTrade);
 		
-		averageTrade = netProfitForClosedTrades / (totalNumberOfTrades - totalNumberOfEntryTrades);
+		averageTrade = netProfitForClosedTrades / ((totalNumberOfTrades - totalNumberOfEntryTrades)==0?1:(totalNumberOfTrades - totalNumberOfEntryTrades));
 		
-		maxConsecutiveWinners = positionManager.getConsecutiveWinningTrades();
-		maxConsecutiveLosers = positionManager.getConsecutiveLosingTrades();
+		maxConsecutiveWinners = positionManager.getConsecutiveWinningTrades(startDate,endDate);
+		maxConsecutiveLosers = positionManager.getConsecutiveLosingTrades(startDate,endDate);
 		
 		
 	}
@@ -323,7 +412,8 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	@Override
 	public void initializeLogger(String name) {
 		graphData.initializeLogger(name + "_Graph");
-		performanceData.initializeLogger(name+ "_Performance");
+		performanceData.initializeLogger(name+ "_Performance.xls");
+		periodBasedPerformanceData.initializeLogger(name+ "_Periodic_Performance.xls");
 	}
 
 
@@ -331,6 +421,7 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	public void finalizeLogger() {
 		graphData.finalizeLogger();
 		performanceData.finalizeLogger();
+		periodBasedPerformanceData.finalizeLogger();
 	}
 
 	
