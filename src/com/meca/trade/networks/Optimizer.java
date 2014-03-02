@@ -437,14 +437,16 @@ public class Optimizer {
 		HashMap<String,List<TradeNetwork>> individuals = mankind.populateRaceIndividuals(individuals_size);
 		//populateIndicators(individuals);
 		
-		// create a race to hold selected individuals for tournament 
-		HashMap<String,List<TradeNetwork>> selectedIndividualsForTournament = new HashMap<String,List<TradeNetwork>>();
+		
 
 		Set<Entry<String,List<TradeNetwork>>> currentMankindSet = m_population.entrySet();
 		
 		// run tournament for the size of individuals needed to be selected
 		for(int individualIndex=0;individualIndex<individuals_size;individualIndex++)
 		{
+			// create a race to hold selected individuals for tournament 
+			HashMap<String,List<TradeNetwork>> selectedIndividualsForTournament = new HashMap<String,List<TradeNetwork>>(tournament_size);
+			
 			// select individuals for the tournament from each race as the number of tournamentSize and them to selectedIndividualsForTournament
 			for(int i=0;i<tournament_size;i++){
 				for(Entry<String,List<TradeNetwork>> race:currentMankindSet){
@@ -480,6 +482,9 @@ public class Optimizer {
 				}
 				
 			}
+			
+			selectedIndividualsForTournament.clear();
+			selectedIndividualsForTournament = null;
 		
 		} // end of tournament for the size of individuals
 		

@@ -366,12 +366,12 @@ public class PositionManager extends MecaObject implements IPositionManager{
 				if(pos.getStatus() == TradeStatusType.OPEN && startDate!=null && endDate==null && pos.getEntryDate().compareTo(startDate) >=0){
 					result += 1;
 					
-				} else if(endDate!=null && startDate==null && (pos.getEntryDate().compareTo(endDate) < 0 && ( pos.getExitDate()==null || pos.getExitDate().compareTo(endDate) > 0) )){
-					result += 1;
-					
-				} else if(startDate!=null && endDate!=null && pos.getEntryDate().compareTo(startDate) >=0 && ( pos.getExitDate()==null || pos.getExitDate().compareTo(endDate) > 0) ){
-					result += 1;
-				}
+				} else if(endDate!=null && startDate==null && (pos.getEntryDate().compareTo(endDate) < 0 && ( pos.getExitDate()==null || (pos.getExitDate().compareTo(endDate) > 0)) )){
+                    result += 1;
+                    
+	             } else if(startDate!=null && endDate!=null &&  pos.getEntryDate().compareTo(startDate) >=0 && (pos.getEntryDate().compareTo(endDate) < 0) && ( pos.getExitDate()==null || (pos.getExitDate().compareTo(endDate) > 0) ) ){
+	                    result += 1;
+	             }
 			}
 		}
 		

@@ -2,11 +2,12 @@ package com.meca.trade.networks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 import com.jpmorrsn.fbp.engine.Component;
 import com.jpmorrsn.fbp.engine.Network;
@@ -21,7 +22,6 @@ import com.meca.trade.to.ITrader;
 import com.meca.trade.to.MarketType;
 import com.meca.trade.to.PerformanceReportManager;
 import com.meca.trade.to.PositionManager;
-import com.meca.trade.to.PriceData;
 import com.meca.trade.to.TestTradeDataSet;
 
 public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
@@ -60,6 +60,28 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 		return builder.toString();
 	}
 	
+	@Override
+    public boolean equals(Object obj)
+    {
+		if (obj == null)
+            return false;
+        if (obj == this)
+            return true;
+        if (!(obj instanceof TradeNetwork))
+            return false;
+
+        TradeNetwork rhs = (TradeNetwork) obj;
+        return new EqualsBuilder().
+            // if deriving: appendSuper(super.equals(obj)).
+            append(uuid, rhs.uuid).
+            isEquals();
+    }
+	
+	@Override
+	public int hashCode() {
+		return uuid.hashCode();
+	}
+
 	@Override
 	public int compareTo(TradeNetwork arg0) {
 		

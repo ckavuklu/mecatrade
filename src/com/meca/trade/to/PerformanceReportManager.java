@@ -17,50 +17,19 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	private Boolean generateLogReport;
 	private Date periodStartDate;
 	private Date periodEndDate;
+	PerformanceKPIS performanceKPIs = null;
 	
 	
 	//private RunConfiguration config;
 	private HashMap<String,Parameter> config;
-	private Double netProfitForClosedTrades = 0d;
-	private Double netProfitForOpenTrades = 0d;
-	private Double grossProfitForClosedTrades = 0d;
-	private Double grossLossForClosedTrades = 0d;
-	private Double largestWinningTrade = 0d;
-	private Double largestLosingTrade = 0d;
 	
-	private Double annualizedGrossProfit;
-	private Double annualizedGrossLoss;
 	private Double margin;
 	
-	
-	private Double averageWinningTrade = 0d;
-	private Double averageLosingTrade = 0d;
-	private Double averageTrade = 0d;
-	private Double ratioAverageWinAverageLoss = 0d;
-	
-	private Integer totalNumberOfTrades = 0;
-	private Integer totalNumberOfWinningTrades = 0;
-	private Integer totalNumberOfEntryTrades= 0;
-	private Integer totalNumberOfLosingTrades = 0;
-	private Double percentProfitable = 0d;
-	
-	private Integer maxConsecutiveWinners = 0;
-	private Integer maxConsecutiveLosers = 0;
 	private Double annualizationCoefficient = 0d;
-	private Double prom = 0d;
-	private Double annTotalNumberOfWinningTrades  = 0d;
-	private Double annTotalNumberOfLosingTrades = 0d;
 	
 	private IReportLogger  graphData = null;
 	private IReportLogger  performanceData = null;
 	private IReportLogger  periodBasedPerformanceData = null;
-
-
-	private Double mdd;
-	private Date MaxDate; 
-	private Date MinDate;
-
-	private Double strategyStopLimit = 0d;
 
 	@Override
 	public IReportLogger getGraphLogger() {
@@ -97,44 +66,12 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		this.type = type;
 		this.generateLogReport = generateLogReport;
 		
-		PerformanceKPIS performanceKPIs = new PerformanceKPIS(null,null);
-		
-		calculatePositionPerformance(null,null);
-		evaluatePROM();
-		calculateMDM(positionManager.getExecutionHistory());
-		calculateStrategyStopLimit();
-		
-		performanceKPIs.setPeriodStartDate(periodStartDate);
-		performanceKPIs.setPeriodEndDate(periodEndDate);
-		
-		performanceKPIs.setAnnTotalNumberOfLosingTrades(annTotalNumberOfLosingTrades);
-		performanceKPIs.setAnnTotalNumberOfWinningTrades(annTotalNumberOfWinningTrades);
-		performanceKPIs.setAnnualizedGrossLoss(annualizedGrossLoss);
-		performanceKPIs.setAnnualizedGrossProfit(annualizedGrossProfit);
-		
-		performanceKPIs.setAverageLosingTrade(averageLosingTrade);
-		performanceKPIs.setAverageTrade(averageTrade);
-		performanceKPIs.setAverageWinningTrade(averageWinningTrade);
-		performanceKPIs.setGrossLossForClosedTrades(grossLossForClosedTrades);
-		performanceKPIs.setGrossProfitForClosedTrades(grossProfitForClosedTrades);
-		performanceKPIs.setLargestLosingTrade(largestLosingTrade);
-		performanceKPIs.setLargestWinningTrade(largestWinningTrade);
-		performanceKPIs.setMaxConsecutiveLosers(maxConsecutiveLosers);
-		performanceKPIs.setMaxConsecutiveWinners(maxConsecutiveWinners);
-		performanceKPIs.setMdd(mdd);
-		performanceKPIs.setNetProfitForClosedTrades(netProfitForClosedTrades);
-		performanceKPIs.setPercentProfitable(percentProfitable);
-		performanceKPIs.setProm(prom);
-		performanceKPIs.setRatioAverageWinAverageLoss(ratioAverageWinAverageLoss);
-		performanceKPIs.setStrategyStopLimit(strategyStopLimit);
-		performanceKPIs.setTotalNumberOfEntryTrades(totalNumberOfEntryTrades);
-		performanceKPIs.setTotalNumberOfLosingTrades(totalNumberOfLosingTrades);
-		performanceKPIs.setTotalNumberOfTrades(totalNumberOfTrades);
-		performanceKPIs.setTotalNumberOfWinningTrades(totalNumberOfWinningTrades);
-		performanceKPIs.setMddMaxDate(MaxDate);
-		performanceKPIs.setMddMinDate(MinDate);
+		performanceKPIs = calculatePeriodBasedPerformanceData(periodStartDate,periodEndDate);
 		
 		
+		calculateMDM(positionManager.getExecutionHistory(),performanceKPIs);
+		evaluatePROM(performanceKPIs);
+		calculateStrategyStopLimit(performanceKPIs);
 		
 		String headers = performanceKPIs.getHeaders();
 		String body = performanceKPIs.getData();
@@ -143,7 +80,6 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		String consoleData = performanceKPIs.getPerformanceData();
 		
 		generatedReport = consoleData;
-		
 		
 		if(Constants.DEBUG_ENABLED){
 			System.out.println(headers);
@@ -167,8 +103,6 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 				
 				periodBasedPerformanceData.writeLog(body);
 			}
-			
-			
 			
 		}
 		
@@ -283,13 +217,13 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 			
 	}
 	
-	private void calculateStrategyStopLimit() {
-		this.strategyStopLimit = (mdd*margin/100d)*Constants.SAFETY_FACTOR; 	
+	private void calculateStrategyStopLimit(PerformanceKPIS kpi) {
+		kpi.setStrategyStopLimit((kpi.getMdd()*margin/100d)*Constants.SAFETY_FACTOR);
 	}
 
 
-	private void calculateMDM(List<ExecutionRecord> executionHistory){
-		
+	private void calculateMDM(List<ExecutionRecord> executionHistory, PerformanceKPIS kpi){
+		Double mdd = 0d;
 		
 		if (executionHistory.size()>0){
 			
@@ -321,82 +255,40 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 					
 			}
 			
-			this.mdd = PctMaxDrawDown;
-			this.MinDate = minMaxDate;
-			this.MaxDate = MaxDate;
+			mdd = PctMaxDrawDown;
+			kpi.setMddMinDate(minMaxDate);
+			kpi.setMddMaxDate(MaxDate);
 			
 		}
 		
-		else this.mdd = Double.NaN;
+		else mdd = Double.NaN;
 		
 		
-		this.mdd = (this.mdd / margin)*100d;
+		mdd = (mdd / margin)*100d;
+		
+		kpi.setMdd(mdd);
 		
 	}
 	
 
-	
-	private void calculatePositionPerformance(Date startDate, Date endDate){
+	private void evaluatePROM(PerformanceKPIS performanceKPIs){
 		
-		Date intervalDate = null;
+		Double annualizedGrossProfit = performanceKPIs.getGrossLossForClosedTrades() * annualizationCoefficient;
+		Double annualizedGrossLoss = performanceKPIs.getGrossLossForClosedTrades() * annualizationCoefficient;
 		
-		for(IPosition pos:positionManager.getPositions()){
-			
-			/**
-			TODO: Where is the quote price
-			 
-			if(pos.getStatus() == TradeStatusType.OPEN){
-				netProfitForOpenTrades += pos.getCurrentProfitLoss(0d);
-			}
-			*/
-			
-			netProfitForClosedTrades += pos.getRealizedProfitLoss(startDate,endDate);
-			grossProfitForClosedTrades += pos.getRealizedGrossProfit(startDate,endDate);
-			grossLossForClosedTrades += pos.getRealizedGrossLoss(startDate,endDate);
-			
-			totalNumberOfTrades += pos.getTotalNumberOfTrades(startDate,endDate);
-			totalNumberOfWinningTrades += pos.getTotalNumberOfWinningTrades(startDate,endDate);
-			totalNumberOfLosingTrades += pos.getTotalNumberOfLosingTrades(startDate,endDate);
-			totalNumberOfEntryTrades += pos.getTotalNumberOfEntryTrades(startDate,endDate);
-			
-			if(largestWinningTrade < pos.getLargestWinningTrade(startDate,endDate))
-				largestWinningTrade = pos.getLargestWinningTrade(startDate,endDate);
-			
-			if(largestLosingTrade > pos.getLargestLosingTrade(startDate,endDate))
-				largestLosingTrade = pos.getLargestLosingTrade(startDate,endDate);
-
-		}
-		
-		percentProfitable = (totalNumberOfWinningTrades*1d / ((totalNumberOfTrades - totalNumberOfEntryTrades)==0?1:(totalNumberOfTrades - totalNumberOfEntryTrades) ))*100;
-
-		averageWinningTrade = grossProfitForClosedTrades / (totalNumberOfWinningTrades==0?1:totalNumberOfWinningTrades);
-		
-		averageLosingTrade = grossLossForClosedTrades / (totalNumberOfLosingTrades==0?1:totalNumberOfLosingTrades);
-		
-		ratioAverageWinAverageLoss = averageWinningTrade / (averageLosingTrade==0?averageWinningTrade:averageLosingTrade);
-		
-		averageTrade = netProfitForClosedTrades / ((totalNumberOfTrades - totalNumberOfEntryTrades)==0?1:(totalNumberOfTrades - totalNumberOfEntryTrades));
-		
-		maxConsecutiveWinners = positionManager.getConsecutiveWinningTrades(startDate,endDate);
-		maxConsecutiveLosers = positionManager.getConsecutiveLosingTrades(startDate,endDate);
+		Double annTotalNumberOfWinningTrades  = performanceKPIs.getTotalNumberOfWinningTrades() * annualizationCoefficient;
+		Double annTotalNumberOfLosingTrades = performanceKPIs.getTotalNumberOfLosingTrades() * annualizationCoefficient;
 		
 		
-	}
-	
-	private void evaluatePROM(){
-		
-		annualizedGrossProfit = grossProfitForClosedTrades * annualizationCoefficient;
-		annualizedGrossLoss = grossLossForClosedTrades * annualizationCoefficient;
-		
-		annTotalNumberOfWinningTrades  = totalNumberOfWinningTrades * annualizationCoefficient;
-		annTotalNumberOfLosingTrades = totalNumberOfLosingTrades * annualizationCoefficient;
-		
-		
-		prom = TradeUtils.roundDownDigits(((((annualizedGrossProfit/(annTotalNumberOfWinningTrades==0d?1:annTotalNumberOfWinningTrades)) * (annTotalNumberOfWinningTrades - Math.sqrt(annTotalNumberOfWinningTrades)))
+		Double prom = TradeUtils.roundDownDigits(((((annualizedGrossProfit/(annTotalNumberOfWinningTrades==0d?1:annTotalNumberOfWinningTrades)) * (annTotalNumberOfWinningTrades - Math.sqrt(annTotalNumberOfWinningTrades)))
 				 +
 				 ((annualizedGrossLoss/(annTotalNumberOfLosingTrades==0d?1:annTotalNumberOfLosingTrades)) * (annTotalNumberOfLosingTrades + Math.sqrt(annTotalNumberOfLosingTrades)))) / margin)*100,2);
 		
-		return;
+		performanceKPIs.setProm(prom);
+		performanceKPIs.setAnnTotalNumberOfLosingTrades(annTotalNumberOfLosingTrades);
+		performanceKPIs.setAnnTotalNumberOfWinningTrades(annTotalNumberOfWinningTrades);
+		performanceKPIs.setAnnualizedGrossLoss(annualizedGrossLoss);
+		performanceKPIs.setAnnualizedGrossProfit(annualizedGrossProfit);
 	}
 	
 	/*
@@ -405,7 +297,7 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	 * 
 	 * */
 	public Double getFitnessValue(){
-		return prom;
+		return performanceKPIs.getProm();
 	}
 
 
