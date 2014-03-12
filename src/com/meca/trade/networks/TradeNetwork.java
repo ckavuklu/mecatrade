@@ -15,6 +15,7 @@ import com.meca.trade.to.Account;
 import com.meca.trade.to.AccountStatusType;
 import com.meca.trade.to.Constants;
 import com.meca.trade.to.CurrencyType;
+import com.meca.trade.to.IMarketDataGenerator;
 import com.meca.trade.to.IPositionManager;
 import com.meca.trade.to.IStrategy;
 import com.meca.trade.to.ITestTradeDataSet;
@@ -27,7 +28,7 @@ import com.meca.trade.to.TestTradeDataSet;
 public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 	
 	private String networkName;
-	private HashMap<String, Parameter> parameterMap;
+	private HashMap<String, Parameter> networkConfigurationParameterMap;
 	private PerformanceReportManager reportManager = null;
 	private Account account = null;
 	private IPositionManager posManager = null;
@@ -213,17 +214,18 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 		  super.initialize(obj, component(compName), port(portName));
 	  }
 	  
-	  public void init(HashMap<String, Parameter> parameterMap){
-	        this.parameterMap = parameterMap;
+	  public void init(HashMap<String, Parameter> parameterMap, IMarketDataGenerator marketDataInterface){
+	        this.networkConfigurationParameterMap = parameterMap;
 	       
+	        Double accountBalance = (Double)networkConfigurationParameterMap.get("ACCOUNT_BALANCE").getValue();
 
 	        uuid = UUID.randomUUID().toString();
 	        
 	        indicatorParameterList = new ArrayList<IndicatorParameter>();
 	        
-			reportManager = new PerformanceReportManager(parameterMap);
+			reportManager = new PerformanceReportManager(marketDataInterface,accountBalance);
 			
-			account = new Account(CurrencyType.USD,"5678",(Double)parameterMap.get("ACCOUNT_BALANCE").getValue(),AccountStatusType.OPEN);
+			account = new Account(CurrencyType.USD,"5678",accountBalance,AccountStatusType.OPEN);
 			
 			/*
 			IndicatorSet set = new IndicatorSet();
@@ -238,8 +240,8 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 			StochasticStrategy stochasticStrategy = new StochasticStrategy(stochasticKLine,stochasticDLine,80d,20d);
 			*/
 				
-			posManager = new PositionManager(null,account,reportManager,MarketType.EURUSD,uuid);
-			dataSet = new TestTradeDataSet((String)parameterMap.get("INPUT_TEST_TRADE_DATA_FILE_NAME").getValue());
+			posManager = new PositionManager(null,account,reportManager,MarketType.EURUSD,networkName);
+			//dataSet = new TestTradeDataSet((String)parameterMap.get("INPUT_TEST_TRADE_DATA_FILE_NAME").getValue());
 			//TurtleStrategy turtleStrategy = new TurtleStrategy(shortSet);
 			
 			//trader = new BaseTrader(posManager);
@@ -247,6 +249,38 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 
 
 
+	  public void init(HashMap<String, Parameter> parameterMap){
+	        this.networkConfigurationParameterMap = parameterMap;
+	       
+	        Double accountBalance = (Double)parameterMap.get("ACCOUNT_BALANCE").getValue();
+
+	        uuid = UUID.randomUUID().toString();
+	        
+	        indicatorParameterList = new ArrayList<IndicatorParameter>();
+	        
+			reportManager = new PerformanceReportManager(parameterMap);
+			
+			account = new Account(CurrencyType.USD,"5678",accountBalance,AccountStatusType.OPEN);
+			
+			/*
+			IndicatorSet set = new IndicatorSet();
+			set.addIndicator("SMASHORT", 4);
+			set.addIndicator("SMALONG", 9);
+			strategy = new SMAStrategy(set);
+			
+			IndicatorSet stochasticKLine = new IndicatorSet();
+			stochasticKLine.addIndicator("KLINE", 10);
+			IndicatorSet stochasticDLine = new IndicatorSet();
+			stochasticDLine.addIndicator("DLINE", 11);
+			StochasticStrategy stochasticStrategy = new StochasticStrategy(stochasticKLine,stochasticDLine,80d,20d);
+			*/
+				
+			posManager = new PositionManager(null,account,reportManager,MarketType.EURUSD,networkName);
+			//dataSet = new TestTradeDataSet((String)parameterMap.get("INPUT_TEST_TRADE_DATA_FILE_NAME").getValue());
+			//TurtleStrategy turtleStrategy = new TurtleStrategy(shortSet);
+			
+			//trader = new BaseTrader(posManager);
+	  }
 
 
 	public PerformanceReportManager getReportManager() {

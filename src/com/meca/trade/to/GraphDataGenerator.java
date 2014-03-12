@@ -24,7 +24,7 @@ public class GraphDataGenerator extends FileReportGenerator {
 			try {
 				String content = FileUtils.readFileToString(file, "UTF-8");
 				content = content.replace("$FILENAME", fileName);
-				File tempFile = new File(Constants.REPORT_GENERATION_DIRECTORY
+				File tempFile = new File(Constants.OUTPUT_DIRECTORY
 						+ File.separator + fileName + " - " + file.getName());
 				FileUtils.writeStringToFile(tempFile, content, "UTF-8");
 			} catch (IOException e) {

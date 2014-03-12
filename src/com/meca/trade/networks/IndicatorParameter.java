@@ -51,6 +51,23 @@ public class IndicatorParameter implements java.lang.Cloneable{
 		this.end = end;
 	}
 	
+	public String getStringValue(){
+		String result = null;
+		 if(!type.equalsIgnoreCase("String")){
+			 if (value instanceof Integer){
+				 result = String.valueOf(value);
+			 }else if(value instanceof Double){
+				 result = String.valueOf(Math.round((Double)value));
+			 }else{
+				 result = "null";
+			 }
+		 }
+	      else
+	    	  result = (String)value;
+		 
+		 return result;
+	}
+	
 	public Object getValue(){
        
         if(type.equalsIgnoreCase("Double")){

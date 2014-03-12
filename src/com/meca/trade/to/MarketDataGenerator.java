@@ -15,7 +15,7 @@ import java.util.List;
 
 import com.meca.trade.networks.Parameter;
 
-public class MarketDataGenerator {
+public class MarketDataGenerator implements IMarketDataGenerator{
 	String sourceFileName;
 	//String targetFileName;
 
@@ -25,6 +25,15 @@ public class MarketDataGenerator {
 	private Double periodClose;
 
 	private Date periodStart;
+	public Date getPeriodStart() {
+		return periodStart;
+	}
+
+	public Date getPeriodEnd() {
+		return periodEnd;
+	}
+
+
 	private Date periodEnd;
 
 	private Date cycleStart;
@@ -39,13 +48,19 @@ public class MarketDataGenerator {
 		return marketData.iterator();
 	}
 	
-	public MarketDataGenerator(HashMap<String, Parameter> parameterMap) throws IOException {
-		//targetFileName = (String)parameterMap.get("INPUT_MARKET_DATA_FILE_NAME").getValue();
-		sourceFileName = "ORG_" + (String)parameterMap.get("INPUT_MARKET_DATA_FILE_NAME").getValue();
-		periodStart = (Date)parameterMap.get("PERIOD_START").getValue();
-		periodEnd = (Date)parameterMap.get("PERIOD_END").getValue();
-		schedulePeriod = (Integer)parameterMap.get("PERIOD_STEP_SIZE").getValue();
-		schedule = (String)parameterMap.get("PERIOD_TYPE").getValue();
+	public MarketDataGenerator(String sourceFileName, Date periodStart, Date periodEnd, Integer schedulePeriod, String schedule) throws IOException{
+		this.sourceFileName = sourceFileName;
+		this.periodStart = periodStart;
+		this.periodEnd = periodEnd;
+		this.schedulePeriod = schedulePeriod;
+		this.schedule = schedule;
+		
+		createMarketData();
+	}
+	
+	
+	
+	private void createMarketData() throws IOException{
 		marketData = new ArrayList<PriceData>();
 		cycleStart 	= periodStart;
 		cycleEnd 	= nextDate(periodStart, schedulePeriod, schedule);
@@ -169,7 +184,18 @@ public class MarketDataGenerator {
 			br.close();
 			//wr.close();
 		}
+	}
+	
+	
+	public MarketDataGenerator(HashMap<String, Parameter> parameterMap) throws IOException {
+		//targetFileName = (String)parameterMap.get("INPUT_MARKET_DATA_FILE_NAME").getValue();
+		sourceFileName = "ORG_" + (String)parameterMap.get("INPUT_MARKET_DATA_FILE_NAME").getValue();
+		periodStart = (Date)parameterMap.get("PERIOD_START").getValue();
+		periodEnd = (Date)parameterMap.get("PERIOD_END").getValue();
+		schedulePeriod = (Integer)parameterMap.get("PERIOD_STEP_SIZE").getValue();
+		schedule = (String)parameterMap.get("PERIOD_TYPE").getValue();
 		
+		createMarketData();
 		
 	}
 	

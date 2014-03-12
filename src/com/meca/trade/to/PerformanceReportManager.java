@@ -28,7 +28,7 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	private Double annualizationCoefficient = 0d;
 	
 	private IReportLogger  graphData = null;
-	private IReportLogger  performanceData = null;
+	//private IReportLogger  performanceData = null;
 	private IReportLogger  periodBasedPerformanceData = null;
 
 	@Override
@@ -43,6 +43,23 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	}
 
 	
+	
+	
+	
+	public PerformanceReportManager(IMarketDataGenerator marketData, Double accountBalance) {
+		super();
+		
+		periodStartDate = marketData.getPeriodStart();
+		periodEndDate = marketData.getPeriodEnd();
+		
+		this.annualizationCoefficient = 365d * 24d * 60d * 60d * 1000 / (periodEndDate.getTime() -  periodStartDate.getTime());
+		this.margin = accountBalance;
+		
+		this.graphData = new GraphDataGenerator();
+		this.periodBasedPerformanceData = new FileReportGenerator();
+		
+	}
+	
 	public PerformanceReportManager(HashMap<String,Parameter> config) {
 		super();
 		this.config = config;
@@ -54,7 +71,6 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		this.margin = (Double)config.get("ACCOUNT_BALANCE").getValue();
 		
 		this.graphData = new GraphDataGenerator();
-		this.performanceData = new FileReportGenerator();
 		this.periodBasedPerformanceData = new FileReportGenerator();
 		
 	}
@@ -87,10 +103,6 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		}
 		
 		if(generateLogReport){
-
-			performanceData.writeLog(headers);
-			performanceData.writeLog(body);
-			
 			
 			List<PerformanceKPIS> listOfKPIs = generatePeriodicPerformanceReport(periodStartDate, periodEndDate);
 			
@@ -304,7 +316,6 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	@Override
 	public void initializeLogger(String name) {
 		graphData.initializeLogger(name + "_Graph");
-		performanceData.initializeLogger(name+ "_Performance.xls");
 		periodBasedPerformanceData.initializeLogger(name+ "_Periodic_Performance.xls");
 	}
 
@@ -312,7 +323,6 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	@Override
 	public void finalizeLogger() {
 		graphData.finalizeLogger();
-		performanceData.finalizeLogger();
 		periodBasedPerformanceData.finalizeLogger();
 	}
 

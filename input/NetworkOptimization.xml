@@ -1,0 +1,55 @@
+<optimization>
+
+    <genetic-configuration>
+		<param name="ELITISM_K" type="Integer" value="0"></param>
+		<param name="POP_SIZE" type="Integer" value="2"></param>
+		<param name="MAX_ITER" type="Integer" value="1"></param>
+		<param name="MUTATION_RATE" type="Double" value="0.02"></param>
+		<param name="CROSSOVER_RATE" type="Double" value="0.7"></param>
+		<param name="TOURNAMENT_SIZE" type="Integer" value="2"></param>
+		<param name="INDIVIDUALS_SIZE" type="Integer" value="2"></param>
+	</genetic-configuration>
+	
+	<indicators>
+	
+		<!-- indicator network="TradeNetwork-1" name="_SimpleMovingAverage_SHORT" port="WINDOW">
+			<interval start="2"  end="5" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-1" name="_SimpleMovingAverage_LONG" port="WINDOW">
+			<interval start="6"  end="9" type="Double"></interval>
+		</indicator-->	
+		 	
+		 	
+		<indicator network="TradeNetwork-1" name="_SimpleMovingAverage_SHORT" port="WINDOW">
+			<interval start="15"  end="60" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-1" name="_SimpleMovingAverage_LONG" port="WINDOW">
+			<interval start="60"  end="180" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-1" name="_ExponentialMovingAverage_SHORT" port="WINDOW">
+			<interval start="15"  end="60" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-1" name="_ExponentialMovingAverage_LONG" port="WINDOW">
+			<interval start="60"  end="180" type="Double"></interval>
+		</indicator>		
+		 	
+		 	
+		 	
+		 	
+		<indicator network="TradeNetwork-2" name="_SimpleMovingAverage_SHORT" port="WINDOW">
+			<interval start="15"  end="60" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-2" name="_SimpleMovingAverage_LONG" port="WINDOW">
+			<interval start="60"  end="180" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-2" name="_ExponentialMovingAverage_SHORT" port="WINDOW">
+			<interval start="15"  end="60" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-2" name="_ExponentialMovingAverage_LONG" port="WINDOW">
+			<interval start="60"  end="180" type="Double"></interval>
+		</indicator>				
+	</indicators>
+	
+	
+
+</optimization>

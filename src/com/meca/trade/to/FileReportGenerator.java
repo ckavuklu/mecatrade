@@ -10,13 +10,13 @@ public class FileReportGenerator implements IReportLogger {
 	String fileName = null;
 	
 	public FileReportGenerator() {
-		for(File file: new File(Constants.REPORT_GENERATION_DIRECTORY).listFiles()) file.delete();
+		//for(File file: new File(Constants.OUTPUT_DIRECTORY).listFiles()) file.delete();
 	}
 
 	@Override
 	public void initializeLogger(String name){
 		try {
-			writer = new PrintWriter(new File(Constants.REPORT_GENERATION_DIRECTORY + File.separator + name));
+			writer = new PrintWriter(new File(Constants.OUTPUT_DIRECTORY + File.separator + name));
 			fileName = name;
 			
 		} catch (FileNotFoundException e) {

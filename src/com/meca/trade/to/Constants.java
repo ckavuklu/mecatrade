@@ -58,11 +58,14 @@ public final class Constants {
 	public final static String VALUE_TYPE_POSITION_SIZER_VOLATILITY_ADJUSTED = "volatility-adjusted";
 	public final static String VALUE_TYPE_POSITION_SIZER_KELLY = "kelly";
 	
-	public final static String GENERATION_DIRECTORY = "report";
+	public final static String OUTPUT_DIRECTORY = "output";
 	
-	public final static String REPORT_GENERATION_DIRECTORY = GENERATION_DIRECTORY + File.separator +"generated";
+	public final static String INPUT_DIRECTORY = "input";
 	
-	public final static String GRAPH_TEMPLATE_DIRECTORY = GENERATION_DIRECTORY + File.separator +"templates";
+	public final static String GRAPH_TEMPLATE_DIRECTORY = OUTPUT_DIRECTORY + File.separator +"graphtemplate"+ File.separator + "templates";
+	
+	public final static String OUTPUT_TEMP_DIRECTORY = OUTPUT_DIRECTORY + File.separator +"temp";
+	
 	
 	public final static Integer EURUSD_MARKET_PRICE_PRECISION = 5;
 	

@@ -35,9 +35,12 @@
 ehthumbs.db
 Thumbs.db
 EURUSD.txt
+ORG_EURUSD.txt
+log.txt
 celal.txt
+*.rtf
 *.md
 .metadata/
 /bin
 /build
-/output
+/output/Run*
