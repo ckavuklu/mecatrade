@@ -6,23 +6,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
-
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.util.Set;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
+import com.meca.trade.to.IMarketData;
 import com.meca.trade.to.IPositionManager;
 import com.meca.trade.to.IStrategy;
 import com.meca.trade.to.ITrader;
-import com.meca.trade.to.MarketDataGenerator;
 
 public class NewMankind {
-	MarketDataGenerator marketDataGenerator;
+	IMarketData marketData;
 	
 	Document definitionDoc = null;
 	
@@ -42,7 +40,7 @@ public class NewMankind {
 		
 		network.setNetworkName(networkNode.getAttribute("name").getValue());
 		
-		network.init(getNetworkConfigurationParameters(networkNode.getChild("configuration")),marketDataGenerator);
+		network.init(getNetworkConfigurationParameters(networkNode.getChild("configuration")),marketData);
 		
 		populateComponents(network, networkNode.getChild("components"));
 		
@@ -228,7 +226,7 @@ public class NewMankind {
 					network.addInitialization(network.getDataSet(),
 							componentName, portName);
 				} else if (value.equalsIgnoreCase("dataIterator")) {
-					network.addInitialization(marketDataGenerator.getMarketDataIterator(),
+					network.addInitialization(marketData.getMarketDataIterator(),
 							componentName, portName);
 				}
 			} else if (paramType.equalsIgnoreCase("Strategy")) {
@@ -289,8 +287,8 @@ public class NewMankind {
 	}
 	*/
 	
-	public NewMankind(String fileName, MarketDataGenerator marketDataGenerator) {
-		this.marketDataGenerator = marketDataGenerator;
+	public NewMankind(String fileName, IMarketData marketData) {
+		this.marketData = marketData;
 		
 		SAXBuilder builder = new SAXBuilder();
 		

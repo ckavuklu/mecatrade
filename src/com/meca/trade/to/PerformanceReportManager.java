@@ -46,7 +46,7 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	
 	
 	
-	public PerformanceReportManager(IMarketDataGenerator marketData, Double accountBalance) {
+	public PerformanceReportManager(IMarketData marketData, Double accountBalance) {
 		super();
 		
 		periodStartDate = marketData.getPeriodStart();

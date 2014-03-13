@@ -15,7 +15,7 @@ import com.meca.trade.to.Account;
 import com.meca.trade.to.AccountStatusType;
 import com.meca.trade.to.Constants;
 import com.meca.trade.to.CurrencyType;
-import com.meca.trade.to.IMarketDataGenerator;
+import com.meca.trade.to.IMarketData;
 import com.meca.trade.to.IPositionManager;
 import com.meca.trade.to.IStrategy;
 import com.meca.trade.to.ITestTradeDataSet;
@@ -214,7 +214,7 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 		  super.initialize(obj, component(compName), port(portName));
 	  }
 	  
-	  public void init(HashMap<String, Parameter> parameterMap, IMarketDataGenerator marketDataInterface){
+	  public void init(HashMap<String, Parameter> parameterMap, IMarketData marketDataInterface){
 	        this.networkConfigurationParameterMap = parameterMap;
 	       
 	        Double accountBalance = (Double)networkConfigurationParameterMap.get("ACCOUNT_BALANCE").getValue();

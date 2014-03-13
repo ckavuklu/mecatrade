@@ -15,7 +15,7 @@ import java.util.List;
 
 import com.meca.trade.networks.Parameter;
 
-public class MarketDataGenerator implements IMarketDataGenerator{
+public class MarketDataGenerator{
 	String sourceFileName;
 	//String targetFileName;
 
@@ -42,6 +42,12 @@ public class MarketDataGenerator implements IMarketDataGenerator{
 	private Integer schedulePeriod = null;
 	private String schedule = null;
 	private List<PriceData> marketData = null;
+	
+	public List<PriceData> getMarketData() {
+		return marketData;
+	}
+
+
 	MarketType marketType = null;
 	
 	public Iterator<PriceData> getMarketDataIterator(){

@@ -11,13 +11,9 @@ public class TheArchitect {
 		
 		matrix.createRuntime();
 		
-		/*
 		matrix.optimize();
-		*/
-		
-		
-		matrix.createMarketDataGenerator();
-		matrix.runNetworks();
+	
+		//matrix.runNetworks();
 	}
 
 }

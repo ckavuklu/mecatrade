@@ -20,16 +20,14 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
 import com.meca.trade.to.Constants;
-import com.meca.trade.to.MarketDataGenerator;
-import com.meca.trade.to.PriceData;
+import com.meca.trade.to.IMarketData;
 
 public class NewOptimizer {
-	
-	HashMap<String, Parameter> paramMap;
+
 	HashMap<String, Parameter> geneticParamMap;
 	Document doc = null;
 	
-	MarketDataGenerator dataGenerator = null;
+	IMarketData marketData = null;
 	
 	
 	HashMap<String,List<TradeNetwork>> m_population;
@@ -69,9 +67,8 @@ public class NewOptimizer {
 
 	}
 	
-	public NewOptimizer(HashMap<String, Parameter> runtimeParamMap) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public NewOptimizer(IMarketData marketData) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 	
-		this.paramMap = runtimeParamMap;
 		
 		
 	
@@ -87,9 +84,9 @@ public class NewOptimizer {
 			tournament_size = (Integer)geneticParamMap.get("TOURNAMENT_SIZE").getValue();
 			individuals_size = (Integer)geneticParamMap.get("INDIVIDUALS_SIZE").getValue();
 
-			dataGenerator = new MarketDataGenerator(runtimeParamMap);
+			this.marketData = marketData;
 			
-			mankind = new NewMankind(Constants.INPUT_DIRECTORY + File.separator + "Networks.xml",dataGenerator);
+			mankind = new NewMankind(Constants.INPUT_DIRECTORY + File.separator + "Networks.xml",marketData);
 			
 			m_population = mankind.populateRaceIndividuals(pop_size);
 			

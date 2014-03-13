@@ -1,25 +1,22 @@
 package com.meca.trade.networks;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.NameFileFilter;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
 
 import com.meca.trade.to.Constants;
+import com.meca.trade.to.IMarketData;
 import com.meca.trade.to.MarketDataGenerator;
 
 public class TheMatrix {
@@ -56,7 +53,7 @@ public class TheMatrix {
 		}
 	}
 	
-	public void createMarketDataGenerator() throws IOException {
+	public IMarketData createMarketDataGenerator() throws IOException {
 		
 		/*
 		sourceFileName = "ORG_" + (String)parameterMap.get("INPUT_MARKET_DATA_FILE_NAME").getValue();
@@ -67,11 +64,14 @@ public class TheMatrix {
 		*/
 		
 		generator = new MarketDataGenerator(runtimeParamMap);
+		
+		return new MarketData(generator.getPeriodStart(),generator.getPeriodEnd(),generator.getMarketData());
 	}
 	
 	public void optimize() throws Exception{
+	
 		
-		optimizer = new NewOptimizer(runtimeParamMap);
+		optimizer = new NewOptimizer(createMarketDataGenerator());
 		
 		optimizer.output(optimizer.iterate());
 		
@@ -82,9 +82,21 @@ public class TheMatrix {
 	}
 	
 	
+	public void walkForwardAnalysis(){
+		
+		/*while(true){
+		
+			optimize(start,end);
+			
+			updateIterators();
+			
+			runNetworks();
+		}*/
+	}
+	
 	public void runNetworks() throws Exception{
 		
-		NewMankind mankind = new NewMankind(Constants.INPUT_DIRECTORY + File.separator + "Networks.xml",generator);
+		NewMankind mankind = new NewMankind(Constants.INPUT_DIRECTORY + File.separator + "Networks.xml",createMarketDataGenerator());
 		
 		HashMap<String,List<TradeNetwork>> m_population = mankind.populateRaceIndividuals(1);
 		mankind.populateDefaultIndicators(m_population);
