@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -55,9 +57,55 @@ public class NewMankind {
 		return network;
 	}
 
+	public void populateDefaultIndicators(
+			HashMap<String, List<TradeNetwork>> mankindMap)
+			throws ClassNotFoundException, InstantiationException,
+			IllegalAccessException, IllegalArgumentException,
+			SecurityException, InvocationTargetException, NoSuchMethodException {
 
-	
-	
+		Set<Entry<String, List<TradeNetwork>>> set = mankindMap.entrySet();
+
+		for (Element networks : definitionDoc.getRootElement().getChildren(
+				"network")) {
+			Element indicators = networks.getChildren("indicators").get(0);
+
+			Iterator itr = indicators.getChildren().iterator();
+
+			while (itr.hasNext()) {
+				Element indicator = (Element) itr.next();
+				String networkName = networks.getAttributeValue("name");
+				String componentName = indicator.getAttribute("name")
+						.getValue();
+
+				for (Entry<String, List<TradeNetwork>> e : set) {
+					if (networkName.equalsIgnoreCase(e.getValue().get(0)
+							.getNetworkName())) {
+						String portName = indicator.getAttribute("port")
+								.getValue();
+						String defaultValue = indicator.getAttribute("default")
+								.getValue();
+						String optimizedValue = indicator.getAttribute(
+								"optimized").getValue();
+						String paramType = indicator.getAttribute("type")
+								.getValue();
+
+						IndicatorParameter indicatorParam = new IndicatorParameter(
+								networkName, componentName, portName,
+								paramType, null, null);
+						indicatorParam.setValue(paramType.equalsIgnoreCase("Double")?Double.valueOf(defaultValue):"null");
+						e.getValue().get(0).getIndicatorParameterList()
+								.add(indicatorParam);
+
+					}
+				}
+			}
+		}
+		
+		for (Entry<String, List<TradeNetwork>> e : set) {
+			e.getValue().get(0).initializeByIndicatorParameterValues();
+		}
+
+	}
 	
 	private void populateComponents(TradeNetwork network, Element connections) throws ClassNotFoundException{
 		Iterator itr = connections.getChildren().iterator();

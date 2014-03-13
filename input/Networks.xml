@@ -239,10 +239,10 @@
 			</connections>
 			
 			<indicators>
-				<indicator name="_SimpleMovingAverage_SHORT" default="10" optimized="$TradeNetwork-2_SimpleMovingAverage_SHORT" port="WINDOW"/>
-				<indicator name="_SimpleMovingAverage_LONG" default="15" optimized="$TradeNetwork-2_SimpleMovingAverage_LONG" port="WINDOW" />
-				<indicator name="_ExponentialMovingAverage_SHORT" default="15" optimized="$TradeNetwork-2_ExponentialMovingAverage_SHORT" port="WINDOW" />
-				<indicator name="_ExponentialMovingAverage_LONG" default="15" optimized="$TradeNetwork-2_ExponentialMovingAverage_LONG" port="WINDOW" />
+				<indicator name="_SimpleMovingAverage_SHORT" default="22" optimized="$TradeNetwork-2_SimpleMovingAverage_SHORT" type="Double" port="WINDOW"/>
+				<indicator name="_SimpleMovingAverage_LONG" default="113" optimized="$TradeNetwork-2_SimpleMovingAverage_LONG" type="Double" port="WINDOW" />
+				<indicator name="_ExponentialMovingAverage_SHORT" default="16" optimized="$TradeNetwork-2_ExponentialMovingAverage_SHORT" type="Double" port="WINDOW" />
+				<indicator name="_ExponentialMovingAverage_LONG" default="103" optimized="$TradeNetwork-2_ExponentialMovingAverage_LONG" type="Double" port="WINDOW" />
 			</indicators>
 
 			<trade-configuration>
@@ -391,11 +391,12 @@
 				</connect>
 			</connections>
 			
+			
 			<indicators>
-				<indicator name="_SimpleMovingAverage_SHORT" default="10" optimized="$TradeNetwork-1_SimpleMovingAverage_SHORT" port="WINDOW"/>
-				<indicator name="_SimpleMovingAverage_LONG" default="15" optimized="$TradeNetwork-1_SimpleMovingAverage_LONG" port="WINDOW" />
-				<indicator name="_ExponentialMovingAverage_SHORT" default="15" optimized="$TradeNetwork-1_ExponentialMovingAverage_SHORT" port="WINDOW" />
-				<indicator name="_ExponentialMovingAverage_LONG" default="15" optimized="$TradeNetwork-1_ExponentialMovingAverage_LONG" port="WINDOW" />
+				<indicator name="_SimpleMovingAverage_SHORT" default="60" optimized="$TradeNetwork-1_SimpleMovingAverage_SHORT" type="Double" port="WINDOW"/>
+				<indicator name="_SimpleMovingAverage_LONG" default="93" optimized="$TradeNetwork-1_SimpleMovingAverage_LONG" type="Double" port="WINDOW" />
+				<indicator name="_ExponentialMovingAverage_SHORT" default="54" optimized="$TradeNetwork-1_ExponentialMovingAverage_SHORT" type="Double" port="WINDOW" />
+				<indicator name="_ExponentialMovingAverage_LONG" default="98" optimized="$TradeNetwork-1_ExponentialMovingAverage_LONG" type="Double" port="WINDOW" />
 			</indicators>
 
 			<trade-configuration>

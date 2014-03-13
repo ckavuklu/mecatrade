@@ -3,10 +3,14 @@ package com.meca.trade.networks;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -20,7 +24,6 @@ import com.meca.trade.to.MarketDataGenerator;
 
 public class TheMatrix {
 	private HashMap<String, Parameter> runtimeParamMap;
-	
 	private MarketDataGenerator generator = null;
 	private NewOptimizer optimizer = null;
 	
@@ -53,7 +56,7 @@ public class TheMatrix {
 		}
 	}
 	
-	private void createMarketDataGenerator(String sourceFileName, Date periodStart, Date periodEnd, Integer schedulePeriod, String schedule) throws IOException {
+	public void createMarketDataGenerator() throws IOException {
 		
 		/*
 		sourceFileName = "ORG_" + (String)parameterMap.get("INPUT_MARKET_DATA_FILE_NAME").getValue();
@@ -79,8 +82,31 @@ public class TheMatrix {
 	}
 	
 	
+	public void runNetworks() throws Exception{
+		
+		NewMankind mankind = new NewMankind(Constants.INPUT_DIRECTORY + File.separator + "Networks.xml",generator);
+		
+		HashMap<String,List<TradeNetwork>> m_population = mankind.populateRaceIndividuals(1);
+		mankind.populateDefaultIndicators(m_population);
+		
+		Set<Entry<String, List<TradeNetwork>>> set = m_population.entrySet();
+
+		for (Entry<String, List<TradeNetwork>> e : set) {
+			for (TradeNetwork network : e.getValue()) {
+
+				Double networkFitness = network.evaluate(true);
+				System.out.println("NETWORK: " + network.getNetworkName());	
+				System.out.println("PERFORMANCE REPORT: \n" + network.getReportManager().getGeneratedReport());	
+		    	System.out.println("POSITIONS:");
+				System.out.println(network.getPosManager());
+			}
+		}
+		
+		createRunReports();
+	}
+	
 	private void createRunReports(){
-		FileFilter filter = FileFilterUtils.notFileFilter(new NameFileFilter("Networks.xml"));
+		//FileFilter filter = FileFilterUtils.notFileFilter(new NameFileFilter("Networks.xml"));
 		SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyy-HHmmss-SSS");
 		File newFile = new File( Constants.OUTPUT_DIRECTORY + File.separator + "Run-" + dateFormat.format( new Date() ) );
 		newFile.mkdirs();
@@ -89,7 +115,7 @@ public class TheMatrix {
 		File outputDirectory = new File(Constants.OUTPUT_DIRECTORY);
 		
 		try {
-		    FileUtils.copyDirectory(inputDirectory, newFile, filter);
+		    FileUtils.copyDirectory(inputDirectory, newFile/*, filter*/);
 		  
 		    for(File file:outputDirectory.listFiles()){
 		    	if(!file.isDirectory())

@@ -10,8 +10,14 @@ public class TheArchitect {
 		TheMatrix matrix = new TheMatrix();
 		
 		matrix.createRuntime();
-		matrix.optimize();
 		
+		/*
+		matrix.optimize();
+		*/
+		
+		
+		matrix.createMarketDataGenerator();
+		matrix.runNetworks();
 	}
 
 }
