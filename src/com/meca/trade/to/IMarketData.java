@@ -11,4 +11,5 @@ public interface IMarketData {
 	public Date getPeriodEnd();
 
 	public Iterator<PriceData> getMarketDataIterator();
+	
 }

@@ -10,6 +10,11 @@
 		<param name="INDIVIDUALS_SIZE" type="Integer" value="2"></param>
 	</genetic-configuration>
 	
+	<wfa-configuration>
+		<param name="OPTIMIZATION_WINDOW_PERCENTAGE" type="Integer" value="10"></param>
+		<param name="WFA_WINDOW_PERCENTAGE" type="Integer" value="5"></param>
+	</wfa-configuration>
+	
 	<indicators>
 	
 		<!-- indicator network="TradeNetwork-1" name="_SimpleMovingAverage_SHORT" port="WINDOW">

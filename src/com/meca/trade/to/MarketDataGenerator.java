@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.meca.trade.networks.MarketData;
 import com.meca.trade.networks.Parameter;
 
 public class MarketDataGenerator{
@@ -43,16 +44,32 @@ public class MarketDataGenerator{
 	private String schedule = null;
 	private List<PriceData> marketData = null;
 	
-	public List<PriceData> getMarketData() {
-		return marketData;
+	public IMarketData getMarketData() {
+		return new MarketData(periodStart,periodEnd,marketData);
 	}
-
 
 	MarketType marketType = null;
 	
 	public Iterator<PriceData> getMarketDataIterator(){
 		return marketData.iterator();
 	}
+	
+	public IMarketData getMarketData(Integer fromIndex, Integer lastIndex){
+		IMarketData result = null;
+		
+		if(lastIndex > marketData.size()){
+			result = new MarketData(marketData.get(fromIndex).getTime(),marketData.get(marketData.size()-1).getTime(),marketData.subList(fromIndex, marketData.size()));
+		}else{
+			result = new MarketData(marketData.get(fromIndex).getTime(),marketData.get(lastIndex).getTime(),marketData.subList(fromIndex,lastIndex));
+		}
+		
+		return result;
+	}
+	
+	public int getMarketDataSize(){
+		return marketData.size();
+	}
+	
 	
 	public MarketDataGenerator(String sourceFileName, Date periodStart, Date periodEnd, Integer schedulePeriod, String schedule) throws IOException{
 		this.sourceFileName = sourceFileName;

@@ -53,8 +53,7 @@ public class TheMatrix {
 		}
 	}
 	
-	public IMarketData createMarketDataGenerator() throws IOException {
-		
+	public MarketDataGenerator createMarketDataGenerator() throws IOException {
 		/*
 		sourceFileName = "ORG_" + (String)parameterMap.get("INPUT_MARKET_DATA_FILE_NAME").getValue();
 		periodStart = (Date)parameterMap.get("PERIOD_START").getValue();
@@ -63,15 +62,13 @@ public class TheMatrix {
 		schedule = (String)parameterMap.get("PERIOD_TYPE").getValue();
 		*/
 		
-		generator = new MarketDataGenerator(runtimeParamMap);
-		
-		return new MarketData(generator.getPeriodStart(),generator.getPeriodEnd(),generator.getMarketData());
+		return new MarketDataGenerator(runtimeParamMap);
 	}
 	
 	public void optimize() throws Exception{
 	
 		
-		optimizer = new NewOptimizer(createMarketDataGenerator());
+		optimizer = new NewOptimizer(createMarketDataGenerator().getMarketData());
 		
 		optimizer.output(optimizer.iterate());
 		
@@ -82,7 +79,9 @@ public class TheMatrix {
 	}
 	
 	
-	public void walkForwardAnalysis(){
+	public void walkForwardAnalysis() throws IOException, Exception{
+		
+		new WalkForwardAnalysis(createMarketDataGenerator());
 		
 		/*while(true){
 		
@@ -96,7 +95,7 @@ public class TheMatrix {
 	
 	public void runNetworks() throws Exception{
 		
-		NewMankind mankind = new NewMankind(Constants.INPUT_DIRECTORY + File.separator + "Networks.xml",createMarketDataGenerator());
+		NewMankind mankind = new NewMankind(Constants.INPUT_DIRECTORY + File.separator + "Networks.xml",createMarketDataGenerator().getMarketData());
 		
 		HashMap<String,List<TradeNetwork>> m_population = mankind.populateRaceIndividuals(1);
 		mankind.populateDefaultIndicators(m_population);

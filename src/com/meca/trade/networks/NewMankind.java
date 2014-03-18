@@ -25,6 +25,14 @@ public class NewMankind {
 	Document definitionDoc = null;
 	
 	
+	public IMarketData getMarketData() {
+		return marketData;
+	}
+
+	public void setMarketData(IMarketData marketData) {
+		this.marketData = marketData;
+	}
+
 	private IStrategy createStrategy(Class strategyClass) throws InstantiationException, IllegalAccessException{
 		return (IStrategy)strategyClass.newInstance();
 	}

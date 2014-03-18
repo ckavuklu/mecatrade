@@ -35,6 +35,28 @@ public class NewOptimizer {
 	private static Random m_rand = new Random();  
 	Integer pop_size, max_iteration,elitizm,tournament_size,individuals_size;
 	Double crossover_rate,mutation_rate;
+	public NewMankind getMankind() {
+		return mankind;
+	}
+
+
+
+
+
+
+	public IMarketData getMarketData() {
+		return marketData;
+	}
+
+	public void setMarketData(IMarketData marketData) {
+		this.marketData = marketData;
+	}
+
+
+
+
+
+
 	NewMankind mankind = null;
 	
 	Long marketDataCreationDuration = null;
@@ -101,7 +123,7 @@ public class NewOptimizer {
 			long currTime = Calendar.getInstance().getTimeInMillis();
 			
 			evaluate();
-			System.out.println("Evaluate Takes : " + String.valueOf(Calendar.getInstance().getTimeInMillis() - currTime));
+			//System.out.println("Evaluate Takes : " + String.valueOf(Calendar.getInstance().getTimeInMillis() - currTime));
 						
 		} catch (JDOMException e) {
 			
@@ -248,9 +270,9 @@ public class NewOptimizer {
 			for(Entry<String,List<TradeNetwork>> e:set){
 				Collections.sort(e.getValue());
 				result.add(e.getValue().get(e.getValue().size()-1));
-				System.out.println("Network: " + e.getKey());
-				System.out.println("\tBest Individual: " + e.getValue().get(e.getValue().size()-1));
-				System.out.println("\t\tPerformance Report: \n" + e.getValue().get(e.getValue().size()-1).getReportManager().getGeneratedReport());
+				//System.out.println("Network: " + e.getKey());
+				//System.out.println("\tBest Individual: " + e.getValue().get(e.getValue().size()-1));
+				//System.out.println("\t\tPerformance Report: \n" + e.getValue().get(e.getValue().size()-1).getReportManager().getGeneratedReport());
 			}
 			return result;
 	        
@@ -267,19 +289,16 @@ public class NewOptimizer {
 
 			TradeNetwork best = race.getValue().get(race.getValue().size()-(1));
 			bestIndividuals.get(best.getNetworkName()).get(0).setIndicatorParameterList(best.getIndicatorParameterList());
-			System.out.println("Re-Running Best Child For Network: " +best.getNetworkName());
+			//System.out.println("Re-Running Best Child For Network: " +best.getNetworkName());
 			bestIndividuals.get(best.getNetworkName()).get(0).initializeByIndicatorParameterValues();
-			bestIndividuals.get(best.getNetworkName()).get(0).evaluate(true);
-			System.out.println("\t\tPerformance Report: \n" + bestIndividuals.get(best.getNetworkName()).get(0).getReportManager().getGeneratedReport());	
-	    	System.out.println("POSITIONS:");
-			System.out.println(bestIndividuals.get(best.getNetworkName()).get(0).getPosManager());
+			bestIndividuals.get(best.getNetworkName()).get(0).evaluate(false);
+			//System.out.println("\t\tPerformance Report: \n" + bestIndividuals.get(best.getNetworkName()).get(0).getReportManager().getGeneratedReport());	
+	    	//System.out.println("POSITIONS:");
+			//System.out.println(bestIndividuals.get(best.getNetworkName()).get(0).getPosManager());
 
 		}
-	
-		
+
     }
-	
-	
 	
 	/**
 	 * 
@@ -487,14 +506,14 @@ public class NewOptimizer {
 				
 				count = 0;
 				
-				System.out.println("ITERATION - " + iter);
+				//System.out.println("ITERATION - " + iter);
 				
 				HashMap<String, List<TradeNetwork>> newPop = new HashMap<String, List<TradeNetwork>>();
 
 				// the list is sorted
-				System.out.println("MASTER POPULATION");
+				//System.out.println("MASTER POPULATION");
 
-				printMankind(m_population);
+				//printMankind(m_population);
 				
 				if (elitizm > 0) {
 					bestIndividuals = elitizm();
@@ -502,8 +521,8 @@ public class NewOptimizer {
 					count += elitizm;
 				}
 				
-				System.out.println("NEW POPULATION AFTER ELITIZM");
-				printMankind(newPop);
+				//System.out.println("NEW POPULATION AFTER ELITIZM");
+				//printMankind(newPop);
 
 				// build new Population
 				while (count < pop_size) {
@@ -511,22 +530,22 @@ public class NewOptimizer {
 					// Selection
 					individuals = tournamentSelection();
 					
-					System.out.println("TOURNAMENT SELECTION INDIVIDUALS");
-					printMankind(individuals);
+					//System.out.println("TOURNAMENT SELECTION INDIVIDUALS");
+					//printMankind(individuals);
 					// Crossover
-					System.out.println("INDIVIDUALS AFTER CROSSOVER");
+					//System.out.println("INDIVIDUALS AFTER CROSSOVER");
 					crossover(individuals);
-					printMankind(individuals);
+					//printMankind(individuals);
 
 					// Mutate
 					
 					mutateIndividuals(individuals);
-					System.out.println("INDIVIDUALS AFTER MUTATION");
-					printMankind(individuals);
+					//System.out.println("INDIVIDUALS AFTER MUTATION");
+					//printMankind(individuals);
 					
 					initializeAndAddIndividuals(individuals, newPop);
-					System.out.println("NEW POPULATION AFTER MUTATION");
-					printMankind(newPop);
+					//System.out.println("NEW POPULATION AFTER MUTATION");
+					//printMankind(newPop);
 					
 					
 					count += 2;
@@ -536,15 +555,15 @@ public class NewOptimizer {
 
 				evaluate();
 				
-				System.out.println("BEST INDIVIDUALS");
-				printBestIndividuals();
+				//System.out.println("BEST INDIVIDUALS");
+				//printBestIndividuals();
 				
 			}
 
-			System.out.println("RESULTING MASTER POPULATION");
-			printMankind(m_population);
+			//System.out.println("RESULTING MASTER POPULATION");
+			//printMankind(m_population);
 			
-			System.out.println("BEST INDIVIDUALS of TOTAL EXECUTION");
+			//System.out.println("BEST INDIVIDUALS of TOTAL EXECUTION");
 			return printBestIndividuals();
 			
 			// System.out.println("RERUN BEST INDIVIDUALS");
