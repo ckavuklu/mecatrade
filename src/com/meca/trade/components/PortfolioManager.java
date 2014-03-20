@@ -32,7 +32,7 @@ import com.meca.trade.to.Trade;
 
 
 
-public class PortolioManager extends Component {
+public class PortfolioManager extends Component {
 
 	static final String copyright = "Copyright 2007, 2012, J. Paul Morrison.  At your option, you may copy, "
 			+ "distribute, or make derivative works under the terms of the Clarified Artistic License, "

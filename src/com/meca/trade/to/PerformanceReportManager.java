@@ -20,6 +20,11 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	PerformanceKPIS performanceKPIs = null;
 	
 	
+	public PerformanceKPIS getPerformanceKPIs() {
+		return performanceKPIs;
+	}
+
+
 	//private RunConfiguration config;
 	private HashMap<String,Parameter> config;
 	

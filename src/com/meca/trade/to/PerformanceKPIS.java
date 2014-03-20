@@ -8,9 +8,18 @@ public class PerformanceKPIS {
 	Double netProfitForClosedTrades = 0d;
 	Double grossProfitForClosedTrades = 0d;
 	Double grossLossForClosedTrades = 0d;
+	Double wfe = 0d;
 	Integer totalNumberOfTrades = 0;
 	Integer totalNumberOfWinningTrades = 0;
 	Integer totalNumberOfLosingTrades = 0;
+	public Double getWfe() {
+		return wfe;
+	}
+
+
+	public void setWfe(Double wfe) {
+		this.wfe = wfe;
+	}
 	Integer totalNumberOfEntryTrades = 0;
 	Integer totalNumberOfOpenPositions = 0;
 	Double largestWinningTrade = 0d;
@@ -119,6 +128,9 @@ public class PerformanceKPIS {
 		
 		builder.append(Constants.CSV_SEPARATOR);
 		builder.append("mddMinDate");
+		
+		builder.append(Constants.CSV_SEPARATOR);
+		builder.append("WFE");
 
 		
 		return builder.toString();
@@ -278,6 +290,10 @@ public class PerformanceKPIS {
 		
 		builder.append("mddMinDate=");
 		builder.append(TradeUtils.convertToString(mddMinDate));
+		builder.append(Constants.FORMAT);
+		
+		builder.append("wfe=");
+		builder.append(wfe);
 		
 		
 		return builder.toString();
@@ -370,6 +386,9 @@ public class PerformanceKPIS {
 		builder.append(Constants.CSV_SEPARATOR);
 		
 		builder.append(TradeUtils.convertToString(mddMinDate));
+		builder.append(Constants.CSV_SEPARATOR);
+		
+		builder.append(wfe);
 		
 		
 		return builder.toString();

@@ -1,8 +1,8 @@
 <optimization>
 
     <genetic-configuration>
-		<param name="ELITISM_K" type="Integer" value="0"></param>
-		<param name="POP_SIZE" type="Integer" value="2"></param>
+		<param name="ELITISM_K" type="Integer" value="2"></param>
+		<param name="POP_SIZE" type="Integer" value="10"></param>
 		<param name="MAX_ITER" type="Integer" value="1"></param>
 		<param name="MUTATION_RATE" type="Double" value="0.02"></param>
 		<param name="CROSSOVER_RATE" type="Double" value="0.7"></param>
@@ -11,8 +11,8 @@
 	</genetic-configuration>
 	
 	<wfa-configuration>
-		<param name="OPTIMIZATION_WINDOW_PERCENTAGE" type="Integer" value="10"></param>
-		<param name="WFA_WINDOW_PERCENTAGE" type="Integer" value="5"></param>
+		<param name="OPTIMIZATION_WINDOW_PERCENTAGE" type="Integer" value="75"></param>
+		<param name="WFA_WINDOW_PERCENTAGE" type="Integer" value="26"></param>
 	</wfa-configuration>
 	
 	<indicators>

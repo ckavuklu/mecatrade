@@ -17,8 +17,8 @@
 				</component>
 				<component name="_TradeMultiplexer"
 					class="com.meca.trade.components.TradeMultiplexer"></component>
-				<component name="_PortolioManager"
-					class="com.meca.trade.components.PortolioManager"></component>
+				<component name="_PortfolioManager"
+					class="com.meca.trade.components.PortfolioManager"></component>
 				<component name="_ActionManager"
 					class="com.meca.trade.components.ActionManager"></component>
 			</components>
@@ -31,13 +31,13 @@
 				<initialize component="_DataFeeder" port="ITERATOR">
 					<parameter value="dataIterator" type="Static"></parameter>
 				</initialize>
-				<initialize component="_PortolioManager" port="MANAGER">
+				<initialize component="_PortfolioManager" port="MANAGER">
 					<parameter value="posManager" type="Static"></parameter>
 				</initialize>
-				<initialize component="_PortolioManager" port="TRADER">
+				<initialize component="_PortfolioManager" port="TRADER">
 					<parameter value="com.meca.trade.to.BaseTrader" type="Trader"></parameter>
 				</initialize>
-				<initialize component="_PortolioManager" port="TESTTRADEDATASET">
+				<initialize component="_PortfolioManager" port="TESTTRADEDATASET">
 					<parameter value="dataSet" type="Static"></parameter>
 				</initialize>
 				
@@ -92,10 +92,10 @@
 				</connect>
 				<connect>
 					<from component="_TradeMultiplexer" port="OUT" />
-					<to component="_PortolioManager" port="IN" no="0" />
+					<to component="_PortfolioManager" port="IN" no="0" />
 				</connect>
 				<connect>
-					<from component="_PortolioManager" port="OUT" />
+					<from component="_PortfolioManager" port="OUT" />
 					<to component="_ActionManager" port="IN" />
 				</connect>
 			</connections>
@@ -135,8 +135,8 @@
 				
 				<component name="_TradeMultiplexer"
 					class="com.meca.trade.components.TradeMultiplexer"></component>
-				<component name="_PortolioManager"
-					class="com.meca.trade.components.PortolioManager"></component>
+				<component name="_PortfolioManager"
+					class="com.meca.trade.components.PortfolioManager"></component>
 				<component name="_ActionManager"
 					class="com.meca.trade.components.ActionManager"></component>
 			</components>
@@ -149,13 +149,13 @@
 				<initialize component="_DataFeeder" port="ITERATOR">
 					<parameter value="dataIterator" type="Static"></parameter>
 				</initialize>
-				<initialize component="_PortolioManager" port="MANAGER">
+				<initialize component="_PortfolioManager" port="MANAGER">
 					<parameter value="posManager" type="Static"></parameter>
 				</initialize>
-				<initialize component="_PortolioManager" port="TRADER">
+				<initialize component="_PortfolioManager" port="TRADER">
 					<parameter value="com.meca.trade.to.BaseTrader" type="Trader"></parameter>
 				</initialize>
-				<initialize component="_PortolioManager" port="TESTTRADEDATASET">
+				<initialize component="_PortfolioManager" port="TESTTRADEDATASET">
 					<parameter value="dataSet" type="Static"></parameter>
 				</initialize>
 				
@@ -230,10 +230,10 @@
 				
 				<connect>
 					<from component="_TradeMultiplexer" port="OUT" />
-					<to component="_PortolioManager" port="IN" no="0" />
+					<to component="_PortfolioManager" port="IN" no="0" />
 				</connect>
 				<connect>
-					<from component="_PortolioManager" port="OUT" />
+					<from component="_PortfolioManager" port="OUT" />
 					<to component="_ActionManager" port="IN" />
 				</connect>
 			</connections>
@@ -288,8 +288,8 @@
 				
 				<component name="_TradeMultiplexer"
 					class="com.meca.trade.components.TradeMultiplexer"></component>
-				<component name="_PortolioManager"
-					class="com.meca.trade.components.PortolioManager"></component>
+				<component name="_PortfolioManager"
+					class="com.meca.trade.components.PortfolioManager"></component>
 				<component name="_ActionManager"
 					class="com.meca.trade.components.ActionManager"></component>
 			</components>
@@ -302,13 +302,13 @@
 				<initialize component="_DataFeeder" port="ITERATOR">
 					<parameter value="dataIterator" type="Static"></parameter>
 				</initialize>
-				<initialize component="_PortolioManager" port="MANAGER">
+				<initialize component="_PortfolioManager" port="MANAGER">
 					<parameter value="posManager" type="Static"></parameter>
 				</initialize>
-				<initialize component="_PortolioManager" port="TRADER">
+				<initialize component="_PortfolioManager" port="TRADER">
 					<parameter value="com.meca.trade.to.BaseTrader" type="Trader"></parameter>
 				</initialize>
-				<initialize component="_PortolioManager" port="TESTTRADEDATASET">
+				<initialize component="_PortfolioManager" port="TESTTRADEDATASET">
 					<parameter value="dataSet" type="Static"></parameter>
 				</initialize>
 				
@@ -383,10 +383,10 @@
 				
 				<connect>
 					<from component="_TradeMultiplexer" port="OUT" />
-					<to component="_PortolioManager" port="IN" no="0" />
+					<to component="_PortfolioManager" port="IN" no="0" />
 				</connect>
 				<connect>
-					<from component="_PortolioManager" port="OUT" />
+					<from component="_PortfolioManager" port="OUT" />
 					<to component="_ActionManager" port="IN" />
 				</connect>
 			</connections>

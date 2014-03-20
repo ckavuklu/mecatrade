@@ -269,18 +269,21 @@ public class NewOptimizer {
 			
 			for(Entry<String,List<TradeNetwork>> e:set){
 				Collections.sort(e.getValue());
+				
 				result.add(e.getValue().get(e.getValue().size()-1));
+
 				//System.out.println("Network: " + e.getKey());
 				//System.out.println("\tBest Individual: " + e.getValue().get(e.getValue().size()-1));
 				//System.out.println("\t\tPerformance Report: \n" + e.getValue().get(e.getValue().size()-1).getReportManager().getGeneratedReport());
 			}
 			return result;
-	        
 	    }
 	
 	
-	public void reRunBestIndividuals() throws Exception {
+	public List<TradeNetwork> reRunBestIndividuals() throws Exception {
 
+		List<TradeNetwork> result = new ArrayList<TradeNetwork>();
+		
 		HashMap<String,List<TradeNetwork>> bestIndividuals = mankind.populateRaceIndividuals(1);
 		Set<Entry<String,List<TradeNetwork>>> currentMankindSet = m_population.entrySet();
 		
@@ -291,13 +294,15 @@ public class NewOptimizer {
 			bestIndividuals.get(best.getNetworkName()).get(0).setIndicatorParameterList(best.getIndicatorParameterList());
 			//System.out.println("Re-Running Best Child For Network: " +best.getNetworkName());
 			bestIndividuals.get(best.getNetworkName()).get(0).initializeByIndicatorParameterValues();
-			bestIndividuals.get(best.getNetworkName()).get(0).evaluate(false);
+			bestIndividuals.get(best.getNetworkName()).get(0).evaluate(true);
+			
+			result.add(bestIndividuals.get(best.getNetworkName()).get(0));
+			
 			//System.out.println("\t\tPerformance Report: \n" + bestIndividuals.get(best.getNetworkName()).get(0).getReportManager().getGeneratedReport());	
 	    	//System.out.println("POSITIONS:");
 			//System.out.println(bestIndividuals.get(best.getNetworkName()).get(0).getPosManager());
-
 		}
-
+		return result;
     }
 	
 	/**

@@ -146,13 +146,13 @@ public class OriginalTradeNetwork extends Network {
 	    
 	    // Stragety
 	    component("_TradeMultiplexer", com.meca.trade.components.TradeMultiplexer.class);
-	    component("_PortolioManager", com.meca.trade.components.PortolioManager.class);
+	    component("_PortfolioManager", com.meca.trade.components.PortfolioManager.class);
 	    component("_ActionManager", com.meca.trade.components.ActionManager.class);
 	
 	    
-	    initialize(posManager, component("_PortolioManager"), port("MANAGER"));
-	    initialize(dataSet, component("_PortolioManager"), port("TESTTRADEDATASET"));
-	    initialize(base, component("_PortolioManager"), port("TRADER"));
+	    initialize(posManager, component("_PortfolioManager"), port("MANAGER"));
+	    initialize(dataSet, component("_PortfolioManager"), port("TESTTRADEDATASET"));
+	    initialize(base, component("_PortfolioManager"), port("TRADER"));
 	    initialize(posManager, component("_ActionManager"), port("MANAGER"));
 	    
 	    //stochasticStrategy
@@ -207,10 +207,10 @@ public class OriginalTradeNetwork extends Network {
 	   
 	    
 	    
-	    connect(component("_TradeMultiplexer"), port("OUT"), component("_PortolioManager"), port("IN",0));
+	    connect(component("_TradeMultiplexer"), port("OUT"), component("_PortfolioManager"), port("IN",0));
 	  
 	    
-	    connect(component("_PortolioManager"), port("OUT"), component("_ActionManager"), port("IN"));
+	    connect(component("_PortfolioManager"), port("OUT"), component("_ActionManager"), port("IN"));
 	    
 	    
 	    initialize(Double.valueOf(12), component("_SimpleMovingAverage_SHORT"), port("WINDOW"));

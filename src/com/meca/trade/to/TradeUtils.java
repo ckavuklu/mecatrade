@@ -144,10 +144,16 @@ public final class TradeUtils {
 	
 	
 	public static Double roundDownDigits(Double param, Integer digitCount){
-		BigDecimal value = new BigDecimal(param);
-		BigDecimal roundOff = value.setScale(digitCount, BigDecimal.ROUND_DOWN);
 		
-		return roundOff.doubleValue();
+		if (!(param.isNaN() || param.isInfinite())) {
+			BigDecimal value = new BigDecimal(param);
+			BigDecimal roundOff = value.setScale(digitCount,
+					BigDecimal.ROUND_DOWN);
+
+			return roundOff.doubleValue();
+		} else
+			return param;
+		
 	}
 	
 	

@@ -83,6 +83,9 @@ public class TheMatrix {
 		
 		new WalkForwardAnalysis(createMarketDataGenerator());
 		
+		createRunReports();
+
+		
 		/*while(true){
 		
 			optimize(start,end);
