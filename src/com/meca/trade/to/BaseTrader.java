@@ -34,7 +34,19 @@ public class BaseTrader implements ITrader {
 	
 	protected String positionStopLossType;
 	protected Double positionStopLossValue;
+
+	protected Double strategyStopLossPercentage;
+
 	
+	public Double getStrategyStopLossPercentage() {
+		return strategyStopLossPercentage;
+	}
+
+
+	public void setStrategyStopLossPercentage(Double strategyStopLossPercentage) {
+		this.strategyStopLossPercentage = strategyStopLossPercentage;
+	}
+
 	private String positionTakeProfitType;
 	private Double positionTakeProfitValue;
 	
@@ -364,6 +376,10 @@ public class BaseTrader implements ITrader {
 				if(param.getType().equalsIgnoreCase(Constants.VALUE_TYPE_POSITION_SIZER_VOLATILITY_ADJUSTED))
 					positionSizer = new VolatilityAdjustedPositionSizer((Double)param.getValue(),this);
 				
+			}else if(param.getName().equalsIgnoreCase(Constants.TYPE_STRATEGY_STOP_LOSS)){
+
+				if(param.getType().equalsIgnoreCase(Constants.VALUE_TYPE_STRATEGY_STOP_LOSS))
+					strategyStopLossPercentage = (Double)param.getValue();
 			}
 		}
 		

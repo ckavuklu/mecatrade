@@ -15,4 +15,7 @@ public interface ITrader extends Serializable, IPriceData {
 	public IPositionManager getPositionManager();
 	public Double getAskPrice();
 	public Double getBidPrice();
+	public Double getStrategyStopLossPercentage();
+	public void setStrategyStopLossPercentage(Double strategyStopLossPercentage);
+	
 }

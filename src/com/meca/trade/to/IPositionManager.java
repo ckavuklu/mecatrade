@@ -34,6 +34,8 @@ public interface IPositionManager extends IPriceData{
 	public Double getFreeMargin();
 	public Double getMarginLevel();
 	
+	public Double getInitialBalance();
+	
 	public void updateGraphData(boolean endOfMarket);
 	
 	public Double getBalance();

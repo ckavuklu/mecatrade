@@ -27,6 +27,7 @@ public class PositionManager extends MecaObject implements IPositionManager{
 	private Boolean graphLog = false;
 	private String uuid;
 	private List<ExecutionRecord> executionHistory = null; 
+	private Double initialBalance = null;
 	
 	public List<ExecutionRecord> getExecutionHistory() {
 		return executionHistory;
@@ -223,6 +224,8 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		this.marketType = marketType;
 		this.uuid = uuid;
 		
+		initialBalance = this.account.getBalance();
+		
 		if(this.positionList == null){
 			this.positionList = new ArrayList<IPosition>();
 			this.tradeHistory = new ArrayList<Trade>();
@@ -230,6 +233,10 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		}
 	}
 	
+
+	public Double getInitialBalance() {
+		return initialBalance;
+	}
 
 	public MarketType getMarketType() {
 		return marketType;

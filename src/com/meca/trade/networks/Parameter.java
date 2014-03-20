@@ -39,6 +39,7 @@ public class Parameter {
 				|| (type.equalsIgnoreCase(Constants.VALUE_TYPE_POSITION_PERCENTAGE))
 				|| (type.equalsIgnoreCase(Constants.VALUE_TYPE_POINT_TYPE))
 				|| (type.equalsIgnoreCase(Constants.VALUE_TYPE_POSITION_SIZER_VOLATILITY_ADJUSTED))
+				|| (type.equalsIgnoreCase(Constants.VALUE_TYPE_STRATEGY_STOP_LOSS))
 				){
 			result = Double.valueOf(value);
 		}else

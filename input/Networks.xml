@@ -249,6 +249,7 @@
 				<param name="position-stop-loss" type="point" value="0.5"></param>
 				<param name="position-take-profit" type="point" value="0.5"></param>
 				<param name="position-sizer" type="volatility-adjusted" value="0.5"></param>
+				<param name="strategy-stop-loss" type="percentage" value="10"></param>
 			</trade-configuration>
 			
 			<configuration>

@@ -52,7 +52,10 @@ public final class Constants {
 	
 	public final static String TYPE_POSITION_STOP_LOSS = "position-stop-loss";
 	public final static String TYPE_POSITION_TAKE_PROFIT = "position-take-profit";
-	
+
+	public final static String TYPE_STRATEGY_STOP_LOSS = "strategy-stop-loss";
+	public final static String VALUE_TYPE_STRATEGY_STOP_LOSS = "percentage";
+
 	
 	public final static String TYPE_POSITION_SIZER = "position-sizer";
 	public final static String VALUE_TYPE_POSITION_SIZER_VOLATILITY_ADJUSTED = "volatility-adjusted";

@@ -62,6 +62,9 @@ public class PortfolioManager extends Component {
 	
 	boolean endOfMarketData = false;
 	
+	boolean tradeClosed = false;
+	
+	
 	SignalType signalType = SignalType.Ex;
 	
 	@Override
@@ -126,6 +129,9 @@ public class PortfolioManager extends Component {
 		    	pArray[i] = inportArray[i].receive();
 		    }
 		    
+		    
+		    if(!tradeClosed){
+		    
 		    for (int i = 0; i < no; i++) {
 		    
 	    	if (pArray[i] != null) {
@@ -144,12 +150,16 @@ public class PortfolioManager extends Component {
 	    				  endOfMarketData = true;
 	    				  signalType = SignalType.Mc;
 	    			  }
-	    			  
-	    				  
-	    			  /*if(((manager.getEquity()/manager.getBalance())*100d <= Constants.STRATEGY_STOP_LEVEL*Constants.SAFETY_FACTOR)){
-	    				  endOfMarketData = true;
-	    				  signalType = SignalType.Ss;
-	    			  }*/
+
+						if (trader.getStrategyStopLossPercentage() != null) {
+
+							if (((manager.getEquity() / manager.getInitialBalance()) * 100d <= trader
+									.getStrategyStopLossPercentage()
+									* Constants.SAFETY_FACTOR)) {
+								endOfMarketData = true;
+								signalType = SignalType.Ss;
+							}
+						}
 	    			  
 	    			  
 	    		  }
@@ -165,16 +175,29 @@ public class PortfolioManager extends Component {
 		    	order = new Order(executeTrades(evaluateStrategyDecisions(strategyDecisions)));
 		    }else{
 		    	order = new Order(executeTrades(trader.endOfMarket(signalType)));
+		    	tradeClosed = true;
 		    }
 		    
 		    manager.updateGraphData(endOfMarketData);
 		  
+		    
 		    
 	    	strategyDecisions.clear();
 	    	
 		    Packet p = create(order);
 			outport.send(p);
 
+		    }
+			
+		    else{
+		    	  for (int i = 0; i < no; i++) {
+			    	  drop(pArray[i]);
+				    }
+		    	  
+		    	Packet p = create(new Order()); 
+		    	outport.send(p);
+		    }
+		    
 	    }
 	    
 	    
