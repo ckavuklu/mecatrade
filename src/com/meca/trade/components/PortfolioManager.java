@@ -130,8 +130,6 @@ public class PortfolioManager extends Component {
 		    }
 		    
 		    
-		    if(!tradeClosed){
-		    
 		    for (int i = 0; i < no; i++) {
 		    
 	    	if (pArray[i] != null) {
@@ -141,25 +139,40 @@ public class PortfolioManager extends Component {
 	    				  || value.getPrice().getHigh() < 0 || value.getPrice().getLow() < 0){
 	    			  endOfMarketData = true;
 	    			  signalType = SignalType.Em;
+	    		  
+						System.out
+								.println("TradeClosed with Em at Equity : " + manager.getEquity() + " Balance : " + manager.getBalance() + " Margin : " + manager.getMargin() );
+						
+	    		  
 	    		  }else{
 	    			  manager.updatePriceData(value.getPrice());
 	    			  trader.updatePriceData(value.getPrice());
 	    			  
-	    			  
-	    			  if(manager.getMarginLevel()  <= Constants.MARGIN_CALL_LEVEL){
-	    				  endOfMarketData = true;
-	    				  signalType = SignalType.Mc;
-	    			  }
-
-						if (trader.getStrategyStopLossPercentage() != null) {
-
-							if (((manager.getEquity() / manager.getInitialBalance()) * 100d <= trader
-									.getStrategyStopLossPercentage()
-									* Constants.SAFETY_FACTOR)) {
-								endOfMarketData = true;
-								signalType = SignalType.Ss;
+	    			  if(!tradeClosed){
+		    			  if(manager.getMarginLevel()  <= Constants.MARGIN_CALL_LEVEL){
+		    				  endOfMarketData = true;
+		    				  signalType = SignalType.Mc;
+	
+								System.out
+										.println("TradeClosed with Mc at Equity : " + manager.getEquity() + " Balance : " + manager.getBalance() + " Margin : " + manager.getMargin() );
+								
+		    			  }
+	
+							if (trader.getStrategyStopLossPercentage() != null) {
+	
+								if (((manager.getEquity() / manager.getInitialBalance()) * 100d <= (100-trader
+										.getStrategyStopLossPercentage()
+										* Constants.SAFETY_FACTOR))) {
+									endOfMarketData = true;
+									signalType = SignalType.Ss;
+									
+									System.out
+											.println("TradeClosed with SS at Equity : " + manager.getEquity() + " Balance : " + manager.getBalance() + " Margin : " + manager.getMargin());
+									
+									
+								}
 							}
-						}
+	    			  }
 	    			  
 	    			  
 	    		  }
@@ -173,9 +186,11 @@ public class PortfolioManager extends Component {
 		    
 		    if(!endOfMarketData){
 		    	order = new Order(executeTrades(evaluateStrategyDecisions(strategyDecisions)));
-		    }else{
+		    }else if(!tradeClosed){
 		    	order = new Order(executeTrades(trader.endOfMarket(signalType)));
 		    	tradeClosed = true;
+		    }else{
+		    	order = new Order();
 		    }
 		    
 		    manager.updateGraphData(endOfMarketData);
@@ -186,17 +201,6 @@ public class PortfolioManager extends Component {
 	    	
 		    Packet p = create(order);
 			outport.send(p);
-
-		    }
-			
-		    else{
-		    	  for (int i = 0; i < no; i++) {
-			    	  drop(pArray[i]);
-				    }
-		    	  
-		    	Packet p = create(new Order()); 
-		    	outport.send(p);
-		    }
 		    
 	    }
 	    

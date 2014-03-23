@@ -35,7 +35,7 @@ public class BaseTrader implements ITrader {
 	protected String positionStopLossType;
 	protected Double positionStopLossValue;
 
-	protected Double strategyStopLossPercentage;
+	protected Double strategyStopLossPercentage = null;
 
 	
 	public Double getStrategyStopLossPercentage() {

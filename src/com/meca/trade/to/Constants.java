@@ -11,7 +11,7 @@ public final class Constants {
 	
 	public final static Double USDTRY_SPREAD = 0.0002d;
 	
-	public final static Double SAFETY_FACTOR = 1.5d;
+	public final static Double SAFETY_FACTOR = 2.0d;
 	
 	public final static Double SAFETY_MARGIN_PERCENTAGE = 0.1d;
 	

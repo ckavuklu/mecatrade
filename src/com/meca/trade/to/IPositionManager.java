@@ -33,6 +33,7 @@ public interface IPositionManager extends IPriceData{
 	public Double getEquity();
 	public Double getFreeMargin();
 	public Double getMarginLevel();
+	public Double getMargin(); 
 	
 	public Double getInitialBalance();
 	
