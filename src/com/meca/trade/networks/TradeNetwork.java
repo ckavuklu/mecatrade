@@ -247,42 +247,6 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 			//trader = new BaseTrader(posManager);
 	  }
 
-
-
-	  public void init(HashMap<String, Parameter> parameterMap){
-	        this.networkConfigurationParameterMap = parameterMap;
-	       
-	        Double accountBalance = (Double)parameterMap.get("ACCOUNT_BALANCE").getValue();
-
-	        uuid = UUID.randomUUID().toString();
-	        
-	        indicatorParameterList = new ArrayList<IndicatorParameter>();
-	        
-			reportManager = new PerformanceReportManager(parameterMap);
-			
-			account = new Account(CurrencyType.USD,"5678",accountBalance,AccountStatusType.OPEN);
-			
-			/*
-			IndicatorSet set = new IndicatorSet();
-			set.addIndicator("SMASHORT", 4);
-			set.addIndicator("SMALONG", 9);
-			strategy = new SMAStrategy(set);
-			
-			IndicatorSet stochasticKLine = new IndicatorSet();
-			stochasticKLine.addIndicator("KLINE", 10);
-			IndicatorSet stochasticDLine = new IndicatorSet();
-			stochasticDLine.addIndicator("DLINE", 11);
-			StochasticStrategy stochasticStrategy = new StochasticStrategy(stochasticKLine,stochasticDLine,80d,20d);
-			*/
-				
-			posManager = new PositionManager(null,account,reportManager,MarketType.EURUSD,networkName);
-			//dataSet = new TestTradeDataSet((String)parameterMap.get("INPUT_TEST_TRADE_DATA_FILE_NAME").getValue());
-			//TurtleStrategy turtleStrategy = new TurtleStrategy(shortSet);
-			
-			//trader = new BaseTrader(posManager);
-	  }
-
-
 	public PerformanceReportManager getReportManager() {
 		return reportManager;
 	}

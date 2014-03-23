@@ -106,7 +106,7 @@ public class WalkForwardAnalysis {
 				if (tempListKPIs == null) tempListKPIs = new ArrayList<PerformanceKPIS>();
 	
 				tempListKPIs.add(network.getReportManager().getPerformanceKPIs());
-				networkWFE.put(network.getNetworkName(),network.getReportManager().getPerformanceKPIs().getAnnualizedGrossProfit());
+				networkWFE.put(network.getNetworkName(),network.getReportManager().getPerformanceKPIs().getAnnualizedNetProfit());
 				
 				listOfKPIs.put(network.getNetworkName(),tempListKPIs);
 				
@@ -129,10 +129,10 @@ public class WalkForwardAnalysis {
 				List<PerformanceKPIS> tempListKPIs = listOfKPIs.get(network.getNetworkName());
 				if (tempListKPIs == null) tempListKPIs = new ArrayList<PerformanceKPIS>();
 				
-				Double wfeWindowAnnualizedProfit = network.getReportManager().getPerformanceKPIs().getAnnualizedGrossProfit();
+				Double wfeWindowAnnualizedProfit = network.getReportManager().getPerformanceKPIs().getAnnualizedNetProfit();
 				Double optimizationWindowAnnualizedProfit = networkWFE.get(network.getNetworkName());
 				
-				Double percentage =  ((wfeWindowAnnualizedProfit - optimizationWindowAnnualizedProfit) / Math.abs(optimizationWindowAnnualizedProfit))*100d;
+				Double percentage =  ((wfeWindowAnnualizedProfit - optimizationWindowAnnualizedProfit) / (Math.abs(optimizationWindowAnnualizedProfit)==0?1:Math.abs(optimizationWindowAnnualizedProfit)))*100d;
 				
 				network.getReportManager().getPerformanceKPIs().setWfe(TradeUtils.roundDownDigits(percentage,2));
 				

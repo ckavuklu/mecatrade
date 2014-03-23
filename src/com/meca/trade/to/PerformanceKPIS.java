@@ -12,14 +12,6 @@ public class PerformanceKPIS {
 	Integer totalNumberOfTrades = 0;
 	Integer totalNumberOfWinningTrades = 0;
 	Integer totalNumberOfLosingTrades = 0;
-	public Double getWfe() {
-		return wfe;
-	}
-
-
-	public void setWfe(Double wfe) {
-		this.wfe = wfe;
-	}
 	Integer totalNumberOfEntryTrades = 0;
 	Integer totalNumberOfOpenPositions = 0;
 	Double largestWinningTrade = 0d;
@@ -37,12 +29,16 @@ public class PerformanceKPIS {
 	Double annualizedGrossProfit = 0d;
 	Double annualizedGrossLoss = 0d;
 	Double mdd = 0d;
+	Double mddValue = 0d;
+	Double annRRR = 0d;
+	
 	Double strategyStopLimit = 0d;
 	Date periodStartDate = null;
 	Date periodEndDate = null;
 	
 	Date mddMaxDate = null;
 	Date mddMinDate = null;
+	Double annualizedNetProfit = 0d;
 	
 	public String getHeaders() {
 		StringBuilder builder = new StringBuilder();
@@ -118,7 +114,13 @@ public class PerformanceKPIS {
 		builder.append("annualizedGrossLoss");
 		
 		builder.append(Constants.CSV_SEPARATOR);
+		builder.append("annualizedNetProfit");
+		
+		builder.append(Constants.CSV_SEPARATOR);
 		builder.append("MDD(%)");
+		
+		builder.append(Constants.CSV_SEPARATOR);
+		builder.append("MDD");
 
 		builder.append(Constants.CSV_SEPARATOR);
 		builder.append("strategyStopLimit(%)");
@@ -131,6 +133,9 @@ public class PerformanceKPIS {
 		
 		builder.append(Constants.CSV_SEPARATOR);
 		builder.append("WFE");
+		
+		builder.append(Constants.CSV_SEPARATOR);
+		builder.append("annRRR");
 
 		
 		return builder.toString();
@@ -174,6 +179,15 @@ public class PerformanceKPIS {
 
 	public void setMddMinDate(Date mddMinDate) {
 		this.mddMinDate = mddMinDate;
+	}
+	
+	public Double getWfe() {
+		return wfe;
+	}
+
+
+	public void setWfe(Double wfe) {
+		this.wfe = wfe;
 	}
 	
 	
@@ -276,8 +290,18 @@ public class PerformanceKPIS {
 		builder.append(annualizedGrossLoss);
 		builder.append(Constants.FORMAT);
 		
-		builder.append("mdd=");
+		builder.append("annualizedNetProfit=");
+		builder.append(annualizedNetProfit);
+		builder.append(Constants.FORMAT);
+		
+		
+		
+		builder.append("mdd(%)=");
 		builder.append(mdd);
+		builder.append(Constants.FORMAT);
+		
+		builder.append("mddValue=");
+		builder.append(mddValue);
 		builder.append(Constants.FORMAT);
 		
 		builder.append("strategyStopLimit=");
@@ -294,9 +318,33 @@ public class PerformanceKPIS {
 		
 		builder.append("wfe=");
 		builder.append(wfe);
+		builder.append(Constants.FORMAT);
+		
+		builder.append("annRRR=");
+		builder.append(annRRR);
 		
 		
 		return builder.toString();
+	}
+
+
+	public Double getMddValue() {
+		return mddValue;
+	}
+
+
+	public void setMddValue(Double mddValue) {
+		this.mddValue = mddValue;
+	}
+
+
+	public Double getAnnRRR() {
+		return annRRR;
+	}
+
+
+	public void setAnnRRR(Double annRRR) {
+		this.annRRR = annRRR;
 	}
 
 
@@ -376,7 +424,13 @@ public class PerformanceKPIS {
 		builder.append(annualizedGrossLoss);
 		builder.append(Constants.CSV_SEPARATOR);
 		
+		builder.append(annualizedNetProfit);
+		builder.append(Constants.CSV_SEPARATOR);
+		
 		builder.append(mdd);
+		builder.append(Constants.CSV_SEPARATOR);
+		
+		builder.append(mddValue);
 		builder.append(Constants.CSV_SEPARATOR);
 		
 		builder.append(strategyStopLimit);
@@ -389,6 +443,9 @@ public class PerformanceKPIS {
 		builder.append(Constants.CSV_SEPARATOR);
 		
 		builder.append(wfe);
+		builder.append(Constants.CSV_SEPARATOR);
+		
+		builder.append(annRRR);
 		
 		
 		return builder.toString();
@@ -553,6 +610,14 @@ public class PerformanceKPIS {
 	}
 	public void setStrategyStopLimit(Double strategyStopLimit) {
 		this.strategyStopLimit = strategyStopLimit;
+	}
+
+	public Double getAnnualizedNetProfit() {
+		return annualizedNetProfit;
+	}
+
+	public void setAnnualizedNetProfit(Double annualizedNetProfit) {
+		this.annualizedNetProfit = annualizedNetProfit;
 	}
 	
 }
