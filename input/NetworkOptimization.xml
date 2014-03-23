@@ -11,8 +11,8 @@
 	</genetic-configuration>
 	
 	<wfa-configuration>
-		<param name="OPTIMIZATION_WINDOW_PERCENTAGE" type="Integer" value="75"></param>
-		<param name="WFA_WINDOW_PERCENTAGE" type="Integer" value="26"></param>
+		<param name="OPTIMIZATION_WINDOW_PERCENTAGE" type="Integer" value="80"></param>
+		<param name="WFA_WINDOW_PERCENTAGE" type="Integer" value="21"></param>
 	</wfa-configuration>
 	
 	<indicators>

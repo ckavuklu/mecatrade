@@ -27,6 +27,10 @@ public class WalkForwardAnalysis {
 	private HashMap<String,IReportLogger>  periodBasedPerformanceData = null;
 	int testWindowSize =  0;
 	
+	static final String SEPARATOR = "__";
+	static final String OPTIMIZATION_WINDOW_PREFIX = "OPT" + SEPARATOR;
+	static final String WFA_WINDOW_PREFIX = "WFA" + SEPARATOR;
+	
 
 	public void createOptimizationEnvironment() throws Exception{
 		SAXBuilder builder = new SAXBuilder();
@@ -102,15 +106,13 @@ public class WalkForwardAnalysis {
 		
 			for(TradeNetwork network:bestNetworks ){
 				
-				List<PerformanceKPIS> tempListKPIs = listOfKPIs.get(network.getNetworkName());
+				List<PerformanceKPIS> tempListKPIs = listOfKPIs.get(OPTIMIZATION_WINDOW_PREFIX + network.getNetworkName());
 				if (tempListKPIs == null) tempListKPIs = new ArrayList<PerformanceKPIS>();
 	
 				tempListKPIs.add(network.getReportManager().getPerformanceKPIs());
-				networkWFE.put(network.getNetworkName(),network.getReportManager().getPerformanceKPIs().getAnnualizedNetProfit());
+				networkWFE.put(OPTIMIZATION_WINDOW_PREFIX + network.getNetworkName(),network.getReportManager().getPerformanceKPIs().getAnnualizedNetProfit());
 				
-				listOfKPIs.put(network.getNetworkName(),tempListKPIs);
-				
-			
+				listOfKPIs.put(OPTIMIZATION_WINDOW_PREFIX + network.getNetworkName(),tempListKPIs);
 			}
 			
 			
@@ -126,18 +128,18 @@ public class WalkForwardAnalysis {
 			
 			for(TradeNetwork network:bestNetworks ){
 				
-				List<PerformanceKPIS> tempListKPIs = listOfKPIs.get(network.getNetworkName());
+				List<PerformanceKPIS> tempListKPIs = listOfKPIs.get(WFA_WINDOW_PREFIX + network.getNetworkName());
 				if (tempListKPIs == null) tempListKPIs = new ArrayList<PerformanceKPIS>();
 				
 				Double wfeWindowAnnualizedProfit = network.getReportManager().getPerformanceKPIs().getAnnualizedNetProfit();
-				Double optimizationWindowAnnualizedProfit = networkWFE.get(network.getNetworkName());
+				Double optimizationWindowAnnualizedProfit = networkWFE.get(OPTIMIZATION_WINDOW_PREFIX + network.getNetworkName());
 				
 				Double percentage =  ((wfeWindowAnnualizedProfit - optimizationWindowAnnualizedProfit) / (Math.abs(optimizationWindowAnnualizedProfit)==0?1:Math.abs(optimizationWindowAnnualizedProfit)))*100d;
 				
 				network.getReportManager().getPerformanceKPIs().setWfe(TradeUtils.roundDownDigits(percentage,2));
 				
 				tempListKPIs.add(network.getReportManager().getPerformanceKPIs());
-				listOfKPIs.put(network.getNetworkName(),tempListKPIs);
+				listOfKPIs.put(WFA_WINDOW_PREFIX + network.getNetworkName(),tempListKPIs);
 
 			}
 			
@@ -165,19 +167,20 @@ public class WalkForwardAnalysis {
 		for(Entry<String, List<PerformanceKPIS>> e: set){
 		
 			if(e.getValue().size() > 0){
-				periodBasedPerformanceData.get(e.getKey()).writeLog(e.getValue().get(0).getHeaders());
+				periodBasedPerformanceData.get(e.getKey().split(SEPARATOR)[1]).writeLog(e.getValue().get(0).getHeaders());
 			}
 			
 			for(PerformanceKPIS kpi:e.getValue()){
-				periodBasedPerformanceData.get(e.getKey()).writeLog(kpi.getData());
-			}	
+				periodBasedPerformanceData.get(e.getKey().split(SEPARATOR)[1]).writeLog(kpi.getData());
+			}
 			
-			periodBasedPerformanceData.get(e.getKey()).finalizeLogger();
+			periodBasedPerformanceData.get(e.getKey().split(SEPARATOR)[1]).writeLog("");
 		}
 		
 		
-		
-		
+		for(Entry<String, IReportLogger> e: periodBasedPerformanceData.entrySet()){
+			e.getValue().finalizeLogger();
+		}
 	}
 		
 		
