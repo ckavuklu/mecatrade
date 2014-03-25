@@ -2,10 +2,13 @@ package com.meca.trade.networks;
 
 import java.util.Random;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
 import com.meca.trade.to.TradeUtils;
 
 
 public class IndicatorParameter implements java.lang.Cloneable{
+	
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		return super.clone();

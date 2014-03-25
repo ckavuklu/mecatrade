@@ -40,6 +40,20 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 	
 	String uuid = null;
 	
+	public Double getMaximumIndicatorWindowSize(){
+		Double result = 0d;
+		
+		for(IndicatorParameter parameter:indicatorParameterList){
+			if((parameter.getValue()  instanceof Double && ((Double)parameter.getValue()) > result)){
+				result = (Double)parameter.getValue();
+			}else if((parameter.getValue()  instanceof Integer && ((Integer)parameter.getValue()) > result)){
+				result = ((Integer)parameter.getValue()).doubleValue();
+			}
+		}
+		
+		return result;
+	}
+	
 	public String toString(){
 		StringBuilder builder = new StringBuilder();
 		
@@ -103,10 +117,13 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 	}
 	
 	public void randIndicatorParametersAndInitialize() {
-    
+		
+		
         for(IndicatorParameter indicator:indicatorParameterList){
 			addInitialization(indicator.randomize(), indicator.getName(), indicator.getPort());
 		}
+        
+        reportManager.setMaximumIndicatorWindowSize(getMaximumIndicatorWindowSize());
     }
 	
 	
@@ -116,6 +133,8 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
         for(IndicatorParameter indicator:indicatorParameterList){
 			addInitialization(indicator.getValue(), indicator.getName(), indicator.getPort());
 		}
+        
+        reportManager.setMaximumIndicatorWindowSize(getMaximumIndicatorWindowSize());
     }
 
 	

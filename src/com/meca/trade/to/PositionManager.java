@@ -1,13 +1,11 @@
 package com.meca.trade.to;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-
-import com.db4o.monitoring.internal.AveragingTimedReading;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 public class PositionManager extends MecaObject implements IPositionManager{
 
@@ -385,6 +383,39 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		return result;
 	}
 	
+	public Double getStandardErrorOfWinningTrades(Date startDate, Date endDate){
+		DescriptiveStatistics stats = new DescriptiveStatistics();
+		
+		for (Trade tr : tradeHistory) {
+
+			if(tr.getProfitLoss() > 0d){
+				if (tr.getStatus() == TradeStatusType.CLOSE && !(tr.getTradeType() == TradeType.BUY || tr.getTradeType() == TradeType.SELL) && startDate==null && endDate==null) {	
+					stats.addValue(tr.getProfitLoss());
+				}else{
+					if(tr.getStatus() == TradeStatusType.CLOSE && !(tr.getTradeType() == TradeType.BUY || tr.getTradeType() == TradeType.SELL)){
+						if(startDate!=null && endDate==null){
+							if(tr.getRealizedDate().compareTo(startDate) >= 0){
+								stats.addValue(tr.getProfitLoss());
+							}
+							
+						} else if(endDate!=null && startDate==null){
+							if(tr.getRealizedDate().compareTo(endDate) < 0){
+								stats.addValue(tr.getProfitLoss());
+							}
+							
+						} else if(startDate!=null && endDate!=null){
+							if(tr.getRealizedDate().compareTo(endDate) < 0 && tr.getRealizedDate().compareTo(startDate) >= 0){
+								stats.addValue(tr.getProfitLoss());
+							}
+						}
+					}
+					
+				}
+			}
+		}
+
+		return stats.getStandardDeviation() / Math.sqrt(stats.getN()==0?1:stats.getN());
+	}
 	
 	public Integer getConsecutiveWinningTrades(Date startDate, Date endDate){
 	

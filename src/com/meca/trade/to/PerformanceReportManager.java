@@ -35,6 +35,8 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	private IReportLogger  graphData = null;
 	//private IReportLogger  performanceData = null;
 	private IReportLogger  periodBasedPerformanceData = null;
+	private Double maximumIndicatorWindowSize;
+	private Integer numberOfSamples;
 
 	@Override
 	public IReportLogger getGraphLogger() {
@@ -59,6 +61,7 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		
 		this.annualizationCoefficient = 365d * 24d * 60d * 60d * 1000 / (periodEndDate.getTime() -  periodStartDate.getTime());
 		this.initialBalance = accountBalance;
+		this.numberOfSamples = marketData.getSampleSize();
 		
 		this.graphData = new GraphDataGenerator();
 		this.periodBasedPerformanceData = new FileReportGenerator();
@@ -74,6 +77,7 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		
 		performanceKPIs = calculatePeriodBasedPerformanceData(periodStartDate,periodEndDate);
 		
+		calculateRandomDegreesOfFreedom(performanceKPIs, maximumIndicatorWindowSize,numberOfSamples);
 		
 		calculateMDM(positionManager.getExecutionHistory(),performanceKPIs);
 		evaluatePROM(performanceKPIs);
@@ -154,6 +158,7 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		Integer periodicMaxConsecutiveWinners = 0;
 		Integer periodicMaxConsecutiveLosers = 0;
 		Integer totalNumberOfOpenPositions = 0;
+		Double periodicStandardErrorOfWinningTrades = 0d;
 		
 		for(IPosition pos:positionManager.getPositions()){
 			
@@ -191,7 +196,10 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		periodicMaxConsecutiveWinners = positionManager.getConsecutiveWinningTrades(startDate,endDate);
 		periodicMaxConsecutiveLosers = positionManager.getConsecutiveLosingTrades(startDate,endDate);
 		
+		periodicStandardErrorOfWinningTrades = positionManager.getStandardErrorOfWinningTrades(startDate,endDate);
+		
 
+		performanceKPIs.setStandardErrorOfWinningTrades(periodicStandardErrorOfWinningTrades);
 		performanceKPIs.setAverageLosingTrade(periodicAverageLosingTrade);
 		performanceKPIs.setAverageTrade(periodicAverageTrade);
 		performanceKPIs.setAverageWinningTrade(periodicAverageWinningTrade);
@@ -228,6 +236,10 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		kpi.setAnnRRR(kpi.getAnnualizedNetProfit() / kpi.getMddValue());
 	}
 
+	private void calculateRandomDegreesOfFreedom(PerformanceKPIS kpi, Double maximumIndicatorWindowSize, Integer numberOfSamples){
+		kpi.setRandomDegreesOfFreedom(100d*(1-(maximumIndicatorWindowSize/numberOfSamples)));
+	}
+	
 	private void calculateMDM(List<ExecutionRecord> executionHistory, PerformanceKPIS kpi){
 		Double mdd = 0d;
 		
@@ -241,7 +253,7 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 			Double PctMaxDrawDown = 0d;
 			
 			for(ExecutionRecord record:executionHistory){
-				
+
 				if (record.getEquity() > Max) 
 				{
 					Max = record.getEquity();
@@ -320,6 +332,11 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	public void finalizeLogger() {
 		graphData.finalizeLogger();
 		periodBasedPerformanceData.finalizeLogger();
+	}
+
+
+	public void setMaximumIndicatorWindowSize(Double maximumIndicatorWindowSize) {
+		this.maximumIndicatorWindowSize = maximumIndicatorWindowSize;
 	}
 
 	

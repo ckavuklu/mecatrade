@@ -33,6 +33,10 @@ public class MarketData implements IMarketData {
 	public List<PriceData> getPriceList() {
 		return priceList;
 	}
+	
+	public Integer getSampleSize() {
+		return priceList.size();
+	}
 
 	public void setPeriodStart(Date periodStart) {
 		this.periodStart = periodStart;

@@ -39,6 +39,8 @@ public class PerformanceKPIS {
 	Date mddMaxDate = null;
 	Date mddMinDate = null;
 	Double annualizedNetProfit = 0d;
+	private Double standardErrorOfWinningTrades =  0d;
+	private Double randomDegreesOfFreedom = 0d;
 	
 	public String getHeaders() {
 		StringBuilder builder = new StringBuilder();
@@ -82,6 +84,10 @@ public class PerformanceKPIS {
 		
 		builder.append(Constants.CSV_SEPARATOR);
 		builder.append("averageWinningTrade");
+		
+		builder.append(Constants.CSV_SEPARATOR);
+		builder.append("standardErrorOfWinningTrades");
+		
 		
 		builder.append(Constants.CSV_SEPARATOR);
 		builder.append("averageLosingTrade");
@@ -136,6 +142,9 @@ public class PerformanceKPIS {
 		
 		builder.append(Constants.CSV_SEPARATOR);
 		builder.append("annRRR");
+		
+		builder.append(Constants.CSV_SEPARATOR);
+		builder.append("randomDegreesOfFreedom");
 
 		
 		return builder.toString();
@@ -249,6 +258,11 @@ public class PerformanceKPIS {
 		builder.append("averageWinningTrade=");
 		builder.append(averageWinningTrade);
 		builder.append(Constants.FORMAT);
+		
+		builder.append("standardErrorOfWinningTrades=");
+		builder.append(standardErrorOfWinningTrades);
+		builder.append(Constants.FORMAT);
+		
 	
 		builder.append("averageLosingTrade=");
 		builder.append(averageLosingTrade);
@@ -322,6 +336,10 @@ public class PerformanceKPIS {
 		
 		builder.append("annRRR=");
 		builder.append(annRRR);
+		builder.append(Constants.FORMAT);
+		
+		builder.append("randomDegreesOfFreedom=");
+		builder.append(randomDegreesOfFreedom);
 		
 		
 		return builder.toString();
@@ -393,7 +411,10 @@ public class PerformanceKPIS {
 
 		builder.append(averageWinningTrade);
 		builder.append(Constants.CSV_SEPARATOR);
-	
+		
+		builder.append(standardErrorOfWinningTrades);
+		builder.append(Constants.CSV_SEPARATOR);
+		
 		builder.append(averageLosingTrade);
 		builder.append(Constants.CSV_SEPARATOR);
 
@@ -446,6 +467,9 @@ public class PerformanceKPIS {
 		builder.append(Constants.CSV_SEPARATOR);
 		
 		builder.append(annRRR);
+		builder.append(Constants.CSV_SEPARATOR);
+		
+		builder.append(randomDegreesOfFreedom);
 		
 		
 		return builder.toString();
@@ -618,6 +642,29 @@ public class PerformanceKPIS {
 
 	public void setAnnualizedNetProfit(Double annualizedNetProfit) {
 		this.annualizedNetProfit = annualizedNetProfit;
+	}
+
+
+	public void setStandardErrorOfWinningTrades(
+			Double standardErrorOfWinningTrades) {
+		this.standardErrorOfWinningTrades = standardErrorOfWinningTrades;
+		
+	}
+
+
+	public Double getStandardErrorOfWinningTrades() {
+		return standardErrorOfWinningTrades;
+	}
+
+
+	public void setRandomDegreesOfFreedom(Double randomDegreesOfFreedom) {
+		this.randomDegreesOfFreedom = randomDegreesOfFreedom;
+		
+	}
+
+
+	public Double getRandomDegreesOfFreedom() {
+		return randomDegreesOfFreedom;
 	}
 	
 }

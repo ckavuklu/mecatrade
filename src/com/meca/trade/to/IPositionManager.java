@@ -18,6 +18,8 @@ public interface IPositionManager extends IPriceData{
 	
 	public Integer getTotalNumberOfOpenPositionCount(Date startDate,Date endDate);
 	
+	public Double getStandardErrorOfWinningTrades(Date startDate, Date endDate);
+	
 	public String toString();
 	
 	public Trade executeTrade(Trade trade);

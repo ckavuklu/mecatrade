@@ -12,4 +12,6 @@ public interface IMarketData {
 
 	public Iterator<PriceData> getMarketDataIterator();
 	
+	public Integer getSampleSize();
+	
 }
