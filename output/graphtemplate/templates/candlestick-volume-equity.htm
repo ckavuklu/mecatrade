@@ -11,16 +11,25 @@
             </head>
 	<body>
         <div id="container" style="height: 600px; min-width: 500px"></div>
+        <iframe id='tradeFrame' src='$TRADE_HISTORY_FILENAME' onload='readTradefile()' style="display:none"> </iframe>
         <iframe id='iframe' src='$FILENAME' onload='readfile()' style="display:none"> </iframe>
         
-        
 		<script type="text/javascript">
+            var markerString = [];
              
             Highcharts.setOptions({
 				global: {
 					useUTC: false
 				}
 			});
+			
+			function readTradefile() {
+                var data = eval(document.getElementById('tradeFrame').contentDocument.body.firstChild.innerHTML);
+                
+                for (i = 0; i < data.length; i++) {     
+                        markerString.push({x : data[i][0], title : data[i][3],text : data[i][1]+ ' ' + data[i][2]});
+                  }
+            }
             
             function readfile() {
                 var data = eval(document.getElementById('iframe').contentDocument.body.firstChild.innerHTML);
@@ -30,6 +39,7 @@
                 var ohlc = [],
                 volume = [],
                 equity = [],
+                trade = [],
                 dataLength = data.length;
                 
                 for (i = 0; i < dataLength; i++) {
@@ -40,15 +50,21 @@
                                data[i][3], // low
                                data[i][4] // close
                                ]);
+                               
+                    trade.push([
+                                 data[i][0], // the date
+                                 data[i][4] // the volume
+                                 ]);
                     
                     volume.push([
                                  data[i][0], // the date
                                  data[i][5] // the volume
-                                 ])
+                                 ]);
+                                 
                     equity.push([
                                  data[i][0], // the date
                                  data[i][6] // the volume
-                                 ])
+                                 ]);
                 }
                 
                 // set the allowed units for data grouping
@@ -108,6 +124,15 @@
                                                     }
                                                     },
                                                     {
+                                                  
+                                                    name: 'TRADE',
+                                                    data: trade,
+                                                    id : 'trade',
+                                                    type: 'line',
+            										color: 'rgba(0,0,0,0)'
+
+                                                    },
+                                                    {
                                                     name: 'EQUITY',
                                                     data: equity,
                                                     yAxis: 2,
@@ -122,7 +147,20 @@
                                                     dataGrouping: {
                                                     units: groupingUnits
                                                     }
-                                                    }]
+                                                    },
+                                                    
+                                                    
+                                                   // the event marker flags
+													{
+														type : 'flags',
+														data : markerString,
+														onSeries : 'trade',
+														shape : 'circlepin',
+														width : 16
+													}
+										                                                    
+                                                    
+                                                    ]
                                            });
             }
             

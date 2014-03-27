@@ -26,6 +26,10 @@ public class FileReportGenerator implements IReportLogger {
 	}
 
 
+	public String getFileName() {
+		return fileName;
+	}
+
 	@Override
 	public void writeLog(String log){
 		writer.println(log);

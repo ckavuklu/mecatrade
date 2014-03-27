@@ -1,10 +1,15 @@
 package com.meca.trade.to;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+
+import org.apache.commons.io.FileUtils;
 
 import com.meca.trade.networks.Parameter;
 
@@ -19,11 +24,6 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	private Date periodEndDate;
 	PerformanceKPIS performanceKPIs = null;
 	
-	
-	public PerformanceKPIS getPerformanceKPIs() {
-		return performanceKPIs;
-	}
-
 
 	//private RunConfiguration config;
 	private HashMap<String,Parameter> config;
@@ -32,12 +32,30 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	
 	private Double annualizationCoefficient = 0d;
 	
+	private IReportLogger  tradeData = null;
+	
+
+
 	private IReportLogger  graphData = null;
-	//private IReportLogger  performanceData = null;
 	private IReportLogger  periodBasedPerformanceData = null;
 	private Double maximumIndicatorWindowSize;
 	private Integer numberOfSamples;
 
+
+	
+	public PerformanceKPIS getPerformanceKPIs() {
+		return performanceKPIs;
+	}
+
+	public IReportLogger getTradeData() {
+		return tradeData;
+	}
+
+
+	public void setTradeData(IReportLogger tradeData) {
+		this.tradeData = tradeData;
+	}
+	
 	@Override
 	public IReportLogger getGraphLogger() {
 		
@@ -65,6 +83,7 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		
 		this.graphData = new GraphDataGenerator();
 		this.periodBasedPerformanceData = new FileReportGenerator();
+		this.tradeData = new GraphDataGenerator();
 		
 	}
 
@@ -325,18 +344,52 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	public void initializeLogger(String name) {
 		graphData.initializeLogger(name + "_Graph");
 		periodBasedPerformanceData.initializeLogger(name+ "_Periodic_Performance.xls");
+		tradeData.initializeLogger(name + "_TradeData");
 	}
 
+	
+	private void generateGraphHTML(String ohlcFileName, String tradeFileName ) {
+
+		Iterator<File> it = FileUtils.iterateFiles(new File(
+				Constants.GRAPH_TEMPLATE_DIRECTORY), null, false);
+
+		while (it.hasNext()) {
+			File file = it.next();
+			try {
+				String content = FileUtils.readFileToString(file, "UTF-8");
+				content = content.replace("$FILENAME", ohlcFileName);
+				content = content.replace("$TRADE_HISTORY_FILENAME", tradeFileName);
+				File tempFile = new File(Constants.OUTPUT_DIRECTORY
+						+ File.separator + ohlcFileName + " - " + file.getName());
+				FileUtils.writeStringToFile(tempFile, content, "UTF-8");
+			} catch (IOException e) {
+				// Simple exception handling, replace with what's necessary for
+				// your use case!
+				throw new RuntimeException("Generating file failed", e);
+			}
+		}
+
+	}
+	
 
 	@Override
 	public void finalizeLogger() {
 		graphData.finalizeLogger();
 		periodBasedPerformanceData.finalizeLogger();
+		tradeData.finalizeLogger();
+		
+		
+		generateGraphHTML(graphData.getFileName(), tradeData.getFileName());
 	}
 
 
 	public void setMaximumIndicatorWindowSize(Double maximumIndicatorWindowSize) {
 		this.maximumIndicatorWindowSize = maximumIndicatorWindowSize;
+	}
+
+	@Override
+	public IReportLogger getTradeLogger() {
+		return tradeData;
 	}
 
 	

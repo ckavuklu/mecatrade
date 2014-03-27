@@ -13,9 +13,9 @@ public class TheArchitect {
 		
 		//matrix.optimize();
 	
-		//matrix.runNetworks();
+		matrix.runNetworks();
 		
-		matrix.walkForwardAnalysis();
+		//matrix.walkForwardAnalysis();
 	}
 
 }

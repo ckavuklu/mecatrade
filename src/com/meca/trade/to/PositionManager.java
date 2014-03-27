@@ -282,7 +282,7 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		if(graphLog){
 			StringBuilder log = new StringBuilder();
 			
-			log.append(Constants.GRAPH_DATA_JSON_START_STRING);
+			
 			log.append(priceData.getTime().getTime());
 			log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
 			log.append(priceData.getOpen());
@@ -296,11 +296,10 @@ public class PositionManager extends MecaObject implements IPositionManager{
 			log.append(priceData.getVolume());
 			log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
 			log.append(equity.toString());
-			log.append(Constants.GRAPH_DATA_JSON_END_STRING);
 			
 			executionHistory.add(new ExecutionRecord(priceData, equity));
 			
-			log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			
 			
 			perfReporManager.getGraphLogger().writeLog(log.toString());
 		}
@@ -536,6 +535,25 @@ public class PositionManager extends MecaObject implements IPositionManager{
 	public void generatePerformanceReport() {
 		
 		this.perfReporManager.generatePerformanceReport(this, getMarketType(),graphLog);
+		
+		for(Trade trade:tradeHistory){
+			StringBuilder builder = new StringBuilder();
+			builder.append(trade.getRealizedDate().getTime());
+			builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			builder.append(trade.getPositionNo());
+			builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			builder.append(trade.getTradeNo());
+			builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			builder.append(trade.getSignal().ordinal());
+			builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			builder.append(trade.getLot());
+			builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			builder.append(trade.getRealizedPrice());
+			builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			builder.append(trade.getProfitLoss());
+
+			perfReporManager.getTradeLogger().writeLog(builder.toString());
+		}
 		
 		
 		if(graphLog){

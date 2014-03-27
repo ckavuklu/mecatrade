@@ -5,6 +5,7 @@ public interface IPerformanceReportManager extends ILogger{
 	public Double getFitnessValue();
 	public String getGeneratedReport();
 	public IReportLogger getGraphLogger();
+	public IReportLogger getTradeLogger();
 
 	
 }
