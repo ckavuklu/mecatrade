@@ -26,9 +26,82 @@
 			function readTradefile() {
                 var data = eval(document.getElementById('tradeFrame').contentDocument.body.firstChild.innerHTML);
                 
-                for (i = 0; i < data.length; i++) {     
-                        markerString.push({x : data[i][0], title : data[i][3],text : data[i][1]+ ' ' + data[i][2]});
+                
+                for (i = 0; i < data.length; i++) {
+                		var colour = 'rgba(255,0,0,1)';
+                		var signalType = '';
+                		var tradeTypePrefix = '';
+                		
+                		
+                		switch(data[i][7])
+						{
+						case 0:
+						  
+						  tradeTypePrefix = 'S';
+						  break;
+						case 1:
+						   tradeTypePrefix = 'S';
+						  break;
+						case 2:
+						   tradeTypePrefix = 'L';
+						  break;
+						case 3:
+						   tradeTypePrefix = 'L';
+						 break;
+						 default:
+						  ;
+						}
+                		
+                		
+                		
+                		switch(data[i][3])
+						{
+						case 0:
+						  colour = 'rgba(80,225,80,1)';
+						  
+						  
+						  signalType = tradeTypePrefix + 'En';
+						  break;
+						case 1:
+						   colour = 'rgba(225,80,80,1)';
+						    signalType = tradeTypePrefix + 'Ex';
+						  break;
+						case 2:
+						   colour = 'rgba(220,220,220,1)';
+						    signalType = 'Pt';
+						  break;
+						case 3:
+						   colour = 'rgba(180,180,180,1)';
+						   signalType = 'Rs';
+						 break;
+						 
+						 case 4:
+						   colour = 'rgba(140,140,140,1)';
+						   signalType = 'Ps';
+						 break;
+						 
+						case 5:
+						   colour = 'rgba(255,255,20,1)';
+						   signalType = 'Mc';
+						  break;
+						 
+						  case 6:
+						   colour = 'rgba(170,170,20,1)';
+						   signalType = 'Ss';
+						 break;
+						  
+						  case 7:
+						   colour = 'rgba(210,210,20,1)';
+						    signalType = 'Em';
+						  break;
+						default:
+						  ;
+						}
+						
+                		
+                        markerString.push({x : data[i][0], color: colour, title : signalType,text : 'P/T #: ' + data[i][1]+ '/' + data[i][2] + '<br>' + 'Lot: ' + data[i][4] + '<br>' + 'Price: ' + data[i][5] + '<br>' + 'P/L: ' + data[i][6]});
                   }
+             
             }
             
             function readfile() {

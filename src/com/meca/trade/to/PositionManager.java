@@ -551,6 +551,8 @@ public class PositionManager extends MecaObject implements IPositionManager{
 			builder.append(trade.getRealizedPrice());
 			builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
 			builder.append(trade.getProfitLoss());
+			builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+			builder.append(trade.getTradeType().ordinal());
 
 			perfReporManager.getTradeLogger().writeLog(builder.toString());
 		}
