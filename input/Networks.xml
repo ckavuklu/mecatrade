@@ -1,20 +1,34 @@
 <networks>
 	
-	<!-- 
-		<network name="TradeNetwork-1">
+		<network name="TradeNetwork-3">
 			<components>
 				<component name="_DataFeeder"
 					class="com.meca.trade.components.DataFeeder"></component>		
 				<component name="_QuotePrice_C"
 					class="com.meca.trade.components.QuotePrice"></component>		
+				<component name="_QuotePrice_H"
+					class="com.meca.trade.components.QuotePrice"></component>		
+				<component name="_QuotePrice_L"
+					class="com.meca.trade.components.QuotePrice"></component>		
+		
+		
 				<component name="_Kicker" class="com.meca.trade.components.Kicker"></component>
 
-				<component name="_SimpleMovingAverage_SHORT"
-					class="com.meca.trade.components.SimpleMovingAverage">
+				<component name="_ExponentialMovingAverage_SHORT"
+					class="com.meca.trade.components.ExponentialMovingAverage">
 				</component>
-				<component name="_SimpleMovingAverage_LONG"
-					class="com.meca.trade.components.SimpleMovingAverage">
+				<component name="_ExponentialMovingAverage_LONG"
+					class="com.meca.trade.components.ExponentialMovingAverage">
 				</component>
+
+				<component name="_Stochastic"
+					class="com.meca.trade.components.StochasticOscillator">
+				</component>
+
+				<component name="_RSI"
+					class="com.meca.trade.components.RelativeStrengthIndex">
+				</component>
+
 				<component name="_TradeMultiplexer"
 					class="com.meca.trade.components.TradeMultiplexer"></component>
 				<component name="_PortfolioManager"
@@ -27,6 +41,12 @@
 				
 				<initialize component="_QuotePrice_C" port="PRICETYPE">
 					<parameter value="C" type="String"></parameter>
+				</initialize>
+				<initialize component="_QuotePrice_L" port="PRICETYPE">
+					<parameter value="L" type="String"></parameter>
+				</initialize>
+				<initialize component="_QuotePrice_H" port="PRICETYPE">
+					<parameter value="H" type="String"></parameter>
 				</initialize>
 				<initialize component="_DataFeeder" port="ITERATOR">
 					<parameter value="dataIterator" type="Static"></parameter>
@@ -45,7 +65,7 @@
 					<parameter value="posManager" type="Static"></parameter>
 				</initialize>
 				<initialize component="_TradeMultiplexer" port="STRATEGY">
-					<parameter value="com.meca.trade.to.SMAStrategy" type="Strategy"></parameter>
+					<parameter value="com.meca.trade.to.StrategyIzmir" type="Strategy"></parameter>
 				</initialize>
 
 
@@ -57,6 +77,16 @@
 					<from component="_DataFeeder" port="OUT" no="0" />
 					<to component="_QuotePrice_C" port="TRADEDATA" />
 				</connect>
+
+				<connect>
+					<from component="_DataFeeder" port="OUT" no="3" />
+					<to component="_QuotePrice_H" port="TRADEDATA" />
+				</connect>
+				<connect>
+					<from component="_DataFeeder" port="OUT" no="2" />
+					<to component="_QuotePrice_L" port="TRADEDATA" />
+				</connect>
+
 				
 				<connect>
 					<from component="_Kicker" port="OUT" no="0" />
@@ -70,11 +100,33 @@
 				
 				<connect>
 					<from component="_QuotePrice_C" port="OUT" no="2" />
-					<to component="_SimpleMovingAverage_SHORT" port="DATA" />
+					<to component="_ExponentialMovingAverage_SHORT" port="DATA" />
 				</connect>
+
+				<connect>
+					<from component="_QuotePrice_C" port="OUT" no="4" />
+					<to component="_Stochastic" port="CLOSE" />
+				</connect>
+
+				<connect>
+					<from component="_QuotePrice_H" port="OUT" no="0" />
+					<to component="_Stochastic" port="HIGH" />
+				</connect>
+
+				<connect>
+					<from component="_QuotePrice_L" port="OUT" no="0" />
+					<to component="_Stochastic" port="LOW" />
+				</connect>
+
+				<connect>
+					<from component="_QuotePrice_C" port="OUT" no="5" />
+					<to component="_RSI" port="DATA" />
+				</connect>
+
+
 				<connect>
 					<from component="_QuotePrice_C" port="OUT" no="3" />
-					<to component="_SimpleMovingAverage_LONG" port="DATA" />
+					<to component="_ExponentialMovingAverage_LONG" port="DATA" />
 				</connect>
 				
 				<connect>
@@ -82,14 +134,31 @@
 					<to component="_TradeMultiplexer" port="MARKETDATA"/>
 				</connect>
 				
-				<connect indicator="SMASHORT">
-					<from component="_SimpleMovingAverage_SHORT" port="OUT" />
+				<connect indicator="EMASHORT">
+					<from component="_ExponentialMovingAverage_SHORT" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="4" />
 				</connect>
-				<connect indicator="SMALONG">
-					<from component="_SimpleMovingAverage_LONG" port="OUT" />
+				
+				<connect indicator="EMALONG">
+					<from component="_ExponentialMovingAverage_LONG" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="9" />
 				</connect>
+
+				<connect indicator="RSI">
+					<from component="_RSI" port="RSI" />
+					<to component="_TradeMultiplexer" port="IN" no="10" />
+				</connect>
+
+				<connect indicator="DLINE">
+					<from component="_Stochastic" port="DLINE" />
+					<to component="_TradeMultiplexer" port="IN" no="11" />
+				</connect>
+
+				<connect indicator="KLINE">
+					<from component="_Stochastic" port="KLINE" />
+					<to component="_TradeMultiplexer" port="IN" no="12" />
+				</connect>
+
 				<connect>
 					<from component="_TradeMultiplexer" port="OUT" />
 					<to component="_PortfolioManager" port="IN" no="0" />
@@ -100,11 +169,37 @@
 				</connect>
 			</connections>
 
+
+			<indicators>
+				<indicator name="_Stochastic" default="14" optimized="$TradeNetwork-3_Stochastic" type="Double" port="N_WINDOW"/>
+				<indicator name="_Stochastic" default="3" optimized="$TradeNetwork-3_Stochastic" type="Double" port="K_WINDOW"/>
+				<indicator name="_Stochastic" default="3" optimized="$TradeNetwork-3_Stochastic" type="Double" port="D_WINDOW"/>
+				
+				<indicator name="_RSI" default="14" optimized="$TradeNetwork-3_RSI" type="Double" port="WINDOW"/>		
+		
+				<indicator name="_ExponentialMovingAverage_SHORT" default="5" optimized="$TradeNetwork-3_ExponentialMovingAverage_SHORT" type="Double" port="WINDOW" />
+				<indicator name="_ExponentialMovingAverage_LONG" default="10" optimized="$TradeNetwork-3_ExponentialMovingAverage_LONG" type="Double" port="WINDOW" />
+			</indicators>
+
+<!-- 
+			<trade-configuration>
+				<param name="position-stop-loss" type="point" value="0.5"></param>
+				<param name="position-take-profit" type="point" value="0.5"></param>
+				<param name="position-sizer" type="volatility-adjusted" value="0.5"></param>
+				<param name="strategy-stop-loss" type="percentage" value="80"></param>
+			</trade-configuration>
+	 -->		
+			<configuration>
+				<param name="ACCOUNT_BALANCE" type="Double" value="10000d"></param>
+			</configuration>
+
+
+
+
 		</network>
 		
 		
-		 -->
-		
+<!-- 		
 		
 		<network name="TradeNetwork-2">
 			<components>
@@ -409,6 +504,7 @@
 			</configuration>
 
 		</network>
-
+ -->
+ 
 </networks>
 
