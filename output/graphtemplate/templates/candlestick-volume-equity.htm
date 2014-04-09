@@ -140,6 +140,8 @@
                                  ]);
                 }
                 
+                var dataThreshold = 100000;
+                
                 // set the allowed units for data grouping
                 var groupingUnits = [[
                                       'minute',                         // unit name
@@ -192,6 +194,7 @@
                                                     type: 'candlestick',
                                                     name: 'EURUSD',
                                                     data: ohlc,
+                                                    turboThreshold: dataThreshold,
                                                     dataGrouping: {
                                                     units: groupingUnits
                                                     }
@@ -200,6 +203,7 @@
                                                   
                                                     name: 'TRADE',
                                                     data: trade,
+                                                    turboThreshold: dataThreshold,
                                                     id : 'trade',
                                                     type: 'line',
             										color: 'rgba(0,0,0,0)'
@@ -208,6 +212,7 @@
                                                     {
                                                     name: 'EQUITY',
                                                     data: equity,
+                                                    turboThreshold: dataThreshold,
                                                     yAxis: 2,
                                                     dataGrouping: {
                                                     units: groupingUnits
@@ -216,6 +221,7 @@
                                                     type: 'column',
                                                     name: 'VOLUME',
                                                     data: volume,
+                                                    turboThreshold: dataThreshold,
                                                     yAxis: 1,
                                                     dataGrouping: {
                                                     units: groupingUnits
@@ -224,13 +230,14 @@
                                                     
                                                     
                                                    // the event marker flags
-													{
-														type : 'flags',
-														data : markerString,
-														onSeries : 'trade',
-														shape : 'circlepin',
-														width : 16
-													}
+							{
+								type : 'flags',
+								data : markerString,
+								turboThreshold: dataThreshold,
+								onSeries : 'trade',
+								shape : 'circlepin',
+								width : 16
+							}
 										                                                    
                                                     
                                                     ]
