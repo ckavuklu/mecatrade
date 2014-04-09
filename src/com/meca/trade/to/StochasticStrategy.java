@@ -68,11 +68,11 @@ public class StochasticStrategy  extends BaseStrategy{
 			
 			
 			if(previousKLine < previousDLine && currentKLine > currentDLine && currentDLine <= oversoldValue){
-				decision = new StrategyDecision(DecisionType.LONG, data);
+				decision = new StrategyDecision(DecisionType.LONG_ENTRY, data);
 			} 
 			
 			if(previousKLine > previousDLine && currentKLine < currentDLine && currentDLine >= overboughtValue){
-				decision = new StrategyDecision(DecisionType.SHORT, data);
+				decision = new StrategyDecision(DecisionType.SHORT_ENTRY, data);
 			}
 			
 		}

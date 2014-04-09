@@ -265,7 +265,9 @@ public class BaseTrader implements ITrader {
 		
 		for(StrategyDecision decision : decisionList){
 
-			if(decision.getDecision() == DecisionType.LONG){
+			for(DecisionType decisionType: decision.getDecisionList()){
+			
+				if(decisionType == DecisionType.LONG_ENTRY){
 				
 				Double lotSize = positionSizer.getLotSize(TradeType.BUY);
 	
@@ -291,24 +293,9 @@ public class BaseTrader implements ITrader {
 					
 				}
 				
-				for(IPosition p:positions){
-					if(p.getStatus() == TradeStatusType.OPEN && p.getTradeType()==TradeType.SELL){
-						Trade tradeData = new Trade();
-						tradeData.setEntryDate(priceData.getTime());
-						tradeData.setStatus(TradeStatusType.OPEN);
-						tradeData.setPositionNo(p.getPositionNo());
-						tradeData.setStatus(TradeStatusType.OPEN);
-						tradeData.setTradeType(TradeType.SEXIT);
-						tradeData.setSignal(SignalType.Ex);
-						tradeData.setLot(p.getOpenLotCount());
-						tradeData.setEntryPrice(p.getEntryPrice());
-						tradeData.setExitPrice(askPrice);
-						tradeData.setMarketType(positionManager.getMarketType());
-						addToTradeList(tradeList,tradeData);
-					}
-				}
 				
-			}else if(decision.getDecision() == DecisionType.SHORT){
+				
+			}else if(decisionType == DecisionType.SHORT_ENTRY){
 				
 				Double lotSize = positionSizer.getLotSize(TradeType.SELL);
 				
@@ -332,6 +319,26 @@ public class BaseTrader implements ITrader {
 					addToTradeList(tradeList,tradeData);
 				}
 				
+				
+
+			}else if(decisionType == DecisionType.SHORT_EXIT){
+				for(IPosition p:positions){
+					if(p.getStatus() == TradeStatusType.OPEN && p.getTradeType()==TradeType.SELL){
+						Trade tradeData = new Trade();
+						tradeData.setEntryDate(priceData.getTime());
+						tradeData.setStatus(TradeStatusType.OPEN);
+						tradeData.setPositionNo(p.getPositionNo());
+						tradeData.setStatus(TradeStatusType.OPEN);
+						tradeData.setTradeType(TradeType.SEXIT);
+						tradeData.setSignal(SignalType.Ex);
+						tradeData.setLot(p.getOpenLotCount());
+						tradeData.setEntryPrice(p.getEntryPrice());
+						tradeData.setExitPrice(askPrice);
+						tradeData.setMarketType(positionManager.getMarketType());
+						addToTradeList(tradeList,tradeData);
+					}
+				}
+			}else if(decisionType == DecisionType.LONG_EXIT){
 				for(IPosition p:positions){
 
 					if(p.getStatus() == TradeStatusType.OPEN && p.getTradeType()==TradeType.BUY){
@@ -350,10 +357,8 @@ public class BaseTrader implements ITrader {
 					}
 					
 				}
-
-			}else {
-				
 			}
+		}
 		}
 
 		return tradeList;

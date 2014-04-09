@@ -80,7 +80,7 @@ public class StrategyIzmir  extends BaseStrategy{
 	@Override
 	public StrategyDecision execute(Packet[] pArray, PriceData data) {
 		
-		StrategyDecision decision = new StrategyDecision(DecisionType.KEEP, data);
+		StrategyDecision decision  = null;
 		
 		this.currentKLine = (Double)pArray[set.getMap().get("KLINE")].getContent();
 		this.currentDLine = (Double)pArray[set.getMap().get("DLINE")].getContent();
@@ -101,7 +101,7 @@ public class StrategyIzmir  extends BaseStrategy{
 					(currentRSI > midLevelRSIValue)
 				) 
 
-				decision = new StrategyDecision(DecisionType.LONG, data);
+				decision = new StrategyDecision(DecisionType.LONG_ENTRY, data);
 
 				
 			if(		(previousShortEMA > previousLongEMA && currentShortEMA < currentLongEMA) && 
@@ -110,13 +110,31 @@ public class StrategyIzmir  extends BaseStrategy{
 					(currentRSI < midLevelRSIValue)
 				) 
 
-				decision = new StrategyDecision(DecisionType.SHORT, data);
-		
+				if (decision == null)
+					decision = new StrategyDecision(DecisionType.SHORT_ENTRY, data);
+				else decision.getDecisionList().add(DecisionType.SHORT_ENTRY);
+			
+			
+			if(		(previousShortEMA > previousLongEMA && currentShortEMA < currentLongEMA) ||
+					(currentRSI < midLevelRSIValue)
+				) 
+				if (decision == null)
+					decision = new StrategyDecision(DecisionType.LONG_EXIT, data);
+				else decision.getDecisionList().add(DecisionType.LONG_EXIT);
+			
+			
+			if(		(previousShortEMA < previousLongEMA && currentShortEMA > currentLongEMA) || 
+					(currentRSI > midLevelRSIValue)
+				) 
+
+				if (decision == null)
+					decision = new StrategyDecision(DecisionType.SHORT_EXIT, data);
+				else decision.getDecisionList().add(DecisionType.SHORT_EXIT);
 			
 			
 		}
 		
-		/*System.out.println("StochasticStrategy values:");
+		/*System.out.println("StochasticStrategy values:");s
 		System.out.println(this);*/
 		
 		
@@ -127,6 +145,10 @@ public class StrategyIzmir  extends BaseStrategy{
 		previousShortEMA = currentShortEMA;
 		previousLongEMA = currentLongEMA;
 
+
+		if (decision == null)
+			decision = new StrategyDecision(DecisionType.KEEP, data);
+		
 		return decision;
 	}
 

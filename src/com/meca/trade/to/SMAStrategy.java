@@ -22,11 +22,11 @@ public class SMAStrategy extends BaseStrategy {
 			
 			
 			if(previousShortSMA < previousLongSMA && currentShortSMA > currentLongSMA){
-				decision = new StrategyDecision(DecisionType.LONG, data);
+				decision = new StrategyDecision(DecisionType.LONG_ENTRY, data);
 			} 
 			
 			if(previousShortSMA > previousLongSMA && currentShortSMA < currentLongSMA){
-				decision = new StrategyDecision(DecisionType.SHORT, data);
+				decision = new StrategyDecision(DecisionType.SHORT_ENTRY, data);
 			}
 			
 		}

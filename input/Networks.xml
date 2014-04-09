@@ -181,14 +181,14 @@
 				<indicator name="_ExponentialMovingAverage_LONG" default="10" optimized="$TradeNetwork-3_ExponentialMovingAverage_LONG" type="Double" port="WINDOW" />
 			</indicators>
 
-<!-- 
+
 			<trade-configuration>
 				<param name="position-stop-loss" type="point" value="0.5"></param>
 				<param name="position-take-profit" type="point" value="0.5"></param>
 				<param name="position-sizer" type="volatility-adjusted" value="0.5"></param>
-				<param name="strategy-stop-loss" type="percentage" value="80"></param>
+				
 			</trade-configuration>
-	 -->		
+	 		
 			<configuration>
 				<param name="ACCOUNT_BALANCE" type="Double" value="10000d"></param>
 			</configuration>

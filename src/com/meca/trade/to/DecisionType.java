@@ -4,8 +4,10 @@ import java.io.Serializable;
 
 public enum DecisionType implements Serializable{
 	
-	LONG(1d),
-	SHORT(2d),
+	LONG_ENTRY(1d),
+	SHORT_ENTRY(2d),
+	LONG_EXIT(3d),
+	SHORT_EXIT(4d),
 	KEEP(0d);
 	
 	

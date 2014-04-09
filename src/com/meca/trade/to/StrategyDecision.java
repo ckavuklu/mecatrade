@@ -1,8 +1,22 @@
 package com.meca.trade.to;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class StrategyDecision extends MecaObject{
 	
-	private DecisionType decision;
+	private List<DecisionType> decisionList;
+	public List<DecisionType> getDecisionList() {
+		return decisionList;
+	}
+
+	public void setDecisionList(List<DecisionType> decisionList) {
+		this.decisionList = decisionList;
+	}
+
+
+
+
 	private PriceData price;
 	
 	public PriceData getPrice() {
@@ -15,22 +29,28 @@ public class StrategyDecision extends MecaObject{
 
 	public StrategyDecision(DecisionType decision, PriceData price) {
 		super();
-		this.decision = decision;
+		this.decisionList = new ArrayList<DecisionType>();
+		decisionList.add(decision);
 		this.price = price;
 	}
-
-	public DecisionType getDecision() {
-		return decision;
+	
+	public StrategyDecision(List<DecisionType> decisionList, PriceData price) {
+		super();
+		this.decisionList = decisionList;
+		this.price = price;
 	}
+	
 
-	public void setDecision(DecisionType decision) {
-		this.decision = decision;
-	}
+	
 
 	@Override
 	public String toString() {
 		
-		return "DecisionType:"+decision;
+		StringBuilder result = new StringBuilder();
+		for(DecisionType decision:this.decisionList)
+		 result.append("DecisionType: "+decision);
+		
+		return result.toString();
 	}
 
 }

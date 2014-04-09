@@ -1,8 +1,5 @@
 package com.meca.trade.components;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.jpmorrsn.fbp.engine.ComponentDescription;
 import com.jpmorrsn.fbp.engine.InPort;
 import com.jpmorrsn.fbp.engine.InPorts;
@@ -36,6 +33,9 @@ public class RelativeStrengthIndex extends Indicator {
 	private Integer windowSize = null;
 	private Double result = null;
 	private Double previousData = null;
+	private Double previousAverageGain = null;
+	private Double previousAverageLoss = null;
+
 
 	@Override
 	protected void execute() {
@@ -111,11 +111,11 @@ public class RelativeStrengthIndex extends Indicator {
 		Double loss = 0d;
 		Double rs = 0d;
 		
+		if(previousAverageGain == null || previousAverageLoss==null){
 		
-			if (window.size() >= windowSize) {
+			if (this.window.size() >= windowSize) {
 
 				for (Double data : window) {
-
 					if (data > 0d ) gain += data; 
 						else loss += Math.abs(data);
 				
@@ -124,6 +124,9 @@ public class RelativeStrengthIndex extends Indicator {
 				if (loss == 0d) rs = Double.MAX_VALUE;
 				else rs = (gain) / (loss);
 				
+				previousAverageGain = gain/windowSize;
+				previousAverageLoss = loss/windowSize;
+				
 				result = 100 - 100 / (1 + rs);
 
 				window.remove(0);
@@ -131,6 +134,22 @@ public class RelativeStrengthIndex extends Indicator {
 			} else
 
 				result = Double.NaN;
+		}else{
+			Double averageLoss = ((previousAverageLoss*(windowSize-1)) + Math.abs(window.get(windowSize-1)<0d?window.get(windowSize-1):0d))/windowSize;
+			Double averageGain = ((previousAverageGain*(windowSize-1)) + (window.get(windowSize-1)>0d?window.get(windowSize-1):0d))/windowSize;
+			
+			if (averageLoss == 0d) 
+				rs = Double.MAX_VALUE;
+			else
+				rs = averageGain / averageLoss;
+			
+			previousAverageGain = averageGain;
+			previousAverageLoss = averageLoss;
+			
+			result = 100 - 100 / (1 + rs);
+
+			window.remove(0);
+		}
 		
 
 		return result;
