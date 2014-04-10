@@ -31,11 +31,15 @@ public class SMAandEMAStrategy extends BaseStrategy {
 		if(!(previousShortSMA.isNaN() || previousLongSMA.isNaN() || previousShortEMA.isNaN() || previousLongEMA.isNaN())){
 			
 			
-			if((previousShortSMA < previousLongSMA && currentShortSMA > currentLongSMA) || ( previousShortEMA < previousLongEMA && currentShortEMA > currentLongEMA)){
+			if((previousShortSMA < previousLongSMA && currentShortSMA > currentLongSMA) 
+					|| 
+			   ( previousShortEMA < previousLongEMA && currentShortEMA > currentLongEMA)){
 				decision = new StrategyDecision(DecisionType.LONG_ENTRY, data);
 			} 
 			
-			if((previousShortSMA > previousLongSMA && currentShortSMA < currentLongSMA) || (previousShortEMA > previousLongEMA && currentShortEMA < currentLongEMA)){
+			if((previousShortSMA > previousLongSMA && currentShortSMA < currentLongSMA) 
+					|| 
+			   (previousShortEMA > previousLongEMA && currentShortEMA < currentLongEMA)){
 				decision = new StrategyDecision(DecisionType.SHORT_ENTRY, data);
 			}
 			

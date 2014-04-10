@@ -536,31 +536,33 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		
 		this.perfReporManager.generatePerformanceReport(this, getMarketType(),graphLog);
 		
-		for(Trade trade:tradeHistory){
-			StringBuilder builder = new StringBuilder();
-			builder.append(trade.getRealizedDate().getTime());
-			builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
-			builder.append(trade.getPositionNo());
-			builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
-			builder.append(trade.getTradeNo());
-			builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
-			builder.append(trade.getSignal().ordinal());
-			builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
-			builder.append(trade.getLot());
-			builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
-			builder.append(trade.getRealizedPrice());
-			builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
-			builder.append(trade.getProfitLoss());
-			builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
-			builder.append(trade.getTradeType().ordinal());
-
-			perfReporManager.getTradeLogger().writeLog(builder.toString());
-		}
-		
-		
 		if(graphLog){
-			perfReporManager.finalizeLogger();
+			for(Trade trade:tradeHistory){
+				StringBuilder builder = new StringBuilder();
+				builder.append(trade.getRealizedDate().getTime());
+				builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+				builder.append(trade.getPositionNo());
+				builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+				builder.append(trade.getTradeNo());
+				builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+				builder.append(trade.getSignal().ordinal());
+				builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+				builder.append(trade.getLot());
+				builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+				builder.append(trade.getRealizedPrice());
+				builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+				builder.append(trade.getProfitLoss());
+				builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+				builder.append(trade.getTradeType().ordinal());
+	
+				
+				perfReporManager.getTradeLogger().writeLog(builder.toString());
+			}
+		
+		perfReporManager.finalizeLogger();
 		}
+		
+		
 		
 	}
 	
