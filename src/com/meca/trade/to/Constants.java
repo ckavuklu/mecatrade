@@ -44,6 +44,7 @@ public final class Constants {
 	public final static String GRAPH_DATA_JSON_START_STRING = "[";
 	public final static String GRAPH_DATA_JSON_END_STRING = "]";
 	public final static String GRAPH_DATA_JSON_SEPARATOR_STRING = ",";
+	public final static String GRAPH_DATA_JSON_ESCAPE_STRING = "'";
 	
 	
 	public final static String VALUE_TYPE_EQUITY_PERCENTAGE = "equity-percentage";

@@ -1,6 +1,9 @@
-package com.meca.trade.to;
+package com.meca.trade.strategy;
 
 import com.jpmorrsn.fbp.engine.Packet;
+import com.meca.trade.to.DecisionType;
+import com.meca.trade.to.PriceData;
+import com.meca.trade.to.StrategyDecision;
 
 public class SMAandEMAStrategy extends BaseStrategy {
 	
@@ -20,6 +23,7 @@ public class SMAandEMAStrategy extends BaseStrategy {
 
 	@Override
 	public StrategyDecision execute(Packet[] pArray, PriceData data) {
+		super.execute(pArray, data);
 		StrategyDecision decision = new StrategyDecision(DecisionType.KEEP, data);
 		
 		this.currentShortSMA = (Double)pArray[set.getMap().get("SMASHORT")].getContent();

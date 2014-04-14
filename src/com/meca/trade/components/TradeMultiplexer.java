@@ -87,7 +87,7 @@ public class TradeMultiplexer extends Component {
 		    
 		    if(Constants.DEBUG_ENABLED)
 		    	System.out.println("");
-		    
+
 		    StrategyDecision dec = strategy.execute(pArray, marketData);
 		    
 		    if(Constants.DEBUG_ENABLED)

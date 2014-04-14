@@ -65,7 +65,7 @@
 					<parameter value="posManager" type="Static"></parameter>
 				</initialize>
 				<initialize component="_TradeMultiplexer" port="STRATEGY">
-					<parameter value="com.meca.trade.to.StrategyIzmir" type="Strategy"></parameter>
+					<parameter value="com.meca.trade.strategy.StrategyIzmir" type="Strategy"></parameter>
 				</initialize>
 
 
@@ -258,7 +258,7 @@
 					<parameter value="posManager" type="Static"></parameter>
 				</initialize>
 				<initialize component="_TradeMultiplexer" port="STRATEGY">
-					<parameter value="com.meca.trade.to.SMAStrategy" type="Strategy"></parameter>
+					<parameter value="com.meca.trade.strategy.SMAStrategy" type="Strategy"></parameter>
 				</initialize>
 
 
@@ -412,7 +412,7 @@
 					<parameter value="posManager" type="Static"></parameter>
 				</initialize>
 				<initialize component="_TradeMultiplexer" port="STRATEGY">
-					<parameter value="com.meca.trade.to.SMAStrategy" type="Strategy"></parameter>
+					<parameter value="com.meca.trade.strategy.SMAStrategy" type="Strategy"></parameter>
 				</initialize>
 
 

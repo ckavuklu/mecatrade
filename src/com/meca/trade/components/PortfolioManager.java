@@ -11,6 +11,7 @@ import com.jpmorrsn.fbp.engine.InputPort;
 import com.jpmorrsn.fbp.engine.OutPort;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
+import com.meca.trade.networks.TradeNetwork;
 import com.meca.trade.to.Constants;
 import com.meca.trade.to.IPositionManager;
 import com.meca.trade.to.ITestTradeDataSet;
@@ -193,7 +194,9 @@ public class PortfolioManager extends Component {
 		    	order = new Order();
 		    }
 		    
-		    manager.updateGraphData(endOfMarketData);
+		    
+		    TradeNetwork tradeNetwork = (TradeNetwork)this.network;
+		    manager.updateGraphData(tradeNetwork.getStrategy());
 		  
 		    
 		    

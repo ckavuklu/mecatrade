@@ -23,9 +23,18 @@ public class PositionManager extends MecaObject implements IPositionManager{
 	private Double marginLotCount = 0d;
 	private Double weightedAverageEntryPrice = 0d;
 	private Boolean graphLog = false;
+	private Boolean isHeadersWritten = false;
+	
+
+
+
 	private String uuid;
 	private List<ExecutionRecord> executionHistory = null; 
 	private Double initialBalance = null;
+	
+	public Boolean getIsHeadersWritten() {
+		return isHeadersWritten;
+	}
 	
 	public List<ExecutionRecord> getExecutionHistory() {
 		return executionHistory;
@@ -278,10 +287,35 @@ public class PositionManager extends MecaObject implements IPositionManager{
 		marginLevel = TradeUtils.getRoundedUpValue((equity/(margin<=0?equity:margin))*100d);
 	}
 
-	public void updateGraphData(boolean endOfMarket){
+	public void updateGraphData(IStrategy strategy){
 		if(graphLog){
-			StringBuilder log = new StringBuilder();
 			
+			executionHistory.add(new ExecutionRecord(priceData, equity));
+			
+			if(!getIsHeadersWritten()){
+				updateIndicatorData(strategy.getIndicatorHeaders());
+				isHeadersWritten = true;
+			}
+			
+			updateIndicatorData(strategy.getIndicatorData());
+			updateTradeData();
+		}
+	}
+	
+	public void updateIndicatorData(String value){
+		StringBuilder log = new StringBuilder();
+		
+		
+		log.append(priceData.getTime().getTime());
+		log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
+		log.append(value);
+		
+		perfReporManager.getIndicatorLogger().writeLog(log.toString());
+}
+
+	
+	private void updateTradeData(){
+			StringBuilder log = new StringBuilder();
 			
 			log.append(priceData.getTime().getTime());
 			log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
@@ -296,13 +330,8 @@ public class PositionManager extends MecaObject implements IPositionManager{
 			log.append(priceData.getVolume());
 			log.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
 			log.append(equity.toString());
-			
-			executionHistory.add(new ExecutionRecord(priceData, equity));
-			
-			
-			
+		
 			perfReporManager.getGraphLogger().writeLog(log.toString());
-		}
 	}
 
 	

@@ -140,6 +140,16 @@ public class PriceData extends MecaObject {
 		return low;
 	}
 
+	public MarketType getMarketType() {
+		return marketType;
+	}
+
+
+	public void setMarketType(MarketType marketType) {
+		this.marketType = marketType;
+	}
+
+
 	public void setLow(Double low) {
 		this.low = low;
 	}

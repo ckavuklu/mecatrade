@@ -1,6 +1,9 @@
-package com.meca.trade.to;
+package com.meca.trade.strategy;
 
 import com.jpmorrsn.fbp.engine.Packet;
+import com.meca.trade.to.DecisionType;
+import com.meca.trade.to.PriceData;
+import com.meca.trade.to.StrategyDecision;
 
 	
 	public class StrategyIzmir  extends BaseStrategy{
@@ -92,7 +95,7 @@ import com.jpmorrsn.fbp.engine.Packet;
 
 	@Override
 	public StrategyDecision execute(Packet[] pArray, PriceData data) {
-		
+		super.execute(pArray, data);
 		StrategyDecision decision  = null;
 		
 		this.currentKLine = (Double)pArray[set.getMap().get("KLINE")].getContent();

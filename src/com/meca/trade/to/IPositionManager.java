@@ -39,7 +39,7 @@ public interface IPositionManager extends IPriceData{
 	
 	public Double getInitialBalance();
 	
-	public void updateGraphData(boolean endOfMarket);
+	public void updateGraphData(IStrategy strategy);
 	
 	public Double getBalance();
 

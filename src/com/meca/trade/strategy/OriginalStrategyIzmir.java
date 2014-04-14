@@ -1,6 +1,9 @@
-package com.meca.trade.to;
+package com.meca.trade.strategy;
 
 import com.jpmorrsn.fbp.engine.Packet;
+import com.meca.trade.to.DecisionType;
+import com.meca.trade.to.PriceData;
+import com.meca.trade.to.StrategyDecision;
 
 public class OriginalStrategyIzmir  extends BaseStrategy{
 	

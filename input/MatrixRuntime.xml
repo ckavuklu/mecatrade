@@ -1,7 +1,7 @@
 <runtime>
 
 	<configuration>
-		<param name="PERIOD_TYPE" type="String" value="Minute"></param>
+		<param name="PERIOD_TYPE" type="String" value="Hour"></param>
 		<param name="PERIOD_STEP_SIZE" type="Integer" value="1"></param>
 		<param name="PERIOD_START" type="Date" value="20111010-190000"></param>
 		<param name="PERIOD_END" type="Date"   value="20120110-190000"></param>

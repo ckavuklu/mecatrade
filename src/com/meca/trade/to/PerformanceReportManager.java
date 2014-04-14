@@ -33,15 +33,24 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	private Double annualizationCoefficient = 0d;
 	
 	private IReportLogger  tradeData = null;
-	
-
-
+	private IReportLogger  indicatorData = null;
 	private IReportLogger  graphData = null;
 	private IReportLogger  periodBasedPerformanceData = null;
 	private Double maximumIndicatorWindowSize;
 	private Integer numberOfSamples;
 
+	
+	public IReportLogger getIndicatorLogger() {
+		return getIndicatorData();
+	}
 
+	public IReportLogger getIndicatorData() {
+		return indicatorData;
+	}
+
+	public void setIndicatorData(IReportLogger indicatorData) {
+		this.indicatorData = indicatorData;
+	}
 	
 	public PerformanceKPIS getPerformanceKPIs() {
 		return performanceKPIs;
@@ -68,9 +77,6 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 	}
 
 	
-	
-	
-	
 	public PerformanceReportManager(IMarketData marketData, Double accountBalance) {
 		super();
 		
@@ -84,6 +90,7 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		this.graphData = new GraphDataGenerator();
 		this.periodBasedPerformanceData = new FileReportGenerator();
 		this.tradeData = new GraphDataGenerator();
+		this.indicatorData = new GraphDataGenerator();
 		
 	}
 
@@ -345,10 +352,12 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		graphData.initializeLogger(name + "_Graph");
 		periodBasedPerformanceData.initializeLogger(name+ "_Periodic_Performance.xls");
 		tradeData.initializeLogger(name + "_TradeData");
+		indicatorData.initializeLogger(name + "_IndicatorData");
+		
 	}
 
 	
-	private void generateGraphHTML(String ohlcFileName, String tradeFileName ) {
+	private void generateGraphHTML(String ohlcFileName, String tradeFileName, String indicatorFileName ) {
 
 		Iterator<File> it = FileUtils.iterateFiles(new File(
 				Constants.GRAPH_TEMPLATE_DIRECTORY), null, false);
@@ -358,7 +367,9 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 			try {
 				String content = FileUtils.readFileToString(file, "UTF-8");
 				content = content.replace("$FILENAME", ohlcFileName);
-				content = content.replace("$TRADE_HISTORY_FILENAME", tradeFileName);
+				content = content.replace("$TRADE_HISTORY_FILENAME", tradeFileName);	
+				content = content.replace("$INDICATOR_FILENAME", indicatorFileName);
+				
 				File tempFile = new File(Constants.OUTPUT_DIRECTORY
 						+ File.separator + ohlcFileName + " - " + file.getName());
 				FileUtils.writeStringToFile(tempFile, content, "UTF-8");
@@ -377,9 +388,10 @@ public class PerformanceReportManager extends MecaObject implements IPerformance
 		graphData.finalizeLogger();
 		periodBasedPerformanceData.finalizeLogger();
 		tradeData.finalizeLogger();
+		indicatorData.finalizeLogger();
 		
 		
-		generateGraphHTML(graphData.getFileName(), tradeData.getFileName());
+		generateGraphHTML(graphData.getFileName(), tradeData.getFileName(), indicatorData.getFileName());
 	}
 
 
