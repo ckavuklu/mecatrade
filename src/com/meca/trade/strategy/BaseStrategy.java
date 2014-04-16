@@ -63,6 +63,8 @@ public class BaseStrategy implements IStrategy {
 	}
 
 	public String getIndicatorData() {
+		
+		Double indicatorData = Double.NaN;
 
 		StringBuilder builder = new StringBuilder();
 
@@ -72,13 +74,27 @@ public class BaseStrategy implements IStrategy {
 			for (int i = 0; i < indexArray.size() - 1; i++) {
 				indicatorValue = (Double) (pArray[set.getMap().get(indexArray.get(i))])
 						.getContent();
-				builder.append(TradeUtils.roundUpDigits(indicatorValue.equals(Double.NaN)?0d:indicatorValue, data.getMarketType().getPricePrecision()));
+				indicatorData = Double.NaN;
+				
+				if(!indicatorValue.equals(Double.NaN)){
+					indicatorData = TradeUtils.roundUpDigits(indicatorValue,data.getMarketType().getPricePrecision());
+				}
+				
+				builder.append(indicatorData.equals(Double.NaN)?"'NaN'":indicatorData);
 				builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
 			}
 
 			indicatorValue = (Double) (pArray[set.getMap().get(
 					indexArray.get(indexArray.size() - 1))]).getContent();
-			builder.append(TradeUtils.roundUpDigits(indicatorValue.equals(Double.NaN)?0d:indicatorValue,data.getMarketType().getPricePrecision()));
+			
+			
+			indicatorData = Double.NaN;
+			
+			if(!indicatorValue.equals(Double.NaN)){
+				indicatorData = TradeUtils.roundUpDigits(indicatorValue,data.getMarketType().getPricePrecision());
+			}
+					
+			builder.append(indicatorData.equals(Double.NaN)?"'NaN'":indicatorData);
 		}
 
 		return builder.toString();
