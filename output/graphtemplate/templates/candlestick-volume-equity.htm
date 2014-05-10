@@ -37,6 +37,8 @@
             var percentageIndicatorDashStyle = [];
             var percentageIndicatorMarkerRadiusLength = [];
             var valueIndicatorMarkerRadiusLength = [];
+            var indicatorDisplayFlag = [];
+            
             var OHLCLineLength = 1;
             
              
@@ -57,6 +59,10 @@
                
                 var indicatorSeriesIndex = [];
                 
+                
+                for(i=0;i<10;i++)
+                	indicatorDisplayFlag[i] = false;
+                
                 for(j=1;j<indicatorLength+1;j++){
                 
                 	//SYTNAX IS: INDICATOR_NAME-SERIES_TYPE(v-OHLC/p-INDICATOR)-LINE_WIDTH-DASH_TYPE(s-solid, d-dash)
@@ -65,9 +71,6 @@
                		var lineWidth = splittedArray[2];
                		var dashStyle = splittedArray[3];
                		var radiusLength = 1;
-               		
-               		
-               		
                		
                		
                		if(dashStyle == "s"){
@@ -87,6 +90,7 @@
                 		percentageIndicatorWidth.push(lineWidth);
                 		percentageIndicatorDashStyle.push(dashStyle);
                 		percentageIndicatorMarkerRadiusLength.push(radiusLength);
+                		indicatorDisplayFlag[indicatorSeriesIndex[j-1]] = new Boolean(true);
                 	}
                 	
                 	else if ( lastChar == "v" ) {
@@ -95,10 +99,11 @@
                 		valueIndicatorWidth.push(lineWidth);
                 		valueIndicatorDashStyle.push(dashStyle);
                 		valueIndicatorMarkerRadiusLength.push(radiusLength);
-                	}
+                		indicatorDisplayFlag[indicatorSeriesIndex[j-1]] = new Boolean(true);
+                	} 
                 	
                 }
-               
+                
                 
                 for (i = 1; i < data.length; i++) {
                 		for(k=0;k<indicatorLength;k++){
@@ -347,12 +352,12 @@
                                                    ],
                                                    
                                                    legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle',
-                enabled: true,
-                borderWidth: 0
-            },
+									                layout: 'vertical',
+									                align: 'right',
+									                verticalAlign: 'middle',
+									                enabled: true,
+									                borderWidth: 0
+									            },
                                            
                                            series: [{
                                                     type: 'candlestick',
@@ -370,6 +375,7 @@
                                                     data: indicator1,
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator1',
+                                                    showInLegend : indicatorDisplayFlag[0],
 									                marker : {
 														enabled : true,
 														radius : valueIndicatorMarkerRadiusLength[0]
@@ -384,6 +390,7 @@
                                                     data: indicator2,
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator2',
+                                                    showInLegend : indicatorDisplayFlag[1],
                                                     marker : {
 														enabled : true,
 														radius : valueIndicatorMarkerRadiusLength[1]
@@ -398,6 +405,7 @@
                                                     data: indicator3,
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator3',
+                                                    showInLegend : indicatorDisplayFlag[2],
                                                     marker : {
 														enabled : true,
 														radius : valueIndicatorMarkerRadiusLength[2]
@@ -412,6 +420,7 @@
                                                     data: indicator4,
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator4',
+                                                    showInLegend : indicatorDisplayFlag[3],
                                                     marker : {
 														enabled : true,
 														radius : valueIndicatorMarkerRadiusLength[3]
@@ -426,6 +435,7 @@
                                                     data: indicator5,
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator5',
+                                                    showInLegend : indicatorDisplayFlag[4],
                                                     marker : {
 														enabled : true,
 														radius : valueIndicatorMarkerRadiusLength[4]
@@ -441,6 +451,7 @@
                                                     turboThreshold: dataThreshold,
                                                     id : 'trade',
                                                     type: 'line',
+                                                    showInLegend: false,
                                                     color: 'rgba(0,0,0,0)'
 
                                                     },
@@ -452,6 +463,7 @@
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator6',
                                                     yAxis: 3,
+                                                    showInLegend : indicatorDisplayFlag[5],
                                                     marker : {
 														enabled : true,
 														radius : percentageIndicatorMarkerRadiusLength[0]
@@ -466,6 +478,7 @@
                                                     data: indicator7,
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator7',
+                                                    showInLegend : indicatorDisplayFlag[6],
                                                     yAxis: 3,
                                                     marker : {
 														enabled : true,
@@ -481,6 +494,7 @@
                                                     data: indicator8,
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator8',
+                                                    showInLegend : indicatorDisplayFlag[7],
                                                     yAxis: 3,
                                                     marker : {
 														enabled : true,
@@ -496,6 +510,7 @@
                                                     data: indicator9,
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator9',
+                                                    showInLegend : indicatorDisplayFlag[8],
                                                     yAxis: 3,
                                                     marker : {
 														enabled : true,
@@ -511,6 +526,7 @@
                                                     data: indicator10,
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator10',
+                                                    showInLegend : indicatorDisplayFlag[9],
                                                     yAxis: 3,
                                                     marker : {
 														enabled : true,
@@ -531,6 +547,7 @@
                                                     data: equity,
                                                     turboThreshold: dataThreshold,
                                                     yAxis: 2,
+                                                    showInLegend : false,
                                                     dataGrouping: {
                                                     units: groupingUnits
                                                     }
@@ -540,6 +557,7 @@
                                                     name: 'VOLUME',
                                                     data: volume,
                                                     turboThreshold: dataThreshold,
+                                                    showInLegend : false,
                                                     yAxis: 1,
                                                     dataGrouping: {
                                                     units: groupingUnits
@@ -553,6 +571,7 @@
 								data : markerString,
 								turboThreshold: dataThreshold,
 								onSeries : 'trade',
+								 showInLegend: false,
 								shape : 'circlepin',
 								width : 16
 							}

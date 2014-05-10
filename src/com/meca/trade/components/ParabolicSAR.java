@@ -81,7 +81,7 @@ public class ParabolicSAR extends Indicator {
 			Double doubleValue = (Double) maxStepPacket.getContent();
 			maxStepSize = doubleValue;
 			maxStepPort.close();
-			drop(stepPacket);
+			drop(maxStepPacket);
 		}
 		
 		while ((highDataPacket = highDataPort.receive()) != null) {
@@ -144,12 +144,12 @@ public class ParabolicSAR extends Indicator {
 					
 					// calculate tentative SAR 
 					if(previousSARNo<0)
-						tentativeSAR = Math.max(TradeUtils.roundUpDigits(previousSAR+previousAF*(previousEP-previousSAR),2),twoPreviousHIGHEST);
+						tentativeSAR = Math.max(previousSAR+previousAF*(previousEP-previousSAR),twoPreviousHIGHEST);
 					else 
-						tentativeSAR = Math.min(TradeUtils.roundUpDigits(previousSAR+previousAF*(previousEP-previousSAR),2), twoPreviousLOWEST);
+						tentativeSAR = Math.min(previousSAR+previousAF*(previousEP-previousSAR), twoPreviousLOWEST);
 					
 					//calculated SAR
-					calculatedSAR =  TradeUtils.roundUpDigits(previousSAR+previousAF*(previousEP-previousSAR),2);
+					calculatedSAR =  previousSAR+previousAF*(previousEP-previousSAR);
 					
 					// SARNo
 					if(previousSARNo<0)

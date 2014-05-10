@@ -199,7 +199,7 @@
 		</network>
 		
 		
- 		-->
+		
 		
 		<network name="TradeNetwork-2">
 			<components>
@@ -338,6 +338,139 @@
 				<indicator name="_SimpleMovingAverage_LONG" default="113" optimized="$TradeNetwork-2_SimpleMovingAverage_LONG" type="Double" port="WINDOW" />
 				<indicator name="_ExponentialMovingAverage_SHORT" default="16" optimized="$TradeNetwork-2_ExponentialMovingAverage_SHORT" type="Double" port="WINDOW" />
 				<indicator name="_ExponentialMovingAverage_LONG" default="103" optimized="$TradeNetwork-2_ExponentialMovingAverage_LONG" type="Double" port="WINDOW" />
+			</indicators>
+
+			<trade-configuration>
+				<param name="position-stop-loss" type="point" value="0.0005"></param>
+				<param name="position-take-profit" type="point" value="0.001"></param>
+				<param name="position-sizer" type="volatility-adjusted" value="0.5"></param>
+				<param name="strategy-stop-loss" type="percentage" value="80"></param>
+			</trade-configuration>
+			
+			<configuration>
+				<param name="ACCOUNT_BALANCE" type="Double" value="10000d"></param>
+			</configuration>
+		</network>
+		
+		
+		
+ 		-->
+ 		
+ 		
+ 		<network name="TradeNetwork-5">
+			<components>
+				<component name="_DataFeeder"
+					class="com.meca.trade.components.DataFeeder"></component>
+				
+				<component name="_QuotePrice_H"
+					class="com.meca.trade.components.QuotePrice"></component>
+					
+				<component name="_QuotePrice_L"
+					class="com.meca.trade.components.QuotePrice"></component>
+				
+				<component name="_Kicker" class="com.meca.trade.components.Kicker"></component>
+
+				<component name="_ParabolicSAR"
+					class="com.meca.trade.components.ParabolicSAR">
+				</component>
+				
+				
+				<component name="_TradeMultiplexer"
+					class="com.meca.trade.components.TradeMultiplexer"></component>
+				<component name="_PortfolioManager"
+					class="com.meca.trade.components.PortfolioManager"></component>
+				<component name="_ActionManager"
+					class="com.meca.trade.components.ActionManager"></component>
+			</components>
+
+			<initializations>
+				
+				<initialize component="_QuotePrice_H" port="PRICETYPE">
+					<parameter value="H" type="String"></parameter>
+				</initialize>
+				<initialize component="_QuotePrice_L" port="PRICETYPE">
+					<parameter value="L" type="String"></parameter>
+				</initialize>
+				<initialize component="_DataFeeder" port="ITERATOR">
+					<parameter value="dataIterator" type="Static"></parameter>
+				</initialize>
+				<initialize component="_PortfolioManager" port="MANAGER">
+					<parameter value="posManager" type="Static"></parameter>
+				</initialize>
+				<initialize component="_PortfolioManager" port="TRADER">
+					<parameter value="com.meca.trade.to.BaseTrader" type="Trader"></parameter>
+				</initialize>
+				<initialize component="_PortfolioManager" port="TESTTRADEDATASET">
+					<parameter value="dataSet" type="Static"></parameter>
+				</initialize>
+				
+				<initialize component="_ActionManager" port="MANAGER">
+					<parameter value="posManager" type="Static"></parameter>
+				</initialize>
+				<initialize component="_TradeMultiplexer" port="STRATEGY">
+					<parameter value="com.meca.trade.strategy.StrategyParabolic" type="Strategy"></parameter>
+				</initialize>
+
+
+			</initializations>
+
+			<connections>
+				
+				<connect>
+					<from component="_DataFeeder" port="OUT" no="0" />
+					<to component="_QuotePrice_L" port="TRADEDATA" />
+				</connect>
+				
+				<connect>
+					<from component="_DataFeeder" port="OUT" no="1" />
+					<to component="_QuotePrice_H" port="TRADEDATA" />
+				</connect>
+				
+				<connect>
+					<from component="_Kicker" port="OUT" no="0" />
+					<to component="_DataFeeder" port="KICKOFF" />
+				</connect>
+				
+				<connect>
+					<from component="_ActionManager" port="CLOCKTICK" no="0" />
+					<to component="_DataFeeder" port="CLOCKTICK" />
+				</connect>
+				
+				<connect>
+					<from component="_QuotePrice_L" port="OUT" no="2" />
+					<to component="_ParabolicSAR" port="LOW" />
+				</connect>
+				<connect>
+					<from component="_QuotePrice_H" port="OUT" no="3" />
+					<to component="_ParabolicSAR" port="HIGH" />
+				</connect>
+				
+				
+				<connect>
+					<from component="_DataFeeder" port="OUT" no="2" />
+					<to component="_TradeMultiplexer" port="MARKETDATA"/>
+				</connect>
+				
+				<connect indicator="SAR-v-0-s">
+					<from component="_ParabolicSAR" port="SAR" />
+					<to component="_TradeMultiplexer" port="IN" no="4" />
+				</connect>
+				
+				
+				
+				<connect>
+					<from component="_TradeMultiplexer" port="OUT" />
+					<to component="_PortfolioManager" port="IN" no="0" />
+				</connect>
+				<connect>
+					<from component="_PortfolioManager" port="OUT" />
+					<to component="_ActionManager" port="IN" />
+				</connect>
+			</connections>
+			
+			<indicators>
+				<indicator name="_ParabolicSAR" default="0.02" optimized="$TradeNetwork-5_ParabolicSAR" type="Double" port="STEP"/>
+				<indicator name="_ParabolicSAR" default="0.2" optimized="$TradeNetwork-5_ParabolicSAR" type="Double" port="MAXSTEP"/>
 			</indicators>
 
 			<trade-configuration>
