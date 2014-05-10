@@ -9,20 +9,128 @@
             <script src="../graphtemplate/js/exporting.js"></script>
             
             </head>
-	<body>
-        <div id="container" style="height: 600px; min-width: 500px"></div>
-        <iframe id='tradeFrame' src='$TRADE_HISTORY_FILENAME' onload='readTradefile()' style="display:none"> </iframe>
-        <iframe id='iframe' src='$FILENAME' onload='readfile()' style="display:none"> </iframe>
+	<body onload="readIndicatorFile();readTradefile();readfile();">
+        <div id="container" style="height: 750px; min-width: 500px"></div>
+        <iframe id='tradeFrame' src='$TRADE_HISTORY_FILENAME' style="display:none"> </iframe>
+        <iframe id='indicatorFrame' src='$INDICATOR_FILENAME' style="display:none"> </iframe>
+        <iframe id='iframe'  src='$FILENAME' style="display:none"> </iframe>
         
         
 		<script type="text/javascript">
+		
             var markerString = [];
+            var indicator1 = [];
+            var indicator2 = [];
+            var indicator3 = [];
+            var indicator4 = [];
+            var indicator5 = [];
+            var indicator6 = [];
+            var indicator7 = [];
+            var indicator8 = [];
+            var indicator9 = [];
+            var indicator10 = [];
+            var valueIndicatorNames = [];
+            var percentageIndicatorNames = [];
+            
              
             Highcharts.setOptions({
 				global: {
 					useUTC: false
 				}
 			});
+			
+			
+			function readIndicatorFile() {
+			    
+                
+                var data = eval(document.getElementById('indicatorFrame').contentDocument.body.firstChild.innerHTML);
+                
+                
+                var indicatorLength = data[0].length-1;
+               
+                var indicatorSeriesIndex = [];
+                
+                for(j=1;j<indicatorLength+1;j++){
+               
+                    var lastChar = data[0][j].substring(data[0][j].length-1);
+
+                	if ( lastChar == "p" ) {
+                		percentageIndicatorNames.push(data[0][j].substring(0,data[0][j].length-2));
+                		indicatorSeriesIndex[j-1] = percentageIndicatorNames.length + 4;
+                	}
+                	
+                	else if ( lastChar == "v" ) {
+                		valueIndicatorNames.push(data[0][j].substring(0,data[0][j].length-2));
+                		indicatorSeriesIndex[j-1] = valueIndicatorNames.length - 1;
+                	}
+                	
+                }
+               
+                
+                for (i = 1; i < data.length; i++) {
+                		for(k=0;k<indicatorLength;k++){
+                		
+                		if(data[i][k+1] != "NaN"){
+	                		
+		                		
+		                		if(indicatorSeriesIndex[k]==5){
+	                				
+	                					indicator6.push([data[i][0],data[i][k+1]]);
+	                				
+	                			}else if(indicatorSeriesIndex[k]==6){
+	                				
+	                					indicator7.push([data[i][0],data[i][k+1]]);
+	                				
+	                			}else if(indicatorSeriesIndex[k]==7){
+	                				
+	                					indicator8.push([data[i][0],data[i][k+1]]);
+	                				
+	                			}else if(indicatorSeriesIndex[k]==8){
+	                				
+	                					indicator9.push([data[i][0],data[i][k+1]]);
+	                				
+	                			}else if(indicatorSeriesIndex[k]==9){
+	                				
+	                					indicator10.push([data[i][0],data[i][k+1]]);
+	                				
+	                			}else if(indicatorSeriesIndex[k]==0){
+		                				
+	                					indicator1.push([data[i][0],data[i][k+1]]);
+	                				
+	                			}else if(indicatorSeriesIndex[k]==1){
+	                				
+	                					indicator2.push([data[i][0],data[i][k+1]]);
+	                				
+	                			}else if(indicatorSeriesIndex[k]==2){
+	                				
+	                					indicator3.push([data[i][0],data[i][k+1]]);
+	                				
+	                			}else if(indicatorSeriesIndex[k]==3){
+	                				
+	                					indicator4.push([data[i][0],data[i][k+1]]);
+	                				
+	                			}else if(indicatorSeriesIndex[k]==4){
+	                				
+	                					indicator5.push([data[i][0],data[i][k+1]]);
+	                				
+	                			}
+		                		
+		                	}
+                			
+                		}
+                  }
+                  
+              
+            }
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			
 			function readTradefile() {
                 var data = eval(document.getElementById('tradeFrame').contentDocument.body.firstChild.innerHTML);
@@ -106,8 +214,12 @@
             }
             
             function readfile() {
+         
+           		
                 var data = eval(document.getElementById('iframe').contentDocument.body.firstChild.innerHTML);
                 
+             
+              
                 
                 // split the data set into ohlc and volume
                 var ohlc = [],
@@ -141,7 +253,7 @@
                                  ]);
                 }
                 
-                var dataThreshold = 5000;
+                var dataThreshold = 1000;
                 
                 // set the allowed units for data grouping
                 var groupingUnits = [[
@@ -176,7 +288,7 @@
                                                    title: {
                                                    text: 'Volume'
                                                    },
-                                                   top: 400,
+                                                   top: 520,
                                                    height: 100,
                                                    offset: 0,
                                                    lineWidth: 2
@@ -185,11 +297,29 @@
                                                    title: {
                                                    text: 'Equity'
                                                    },
+                                                   top: 400,
+                                                   height: 100,
+                                                   offset: 0,
+                                                   lineWidth: 2
+                                                   },
+                                                   {
+                                                   title: {
+                                                   text: 'Indicator'
+                                                   },
                                                    top: 280,
                                                    height: 100,
                                                    offset: 0,
                                                    lineWidth: 2
-                                                   }],
+                                                   }
+                                                   ],
+                                                   
+                                                   legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                enabled: true,
+                borderWidth: 0
+            },
                                            
                                            series: [{
                                                     type: 'candlestick',
@@ -200,6 +330,52 @@
                                                     units: groupingUnits
                                                     }
                                                     },
+                                                    
+                                                    {
+                                                  
+                                                    name: valueIndicatorNames[0],
+                                                    data: indicator1,
+                                                    turboThreshold: dataThreshold,
+                                                    id : 'indicator1',
+                                                    type: 'line'
+
+                                                    },
+                                                    {
+                                                  
+                                                    name: valueIndicatorNames[1],
+                                                    data: indicator2,
+                                                    turboThreshold: dataThreshold,
+                                                    id : 'indicator2',
+                                                    type: 'line'
+
+                                                    },
+                                                    {
+                                                  
+                                                    name: valueIndicatorNames[2],
+                                                    data: indicator3,
+                                                    turboThreshold: dataThreshold,
+                                                    id : 'indicator3',
+                                                    type: 'line'
+
+                                                    },
+                                                    {
+                                                  
+                                                    name: valueIndicatorNames[3],
+                                                    data: indicator4,
+                                                    turboThreshold: dataThreshold,
+                                                    id : 'indicator4',
+                                                    type: 'line'
+
+                                                    },
+                                                    {
+                                                  
+                                                    name: valueIndicatorNames[4],
+                                                    data: indicator5,
+                                                    turboThreshold: dataThreshold,
+                                                    id : 'indicator5',
+                                                    type: 'line'
+
+                                                    },
                                                     {
                                                   
                                                     name: 'TRADE',
@@ -207,9 +383,63 @@
                                                     turboThreshold: dataThreshold,
                                                     id : 'trade',
                                                     type: 'line',
-            										color: 'rgba(0,0,0,0)'
+                                                    color: 'rgba(0,0,0,0)'
 
                                                     },
+                                                    
+                                                    {
+                                                  
+                                                    name: percentageIndicatorNames[0],
+                                                    data: indicator6,
+                                                    turboThreshold: dataThreshold,
+                                                    id : 'indicator6',
+                                                    yAxis: 3,
+                                                    type: 'line'
+
+                                                    },
+                                                    {
+                                                  
+                                                    name: percentageIndicatorNames[1],
+                                                    data: indicator7,
+                                                    turboThreshold: dataThreshold,
+                                                    id : 'indicator7',
+                                                    yAxis: 3,
+                                                    type: 'line'
+
+                                                    },
+                                                    {
+                                                  
+                                                    name: percentageIndicatorNames[2],
+                                                    data: indicator8,
+                                                    turboThreshold: dataThreshold,
+                                                    id : 'indicator8',
+                                                    yAxis: 3,
+                                                    type: 'line'
+
+                                                    },
+                                                    {
+                                                  
+                                                    name: percentageIndicatorNames[3],
+                                                    data: indicator9,
+                                                    turboThreshold: dataThreshold,
+                                                    id : 'indicator9',
+                                                    yAxis: 3,
+                                                    type: 'line'
+
+                                                    },
+                                                    {
+                                                  
+                                                    name: percentageIndicatorNames[4],
+                                                    data: indicator10,
+                                                    turboThreshold: dataThreshold,
+                                                    id : 'indicator10',
+                                                    yAxis: 3,
+                                                    type: 'line',
+                                                    dataGrouping: {
+                                                    units: groupingUnits
+                                                    }
+                                                    },
+                                                    
                                                     {
                                                     name: 'EQUITY',
                                                     data: equity,
@@ -218,7 +448,8 @@
                                                     dataGrouping: {
                                                     units: groupingUnits
                                                     }
-                                                    },{
+                                                    },
+                                                    {
                                                     type: 'column',
                                                     name: 'VOLUME',
                                                     data: volume,

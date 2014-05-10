@@ -26,11 +26,11 @@ public class SMAandEMAStrategy extends BaseStrategy {
 		super.execute(pArray, data);
 		StrategyDecision decision = new StrategyDecision(DecisionType.KEEP, data);
 		
-		this.currentShortSMA = (Double)pArray[set.getMap().get("SMASHORT")].getContent();
-		this.currentLongSMA = (Double)pArray[set.getMap().get("SMALONG")].getContent();
+		this.currentShortSMA = (Double)pArray[set.getMap().get("SMASHORT-v")].getContent();
+		this.currentLongSMA = (Double)pArray[set.getMap().get("SMALONG-v")].getContent();
 		
-		this.currentShortEMA = (Double)pArray[set.getMap().get("EMASHORT")].getContent();
-		this.currentLongEMA = (Double)pArray[set.getMap().get("EMALONG")].getContent();
+		this.currentShortEMA = (Double)pArray[set.getMap().get("EMASHORT-v")].getContent();
+		this.currentLongEMA = (Double)pArray[set.getMap().get("EMALONG-v")].getContent();
 			
 		if(!(previousShortSMA.isNaN() || previousLongSMA.isNaN() || previousShortEMA.isNaN() || previousLongEMA.isNaN())){
 			

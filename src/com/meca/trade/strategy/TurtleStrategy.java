@@ -9,7 +9,6 @@ public class TurtleStrategy extends BaseStrategy{
 	@Override
 	public StrategyDecision execute(Packet[] pArray, PriceData data) {
 		super.execute(pArray, data);
-		Packet a = pArray[set.getMap().get("LINE")];
 		
 		
 		return null;
