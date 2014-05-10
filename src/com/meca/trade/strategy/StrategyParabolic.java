@@ -34,7 +34,7 @@ import com.meca.trade.to.StrategyDecision;
 		super.execute(pArray, data);
 		StrategyDecision decision  = null;
 		
-		this.currentSAR = (Double)pArray[set.getMap().get("SAR-v-0-s")].getContent();
+		this.currentSAR = (Double)pArray[set.getMap().get("SAR")].getContent();
 		
 		if (decision == null)
 			decision = new StrategyDecision(DecisionType.KEEP, data);

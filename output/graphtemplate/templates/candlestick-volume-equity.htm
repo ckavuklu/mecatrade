@@ -347,6 +347,28 @@
                                                    top: 280,
                                                    height: 100,
                                                    offset: 0,
+                                                   tickInterval: 100,
+                                                   min: 0,
+                                                   max: 100,
+                                                   
+                                                   plotLines : [{
+														value : 30,
+														color : 'gray',
+														dashStyle : 'shortdash',
+														width : 1,
+														label : {
+															text : '30'
+														}
+													}, {
+														value : 70,
+														color : 'gray',
+														dashStyle : 'shortdash',
+														width : 1,
+														label : {
+															text : '70'
+														}
+													}],
+													
                                                    lineWidth: OHLCLineLength
                                                    }
                                                    ],

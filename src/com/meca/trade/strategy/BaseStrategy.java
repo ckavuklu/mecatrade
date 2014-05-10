@@ -29,8 +29,8 @@ public class BaseStrategy implements IStrategy {
 	}
 
 	@Override
-	public void addIndicator(String indicatorName, Integer indicatorPort) {
-		set.addIndicator(indicatorName, indicatorPort);
+	public void addIndicator(String indicatorName, String displayType, Integer indicatorPort) {
+		set.addIndicator(indicatorName, displayType, indicatorPort);
 	}
 
 	@Override
@@ -43,18 +43,21 @@ public class BaseStrategy implements IStrategy {
 
 	public String getIndicatorHeaders() {
 		StringBuilder builder = new StringBuilder();
+		
+		
 		if (set != null && set.getMap().size() > 0) {
+			
 			indexArray = new ArrayList<String>(set.getMap().keySet());
 
 			for (int i = 0; i < indexArray.size() - 1; i++) {
 				builder.append(Constants.GRAPH_DATA_JSON_ESCAPE_STRING);
-				builder.append(indexArray.get(i));
+				builder.append(indexArray.get(i) + set.getDisplayMap().get(indexArray.get(i)));
 				builder.append(Constants.GRAPH_DATA_JSON_ESCAPE_STRING);
 				builder.append(Constants.GRAPH_DATA_JSON_SEPARATOR_STRING);
 			}
 
 			builder.append(Constants.GRAPH_DATA_JSON_ESCAPE_STRING);
-			builder.append(indexArray.get(indexArray.size() - 1));
+			builder.append(indexArray.get(indexArray.size() - 1) + set.getDisplayMap().get(indexArray.get(indexArray.size() - 1)));
 			builder.append(Constants.GRAPH_DATA_JSON_ESCAPE_STRING);
 		}
 

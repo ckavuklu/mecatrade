@@ -66,8 +66,8 @@ public class StochasticStrategy  extends BaseStrategy{
 		super.execute(pArray, data);
 		StrategyDecision decision = new StrategyDecision(DecisionType.KEEP, data);
 		
-		this.currentKLine = (Double)pArray[kLine.getMap().get("KLINE-p-1-s")].getContent();
-		this.currentDLine = (Double)pArray[dLine.getMap().get("DLINE-p-1-s")].getContent();
+		this.currentKLine = (Double)pArray[kLine.getMap().get("KLINE")].getContent();
+		this.currentDLine = (Double)pArray[dLine.getMap().get("DLINE")].getContent();
 			
 		if(!(previousKLine.isNaN() || previousDLine.isNaN())){
 			

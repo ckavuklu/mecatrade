@@ -5,6 +5,12 @@ import java.util.HashMap;
 
 public class IndicatorSet implements Serializable {
 	HashMap<String, Integer> map;
+	HashMap<String, DisplayParameters> displayMap;
+	
+
+	public HashMap<String, DisplayParameters> getDisplayMap() {
+		return displayMap;
+	}
 
 
 	public HashMap<String, Integer> getMap() {
@@ -12,19 +18,15 @@ public class IndicatorSet implements Serializable {
 	}
 
 
-	public void addIndicator(String key, Integer value) {
+	public void addIndicator(String key, String displayType, Integer value) {
 		this.map.put(key,value);
-	}
-
-
-	public IndicatorSet(HashMap<String, Integer> map) {
-		super();
-		this.map = map;
+		this.displayMap.put(key,new DisplayParameters(displayType));
 	}
 	
 	public IndicatorSet() {
 		super();
 		this.map = new HashMap<String,Integer>();
+		displayMap = new HashMap<String,DisplayParameters>();
 	}
 	
 	

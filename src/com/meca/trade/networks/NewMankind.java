@@ -174,6 +174,8 @@ public class NewMankind {
            Element fromElement = elem.getChild("from");
            Element toElement = elem.getChild("to");
            
+           
+           
            String fromComponent = fromElement.getAttribute("component").getValue();
            String fromPort = fromElement.getAttribute("port").getValue();
            Integer fromPortNo = fromElement.getAttribute("no")!=null?Integer.valueOf(fromElement.getAttribute("no").getValue()):null;
@@ -186,7 +188,9 @@ public class NewMankind {
            network.addConnection(fromComponent, fromPort, fromPortNo, toComponent, toPort, toPortNo);
            
            if(elem.getAttribute("indicator")!=null){
-        	   network.getStrategy().addIndicator(elem.getAttribute("indicator").getValue(), toPortNo);
+        	   Element displayElement = elem.getChild("display");
+        	   String displayValue = displayElement.getAttribute("value").getValue();
+        	   network.getStrategy().addIndicator(elem.getAttribute("indicator").getValue(), displayValue, toPortNo);
            }
            
           }

@@ -193,19 +193,6 @@ public class ParabolicSAR extends Indicator {
 			}
 			
 			try {
-				if (result != null ) {
-					System.out.println("SAR# : " + currentSARNo + " Calculated SAR : " + calculatedSAR + " Tentative SAR : " + tentativeSAR + " SAR : " + currentSAR + " EP : " + currentEP + " AF : " + currentAF);
-				}
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-				
-			} finally{
-				drop(highDataPacket);
-				drop(lowDataPacket);
-			}
-
-			try {
 				
 				if(result != null && outport.isConnected()){
 					outport.send(create(result));
@@ -214,6 +201,10 @@ public class ParabolicSAR extends Indicator {
 
 			} catch (Exception e) {
 				e.printStackTrace();
+				
+			} finally{
+				drop(highDataPacket);
+				drop(lowDataPacket);
 			}
 		}
 		

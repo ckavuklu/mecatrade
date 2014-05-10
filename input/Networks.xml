@@ -1,5 +1,5 @@
 <networks>
-	<!--  
+	 
 		<network name="TradeNetwork-3">
 			<components>
 				<component name="_DataFeeder"
@@ -137,26 +137,32 @@
 				<connect indicator="EMASHORT">
 					<from component="_ExponentialMovingAverage_SHORT" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="4" />
+					<display value="-v-1-s"/>
 				</connect>
 				
 				<connect indicator="EMALONG">
 					<from component="_ExponentialMovingAverage_LONG" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="9" />
+					<display value="-v-1-s"/>
 				</connect>
 
-				<connect indicator="RSI-p-1-s">
+				<connect indicator="RSI">
 					<from component="_RSI" port="RSI" />
 					<to component="_TradeMultiplexer" port="IN" no="10" />
+					<display value="-p-1-s"/>
+					
 				</connect>
 
-				<connect indicator="DLINE-p-1-s">
+				<connect indicator="DLINE">
 					<from component="_Stochastic" port="DLINE" />
 					<to component="_TradeMultiplexer" port="IN" no="11" />
+					<display value="-p-1-d"/>
 				</connect>
 
-				<connect indicator="KLINE-p-1-s">
+				<connect indicator="KLINE">
 					<from component="_Stochastic" port="KLINE" />
 					<to component="_TradeMultiplexer" port="IN" no="12" />
+					<display value="-p-1-s"/>
 				</connect>
 
 				<connect>
@@ -192,9 +198,6 @@
 			<configuration>
 				<param name="ACCOUNT_BALANCE" type="Double" value="10000d"></param>
 			</configuration>
-
-
-
 
 		</network>
 		
@@ -303,23 +306,27 @@
 					<to component="_TradeMultiplexer" port="MARKETDATA"/>
 				</connect>
 				
-				<connect indicator="SMASHORT-v-1-s">
+				<connect indicator="SMASHORT">
 					<from component="_SimpleMovingAverage_SHORT" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="4" />
+					<display value="-v-1-s"/>
 				</connect>
-				<connect indicator="SMALONG-v-1-s">
+				<connect indicator="SMALONG">
 					<from component="_SimpleMovingAverage_LONG" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="9" />
+					<display value="-v-1-s"/>
 				</connect>
 				
 				
-				<connect indicator="EMASHORT-v-1-s">
+				<connect indicator="EMASHORT">
 					<from component="_ExponentialMovingAverage_SHORT" port="OUT" no="0"/>
 					<to component="_TradeMultiplexer" port="IN" no="5" />
+					<display value="-v-1-s"/>
 				</connect>
-				<connect indicator="EMALONG-v-1-s">
+				<connect indicator="EMALONG">
 					<from component="_ExponentialMovingAverage_LONG" port="OUT" no="0"/>
 					<to component="_TradeMultiplexer" port="IN" no="6" />
+					<display value="-v-1-s"/>
 				</connect>
 				
 				
@@ -354,7 +361,7 @@
 		
 		
 		
- 		-->
+ 		
  		
  		
  		<network name="TradeNetwork-5">
@@ -451,9 +458,10 @@
 					<to component="_TradeMultiplexer" port="MARKETDATA"/>
 				</connect>
 				
-				<connect indicator="SAR-v-0-s">
+				<connect indicator="SAR">
 					<from component="_ParabolicSAR" port="SAR" />
 					<to component="_TradeMultiplexer" port="IN" no="4" />
+					<display value="-v-0-s"/>
 				</connect>
 				
 				
@@ -593,20 +601,24 @@
 				<connect indicator="SMASHORT">
 					<from component="_SimpleMovingAverage_SHORT" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="4" />
+					<display value="-v-1-s"/>
 				</connect>
 				<connect indicator="SMALONG">
 					<from component="_SimpleMovingAverage_LONG" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="9" />
+					<display value="-v-1-s"/>
 				</connect>
 				
 				
 				<connect indicator="EMASHORT">
 					<from component="_ExponentialMovingAverage_SHORT" port="OUT" no="0"/>
 					<to component="_TradeMultiplexer" port="IN" no="5" />
+					<display value="-v-1-s"/>
 				</connect>
 				<connect indicator="EMALONG">
 					<from component="_ExponentialMovingAverage_LONG" port="OUT" no="0"/>
 					<to component="_TradeMultiplexer" port="IN" no="6" />
+					<display value="-v-1-s"/>
 				</connect>
 				
 				
