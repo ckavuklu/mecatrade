@@ -19,8 +19,8 @@ public class SMAStrategy extends BaseStrategy {
 		super.execute(pArray, data);
 		StrategyDecision decision = new StrategyDecision(DecisionType.KEEP, data);
 		
-		this.currentShortSMA = (Double)pArray[set.getMap().get("SMASHORT-v")].getContent();
-		this.currentLongSMA = (Double)pArray[set.getMap().get("SMALONG-v")].getContent();
+		this.currentShortSMA = (Double)pArray[set.getMap().get("SMASHORT-v-1-s")].getContent();
+		this.currentLongSMA = (Double)pArray[set.getMap().get("SMALONG-v-1-s")].getContent();
 			
 		if(!(previousShortSMA.isNaN() || previousLongSMA.isNaN())){
 			

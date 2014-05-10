@@ -144,17 +144,17 @@
 					<to component="_TradeMultiplexer" port="IN" no="9" />
 				</connect>
 
-				<connect indicator="RSI-p">
+				<connect indicator="RSI-p-1-s">
 					<from component="_RSI" port="RSI" />
 					<to component="_TradeMultiplexer" port="IN" no="10" />
 				</connect>
 
-				<connect indicator="DLINE-p">
+				<connect indicator="DLINE-p-1-s">
 					<from component="_Stochastic" port="DLINE" />
 					<to component="_TradeMultiplexer" port="IN" no="11" />
 				</connect>
 
-				<connect indicator="KLINE-p">
+				<connect indicator="KLINE-p-1-s">
 					<from component="_Stochastic" port="KLINE" />
 					<to component="_TradeMultiplexer" port="IN" no="12" />
 				</connect>
@@ -303,21 +303,21 @@
 					<to component="_TradeMultiplexer" port="MARKETDATA"/>
 				</connect>
 				
-				<connect indicator="SMASHORT-v">
+				<connect indicator="SMASHORT-v-1-s">
 					<from component="_SimpleMovingAverage_SHORT" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="4" />
 				</connect>
-				<connect indicator="SMALONG-v">
+				<connect indicator="SMALONG-v-1-s">
 					<from component="_SimpleMovingAverage_LONG" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="9" />
 				</connect>
 				
 				
-				<connect indicator="EMASHORT-v">
+				<connect indicator="EMASHORT-v-1-s">
 					<from component="_ExponentialMovingAverage_SHORT" port="OUT" no="0"/>
 					<to component="_TradeMultiplexer" port="IN" no="5" />
 				</connect>
-				<connect indicator="EMALONG-v">
+				<connect indicator="EMALONG-v-1-s">
 					<from component="_ExponentialMovingAverage_LONG" port="OUT" no="0"/>
 					<to component="_TradeMultiplexer" port="IN" no="6" />
 				</connect>

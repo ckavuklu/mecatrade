@@ -30,7 +30,14 @@
             var indicator9 = [];
             var indicator10 = [];
             var valueIndicatorNames = [];
+            var valueIndicatorWidth = [];
             var percentageIndicatorNames = [];
+            var percentageIndicatorWidth = [];
+            var valueIndicatorDashStyle = [];
+            var percentageIndicatorDashStyle = [];
+            var percentageIndicatorMarkerRadiusLength = [];
+            var valueIndicatorMarkerRadiusLength = [];
+            var OHLCLineLength = 1;
             
              
             Highcharts.setOptions({
@@ -51,17 +58,43 @@
                 var indicatorSeriesIndex = [];
                 
                 for(j=1;j<indicatorLength+1;j++){
+                
+                	//SYTNAX IS: INDICATOR_NAME-SERIES_TYPE(v-OHLC/p-INDICATOR)-LINE_WIDTH-DASH_TYPE(s-solid, d-dash)
+                    var splittedArray = data[0][j].split("-");
+               		var lastChar = splittedArray[1];
+               		var lineWidth = splittedArray[2];
+               		var dashStyle = splittedArray[3];
+               		var radiusLength = 1;
+               		
+               		
+               		
+               		
+               		
+               		if(dashStyle == "s"){
+               			dashStyle = "Solid";
+               		} else if(dashStyle == "d"){
+               			dashStyle = "ShortDash";
+               		}
+               		
+               		if(lineWidth == 0){
+               			radiusLength += 3;
+               		}
                
-                    var lastChar = data[0][j].substring(data[0][j].length-1);
 
                 	if ( lastChar == "p" ) {
-                		percentageIndicatorNames.push(data[0][j].substring(0,data[0][j].length-2));
+                		percentageIndicatorNames.push(splittedArray[0]);
                 		indicatorSeriesIndex[j-1] = percentageIndicatorNames.length + 4;
+                		percentageIndicatorWidth.push(lineWidth);
+                		percentageIndicatorDashStyle.push(dashStyle);
+                		percentageIndicatorMarkerRadiusLength.push(radiusLength);
                 	}
                 	
                 	else if ( lastChar == "v" ) {
-                		valueIndicatorNames.push(data[0][j].substring(0,data[0][j].length-2));
+                		valueIndicatorNames.push(splittedArray[0]);
                 		indicatorSeriesIndex[j-1] = valueIndicatorNames.length - 1;
+                		valueIndicatorWidth.push(lineWidth);
+                		valueIndicatorDashStyle.push(dashStyle);
+                		valueIndicatorMarkerRadiusLength.push(radiusLength);
                 	}
                 	
                 }
@@ -283,7 +316,7 @@
                                                    text: 'OHLC'
                                                    },
                                                    height: 200,
-                                                   lineWidth: 2
+                                                   lineWidth: OHLCLineLength
                                                    }, {
                                                    title: {
                                                    text: 'Volume'
@@ -291,7 +324,7 @@
                                                    top: 520,
                                                    height: 100,
                                                    offset: 0,
-                                                   lineWidth: 2
+                                                   lineWidth: OHLCLineLength+1
                                                    },
                                                    {
                                                    title: {
@@ -300,7 +333,7 @@
                                                    top: 400,
                                                    height: 100,
                                                    offset: 0,
-                                                   lineWidth: 2
+                                                   lineWidth: OHLCLineLength
                                                    },
                                                    {
                                                    title: {
@@ -309,7 +342,7 @@
                                                    top: 280,
                                                    height: 100,
                                                    offset: 0,
-                                                   lineWidth: 2
+                                                   lineWidth: OHLCLineLength
                                                    }
                                                    ],
                                                    
@@ -337,7 +370,12 @@
                                                     data: indicator1,
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator1',
-                                                    type: 'line'
+									                marker : {
+														enabled : true,
+														radius : valueIndicatorMarkerRadiusLength[0]
+													},
+                                                    lineWidth: valueIndicatorWidth[0],
+                                                    dashStyle: valueIndicatorDashStyle[0]
 
                                                     },
                                                     {
@@ -346,7 +384,12 @@
                                                     data: indicator2,
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator2',
-                                                    type: 'line'
+                                                    marker : {
+														enabled : true,
+														radius : valueIndicatorMarkerRadiusLength[1]
+													},
+                                                    lineWidth: valueIndicatorWidth[1],
+                                                    dashStyle: valueIndicatorDashStyle[1]
 
                                                     },
                                                     {
@@ -355,7 +398,12 @@
                                                     data: indicator3,
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator3',
-                                                    type: 'line'
+                                                    marker : {
+														enabled : true,
+														radius : valueIndicatorMarkerRadiusLength[2]
+													},
+                                                    lineWidth: valueIndicatorWidth[2],
+                                                    dashStyle: valueIndicatorDashStyle[2]
 
                                                     },
                                                     {
@@ -364,7 +412,12 @@
                                                     data: indicator4,
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator4',
-                                                    type: 'line'
+                                                    marker : {
+														enabled : true,
+														radius : valueIndicatorMarkerRadiusLength[3]
+													},
+                                                    lineWidth: valueIndicatorWidth[3],
+                                                    dashStyle: valueIndicatorDashStyle[3]
 
                                                     },
                                                     {
@@ -373,7 +426,12 @@
                                                     data: indicator5,
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator5',
-                                                    type: 'line'
+                                                    marker : {
+														enabled : true,
+														radius : valueIndicatorMarkerRadiusLength[4]
+													},
+                                                    lineWidth: valueIndicatorWidth[4],
+                                                    dashStyle: valueIndicatorDashStyle[4]
 
                                                     },
                                                     {
@@ -394,7 +452,12 @@
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator6',
                                                     yAxis: 3,
-                                                    type: 'line'
+                                                    marker : {
+														enabled : true,
+														radius : percentageIndicatorMarkerRadiusLength[0]
+													},
+                                                    lineWidth: percentageIndicatorWidth[0],
+                                                    dashStyle: percentageIndicatorDashStyle[0]
 
                                                     },
                                                     {
@@ -404,7 +467,12 @@
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator7',
                                                     yAxis: 3,
-                                                    type: 'line'
+                                                    marker : {
+														enabled : true,
+														radius : percentageIndicatorMarkerRadiusLength[1]
+													},
+                                                    lineWidth: percentageIndicatorWidth[1],
+                                                    dashStyle: percentageIndicatorDashStyle[1]
 
                                                     },
                                                     {
@@ -414,7 +482,12 @@
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator8',
                                                     yAxis: 3,
-                                                    type: 'line'
+                                                    marker : {
+														enabled : true,
+														radius : percentageIndicatorMarkerRadiusLength[2]
+													},
+                                                    lineWidth: percentageIndicatorWidth[2],
+                                                    dashStyle: percentageIndicatorDashStyle[2]
 
                                                     },
                                                     {
@@ -424,7 +497,12 @@
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator9',
                                                     yAxis: 3,
-                                                    type: 'line'
+                                                    marker : {
+														enabled : true,
+														radius : percentageIndicatorMarkerRadiusLength[3]
+													},
+                                                    lineWidth: percentageIndicatorWidth[3],
+                                                    dashStyle: percentageIndicatorDashStyle[3]
 
                                                     },
                                                     {
@@ -434,10 +512,18 @@
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator10',
                                                     yAxis: 3,
-                                                    type: 'line',
+                                                    marker : {
+														enabled : true,
+														radius : percentageIndicatorMarkerRadiusLength[4]
+													},
+                                                    lineWidth: percentageIndicatorWidth[4],
+                                                    dashStyle: percentageIndicatorDashStyle[4],
+                                                    
+                                                    
                                                     dataGrouping: {
-                                                    units: groupingUnits
+                                                    	units: groupingUnits
                                                     }
+                                                    
                                                     },
                                                     
                                                     {

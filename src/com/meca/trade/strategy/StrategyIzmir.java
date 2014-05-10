@@ -98,13 +98,13 @@ import com.meca.trade.to.StrategyDecision;
 		super.execute(pArray, data);
 		StrategyDecision decision  = null;
 		
-		this.currentKLine = (Double)pArray[set.getMap().get("KLINE-p")].getContent();
-		this.currentDLine = (Double)pArray[set.getMap().get("DLINE-p")].getContent();
+		this.currentKLine = (Double)pArray[set.getMap().get("KLINE-p-1-s")].getContent();
+		this.currentDLine = (Double)pArray[set.getMap().get("DLINE-p-1-s")].getContent();
 		
-		this.currentRSI = (Double)pArray[set.getMap().get("RSI-p")].getContent();
+		this.currentRSI = (Double)pArray[set.getMap().get("RSI-p-1-s")].getContent();
 
-		this.currentShortEMA = (Double)pArray[set.getMap().get("EMASHORT-v")].getContent();
-		this.currentLongEMA = (Double)pArray[set.getMap().get("EMALONG-v")].getContent();
+		this.currentShortEMA = (Double)pArray[set.getMap().get("EMASHORT-v-1-s")].getContent();
+		this.currentLongEMA = (Double)pArray[set.getMap().get("EMALONG-v-1-s")].getContent();
 		
 		
 		if(!(previousShortEMA.isNaN() || previousLongEMA.isNaN() || previousKLine.isNaN() || previousDLine.isNaN())){
