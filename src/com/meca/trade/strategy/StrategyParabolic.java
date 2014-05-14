@@ -12,10 +12,6 @@ import com.meca.trade.to.StrategyDecision;
 	Double currentSAR = 0d;
 	
 	
-	
-	
-	
-	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

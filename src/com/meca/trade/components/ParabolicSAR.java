@@ -4,13 +4,21 @@ import com.jpmorrsn.fbp.engine.InPort;
 import com.jpmorrsn.fbp.engine.InPorts;
 import com.jpmorrsn.fbp.engine.InputPort;
 import com.jpmorrsn.fbp.engine.OutPort;
+import com.jpmorrsn.fbp.engine.OutPorts;
 import com.jpmorrsn.fbp.engine.OutputPort;
 import com.jpmorrsn.fbp.engine.Packet;
 import com.meca.trade.to.TradeUtils;
 
 /** Parabolic SAR **/
 @ComponentDescription("Parabolic SAR")
-@OutPort(value = "SAR", description = "Output port", type = Double.class)
+@OutPort(value = "SAR", arrayPort = true)
+//@OutPort(value = "SAR", description = "Output port", type = Double.class)
+/*
+ @OutPorts({
+	@OutPort(value = "SAR", description = "SAR VALUE", type = Double.class),
+	@OutPort(value = "SARCHANGERATE", description = "SAR CHANGE RATE", type = Double.class)
+})
+*/
 @InPorts({
 		@InPort(value = "HIGH", description = "High Data", type = Double.class),
 		@InPort(value = "LOW", description = "Low Data", type = Double.class),
@@ -27,12 +35,15 @@ public class ParabolicSAR extends Indicator {
 
 	InputPort stepPort, maxStepPort, highDataPort, lowDataPort;
 
-	OutputPort outport;
-
+	//OutputPort outport, changeRatePort;
+	
+	OutputPort[] outport;
+	
 	private Double stepSize = null;
 	private Double maxStepSize = null;
 	
 	private Double result = null;
+	//private Double changeRate = null;
 	
 	private Integer previousSARNo = null;
 	private Integer currentSARNo = null;
@@ -127,6 +138,7 @@ public class ParabolicSAR extends Indicator {
 							
 		
 					// cikis
+					
 					result = currentSAR;
 					twoPreviousHIGHEST = Math.max(previousHIGH, currentHIGH);
 					twoPreviousLOWEST = Math.min(previousLOW, currentLOW);
@@ -178,6 +190,7 @@ public class ParabolicSAR extends Indicator {
 						currentAF = (previousEP.compareTo(currentEP) == 0)?previousAF:Math.min(maxStepSize, previousAF + stepSize);
 					
 					// cikis
+					//changeRate = ((currentSAR-previousSAR)/currentSAR)*10000d;
 					result = currentSAR;
 					twoPreviousHIGHEST = Math.max(previousHIGH, currentHIGH);
 					twoPreviousLOWEST = Math.min(previousLOW, currentLOW);
@@ -194,9 +207,27 @@ public class ParabolicSAR extends Indicator {
 			
 			try {
 				
-				if(result != null && outport.isConnected()){
-					outport.send(create(result));
+				if(result != null){
+					for(int i=0;i<outport.length;i++){
+						
+						if (outport[i].isConnected()) {
+							outport[i].send(create(result));
+						} 
+					}
 				}
+				
+				/*
+				if(result != null && outport.isConnected() && changeRatePort.isConnected()){
+					outport.send(create(result));
+					
+					
+					if(changeRate == null)
+						changeRate = Double.NaN;
+					
+					changeRatePort.send(create(changeRate));
+				}*/
+				
+				
 				
 
 			} catch (Exception e) {
@@ -220,7 +251,8 @@ public class ParabolicSAR extends Indicator {
 		highDataPort = openInput("HIGH");
 		lowDataPort = openInput("LOW");
 
-		outport = openOutput("SAR");
+		outport = openOutputArray("SAR");
+		//changeRatePort = openOutput("SARCHANGERATE");
 
 	}
 	
