@@ -85,15 +85,5 @@ public class SimpleMovingAverage extends Indicator {
 
 	}
 	
-	private Double average(){
-		Double result = 0d;
-		
-		
-		for(Double data:window){
-			// System.out.print(data + " ");
-			result += data; 
-		} 
-		
-		return result/windowSize;
-	}
+	
 }

@@ -97,7 +97,7 @@ public class ExponentialMovingAverage extends Indicator {
 
 	}
 
-	private Double average() {
+	protected Double average() {
 		Double result = 0d;
 
 		if (previousResult == null) {
