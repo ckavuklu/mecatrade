@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,6 +13,7 @@ public final class TradeUtils {
 	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmssSSS");
 	
 	public static final SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
+	
 	
 	
 	public static Date getQuarterEndDate(Date date){
@@ -178,4 +180,18 @@ public final class TradeUtils {
 		
 		return roundUpDigits(val,Constants.MARKET_LOT_PRECISION);
 	}
+	
+	public static Double getSum(List<Double> list){
+		Double result = null;
+		for(Double val:list){
+			if(result == null)
+				result = val;
+			else
+				result += val;
+		}
+
+		return result;
+	}
+
+	
 }

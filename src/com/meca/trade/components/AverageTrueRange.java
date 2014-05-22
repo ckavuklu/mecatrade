@@ -34,7 +34,7 @@ public class AverageTrueRange extends Indicator {
 	
 	private Double windowSize = null;
 	
-	private Double result = null;
+	private Double result = Double.NaN;
 	
 	private Double TR = null;
 	
