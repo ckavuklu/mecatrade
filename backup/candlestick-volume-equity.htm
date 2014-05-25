@@ -10,7 +10,7 @@
             
             </head>
 	<body onload="readIndicatorFile();readTradefile();readfile();">
-        <div id="container" style="height: 620px; min-width: 500px"></div>
+        <div id="container" style="height: 750px; min-width: 500px"></div>
         <iframe id='tradeFrame' src='$TRADE_HISTORY_FILENAME' style="display:none"> </iframe>
         <iframe id='indicatorFrame' src='$INDICATOR_FILENAME' style="display:none"> </iframe>
         <iframe id='iframe'  src='$FILENAME' style="display:none"> </iframe>
@@ -322,7 +322,7 @@
                                                    },
                                                    height: 200,
                                                    lineWidth: OHLCLineLength
-                                                   }, /*{
+                                                   }, {
                                                    title: {
                                                    text: 'Volume'
                                                    },
@@ -330,7 +330,7 @@
                                                    height: 100,
                                                    offset: 0,
                                                    lineWidth: OHLCLineLength+1
-                                                   },*/
+                                                   },
                                                    {
                                                    title: {
                                                    text: 'Equity'
@@ -484,7 +484,7 @@
                                                     data: indicator6,
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator6',
-                                                    yAxis: 2,
+                                                    yAxis: 3,
                                                     showInLegend : indicatorDisplayFlag[5],
                                                     marker : {
 														enabled : true,
@@ -501,7 +501,7 @@
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator7',
                                                     showInLegend : indicatorDisplayFlag[6],
-                                                    yAxis: 2,
+                                                    yAxis: 3,
                                                     marker : {
 														enabled : true,
 														radius : percentageIndicatorMarkerRadiusLength[1]
@@ -517,7 +517,7 @@
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator8',
                                                     showInLegend : indicatorDisplayFlag[7],
-                                                    yAxis: 2,
+                                                    yAxis: 3,
                                                     marker : {
 														enabled : true,
 														radius : percentageIndicatorMarkerRadiusLength[2]
@@ -533,7 +533,7 @@
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator9',
                                                     showInLegend : indicatorDisplayFlag[8],
-                                                    yAxis: 2,
+                                                    yAxis: 3,
                                                     marker : {
 														enabled : true,
 														radius : percentageIndicatorMarkerRadiusLength[3]
@@ -549,7 +549,7 @@
                                                     turboThreshold: dataThreshold,
                                                     id : 'indicator10',
                                                     showInLegend : indicatorDisplayFlag[9],
-                                                    yAxis: 2,
+                                                    yAxis: 3,
                                                     marker : {
 														enabled : true,
 														radius : percentageIndicatorMarkerRadiusLength[4]
@@ -568,13 +568,13 @@
                                                     name: 'EQUITY',
                                                     data: equity,
                                                     turboThreshold: dataThreshold,
-                                                    yAxis: 1,
+                                                    yAxis: 2,
                                                     showInLegend : false,
                                                     dataGrouping: {
                                                     units: groupingUnits
                                                     }
                                                     },
-                                                    /*{
+                                                    {
                                                     type: 'column',
                                                     name: 'VOLUME',
                                                     data: volume,
@@ -584,7 +584,7 @@
                                                     dataGrouping: {
                                                     units: groupingUnits
                                                     }
-                                                    },*/
+                                                    },
                                                     
                                                     
                                                    // the event marker flags

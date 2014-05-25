@@ -198,9 +198,9 @@
 			</indicators>
 
 			<trade-configuration>
-				<param name="position-stop-loss" type="point" value="0.0005"></param>
-				<param name="position-take-profit" type="point" value="0.001"></param>
 				<param name="position-sizer" type="volatility-adjusted" value="0.5"></param>
+				<!-- param name="position-stop-loss" type="point" value="0.0005"></param>
+				<param name="position-take-profit" type="point" value="0.001"></param-->
 				<param name="strategy-stop-loss" type="percentage" value="80"></param>
 			</trade-configuration>
 			

@@ -6,6 +6,7 @@ import java.util.List;
 public class StrategyDecision extends MecaObject{
 	
 	private List<DecisionType> decisionList;
+	
 	public List<DecisionType> getDecisionList() {
 		return decisionList;
 	}
@@ -15,6 +16,12 @@ public class StrategyDecision extends MecaObject{
 	}
 
 
+	public void addDecision(DecisionType decision){
+		if(this.decisionList == null)
+			this.decisionList = new ArrayList<DecisionType>();
+		
+		this.decisionList.add(decision);
+	}
 
 
 	private PriceData price;

@@ -77,5 +77,10 @@ public final class Constants {
 	
 	public final static Integer MARKET_LOT_PRECISION = 2;
 	
-	
+
+	public static enum TREND{
+		UP,
+		DOWN,
+		NONTRENDING
+	};
 }
