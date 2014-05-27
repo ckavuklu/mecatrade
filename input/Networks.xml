@@ -61,7 +61,7 @@
 				</initialize>
 				
 				<initialize component="_PortfolioManager" port="TRADER">
-					<parameter value="com.meca.trade.to.BaseTrader" type="Trader"></parameter>
+					<parameter value="com.meca.trade.to.ADXTrader" type="Trader"></parameter>
 				</initialize>
 				
 				<initialize component="_PortfolioManager" port="TESTTRADEDATASET">

@@ -50,7 +50,7 @@ public class BaseTrader implements ITrader {
 	private String positionTakeProfitType;
 	private Double positionTakeProfitValue;
 	
-	private IPositionSizer positionSizer;
+	protected IPositionSizer positionSizer;
 	
 	public BaseTrader(IPositionManager positionManager) {
 
@@ -211,7 +211,7 @@ public class BaseTrader implements ITrader {
 	}
 	
 	
-	private void addToTradeList(List<Trade> tradeList, Trade tradeData){
+	protected void addToTradeList(List<Trade> tradeList, Trade tradeData){
 		if(!isTradeShouldBeFiltered(tradeList, tradeData)){
 			tradeList.add(tradeData);
 		}
