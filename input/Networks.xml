@@ -19,6 +19,14 @@
 				<component name="_ParabolicSAR"
 					class="com.meca.trade.components.ParabolicSAR">
 				</component>
+
+				<component name="_SAR_SIGNAL_THRESHOLD"
+					class="com.meca.trade.components.StaticParameter">
+				</component>
+	
+			 	<component name="_AVGDX_THRESHOLD"
+					class="com.meca.trade.components.StaticParameter">
+				</component>
 				
 				<component name="_ATR"
 					class="com.meca.trade.components.AverageTrueRange">
@@ -61,7 +69,7 @@
 				</initialize>
 				
 				<initialize component="_PortfolioManager" port="TRADER">
-					<parameter value="com.meca.trade.to.ADXTrader" type="Trader"></parameter>
+					<parameter value="com.meca.trade.trader.SARADXTrader" type="Trader"></parameter>
 				</initialize>
 				
 				<initialize component="_PortfolioManager" port="TESTTRADEDATASET">
@@ -73,7 +81,7 @@
 				</initialize>
 				
 				<initialize component="_TradeMultiplexer" port="STRATEGY">
-					<parameter value="com.meca.trade.strategy.StrategyParabolic" type="Strategy"></parameter>
+					<parameter value="com.meca.trade.strategy.StrategySARADX" type="Strategy"></parameter>
 				</initialize>
 			</initializations>
 
@@ -143,6 +151,16 @@
 					<from component="_QuotePrice_C" port="OUT" no="1" />
 					<to component="_ADX" port="CLOSE" />
 				</connect>
+
+				<connect>
+					<from component="_QuotePrice_C" port="OUT" no="2" />
+					<to component="_SAR_SIGNAL_THRESHOLD" port="DATA" />
+				</connect>
+				
+				<connect>
+					<from component="_QuotePrice_C" port="OUT" no="3" />
+					<to component="_AVGDX_THRESHOLD" port="DATA" />
+				</connect>
 		
 				<connect>
 					<from component="_ATR" port="ATR" no="0" />
@@ -160,7 +178,7 @@
 					<to component="_TradeMultiplexer" port="IN" no="4" />
 					<display value="-v-0-s"/>
 				</connect>
-				
+
 				<connect indicator="MDI">
 					<from component="_ADX" port="MDI" />
 					<to component="_TradeMultiplexer" port="IN" no="5" />
@@ -179,6 +197,22 @@
 					<display value="-p-2-s"/>
 				</connect>
 				
+				
+				<connect indicator="SAR_SIGNAL_THRESHOLD">
+					<from component="_SAR_SIGNAL_THRESHOLD" port="OUT"/>
+					<to component="_TradeMultiplexer" port="IN" no="8" />
+					<display value="-p-0-s"/>
+				</connect>
+
+				<connect indicator="ADX_THRESHOLD">
+					<from component="_AVGDX_THRESHOLD" port="OUT"/>
+					<to component="_TradeMultiplexer" port="IN" no="9" />
+					<display value="-p-0-s"/>
+				</connect>
+				
+				
+				
+				
 				<connect>
 					<from component="_TradeMultiplexer" port="OUT" />
 					<to component="_PortfolioManager" port="IN" no="0" />
@@ -191,14 +225,16 @@
 			</connections>
 			
 			<indicators>
-				<indicator name="_ATR" default="1" optimized="$TradeNetwork-5_ATR" type="Double" port="WINDOW"/>
-				<indicator name="_ADX" default="14" optimized="$TradeNetwork-5_ADX" type="Double" port="WINDOW" />
-				<indicator name="_ParabolicSAR" default="0.02" optimized="$TradeNetwork-5_ParabolicSAR" type="Double" port="STEP"/>
-				<indicator name="_ParabolicSAR" default="0.2" optimized="$TradeNetwork-5_ParabolicSAR" type="Double" port="MAXSTEP"/>
+				<indicator name="_ATR" default="1" optimized="$TradeNetwork-6_ATR" type="Double" port="WINDOW"/>
+				<indicator name="_ADX" default="14" optimized="$TradeNetwork-6_ADX" type="Double" port="WINDOW" />
+				<indicator name="_ParabolicSAR" default="0.02" optimized="$TradeNetwork-6_ParabolicSAR" type="Double" port="STEP"/>
+				<indicator name="_ParabolicSAR" default="0.2" optimized="$TradeNetwork-6_ParabolicSAR" type="Double" port="MAXSTEP"/>
+				<indicator name="_SAR_SIGNAL_THRESHOLD" default="5" optimized="$TradeNetwork-6_SAR_SIGNAL_THRESHOLD" type="Double" port="IN"/>
+				<indicator name="_AVGDX_THRESHOLD" default="30" optimized="$TradeNetwork-6_AVGDX_THRESHOLD" type="Double" port="IN"/>
 			</indicators>
 
 			<trade-configuration>
-				<param name="position-sizer" type="volatility-adjusted" value="0.5"></param>
+				<param name="position-sizer" type="volatility-adjusted" value="0.01"></param>
 				<!-- param name="position-stop-loss" type="point" value="0.0005"></param>
 				<param name="position-take-profit" type="point" value="0.001"></param-->
 				<param name="strategy-stop-loss" type="percentage" value="80"></param>

@@ -120,7 +120,8 @@ public class TradeNetwork extends Network implements Comparable<TradeNetwork> {
 		
 		
         for(IndicatorParameter indicator:indicatorParameterList){
-			addInitialization(indicator.randomize(), indicator.getName(), indicator.getPort());
+        	
+        		addInitialization(indicator.randomize(), indicator.getName(), indicator.getPort());
 		}
         
         reportManager.setMaximumIndicatorWindowSize(getMaximumIndicatorWindowSize());

@@ -39,7 +39,7 @@ public final class Constants {
 	
 	public final static String SEPARATOR = ":";
 	
-	public final static Boolean DEBUG_ENABLED = false;
+	public final static Boolean DEBUG_ENABLED = true;
 	
 	public final static String GRAPH_DATA_JSON_START_STRING = "[";
 	public final static String GRAPH_DATA_JSON_END_STRING = "]";

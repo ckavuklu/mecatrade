@@ -54,7 +54,15 @@ public class PositionManager extends MecaObject implements IPositionManager{
 	}
 
 
-
+	public Integer getOpenPositionCount(TradeType tradeType){
+		Integer result = 0;
+		for(IPosition pos:positionList){
+			if(pos.getStatus() == TradeStatusType.OPEN)
+				if(pos.getTradeType() == tradeType)
+					result += 1;
+		}
+		return result;
+	}
 
 	public Double getMarginLotCount() {
 		Double result = 0d;

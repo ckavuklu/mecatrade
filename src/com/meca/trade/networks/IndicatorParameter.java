@@ -95,13 +95,22 @@ public class IndicatorParameter implements java.lang.Cloneable{
 
 	public Object randomize(){
         Random rand = new Random();
-     
+        
+        Object result = null;
+        
         if(type.equalsIgnoreCase("Double")){
-				value = rand.nextInt(Integer.valueOf(end)-Integer.valueOf(start)+1)+Integer.valueOf(start);
-		}else
+
+            if(!start.equalsIgnoreCase(end))
+        	    value = (rand.nextInt(Integer.valueOf(end)-Integer.valueOf(start)+1)+Integer.valueOf(start))*1d;
+            else 
+            	value = Double.valueOf(start);
+        
+        }else
 				value = "Not Yet";
+        
+        result = value;
 		
-		return (Double)((Integer)value*1d);
+		return result;
 	}
 	
 	public String getNetworkName() {

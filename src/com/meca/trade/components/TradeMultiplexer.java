@@ -17,7 +17,7 @@ import com.meca.trade.to.TradeUtils;
 /** Sort a stream of Packets to an output stream **/
 @ComponentDescription("Filters Messages")
 @OutPort(value = "OUT", description = "Output port", type = StrategyDecision.class)
-@InPort(value = "IN", arrayPort = true)
+//@InPort(value = "IN", arrayPort = true)
 
 @InPorts({
 	@InPort(value = "STRATEGY", description = "strategy interface", type = IStrategy.class),

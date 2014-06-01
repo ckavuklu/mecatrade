@@ -1,10 +1,24 @@
-package com.meca.trade.to;
+package com.meca.trade.trader;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.meca.trade.networks.Parameter;
+import com.meca.trade.to.Constants;
+import com.meca.trade.to.DecisionType;
+import com.meca.trade.to.IPosition;
+import com.meca.trade.to.IPositionManager;
+import com.meca.trade.to.IPositionSizer;
+import com.meca.trade.to.ITrader;
+import com.meca.trade.to.PriceData;
+import com.meca.trade.to.SignalType;
+import com.meca.trade.to.StrategyDecision;
+import com.meca.trade.to.Trade;
+import com.meca.trade.to.TradeStatusType;
+import com.meca.trade.to.TradeType;
+import com.meca.trade.to.TradeUtils;
+import com.meca.trade.to.VolatilityAdjustedPositionSizer;
 
 public class BaseTrader implements ITrader {
 	
