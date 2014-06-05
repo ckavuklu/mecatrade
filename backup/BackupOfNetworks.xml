@@ -175,7 +175,6 @@
 				</connect>
 			</connections>
 
-
 			<indicators>
 				<indicator name="_Stochastic" default="14" optimized="$TradeNetwork-3_Stochastic" type="Double" port="N_WINDOW"/>
 				<indicator name="_Stochastic" default="3" optimized="$TradeNetwork-3_Stochastic" type="Double" port="K_WINDOW"/>

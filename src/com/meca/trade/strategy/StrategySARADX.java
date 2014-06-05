@@ -84,22 +84,22 @@ import com.meca.trade.to.StrategyDecision;
 				if(sarTrend == TREND.UP){
 					if(currentADX >= ADX_THRESHOLD) {
 						decision = new StrategyDecision(DecisionType.LONG_ENTRY, data);
-						//decision.addDecision(DecisionType.SHORT_EXIT);
 					}
 				}
 				
 			}
 			
 				
-				if(sarTrend == TREND.DOWN && currentADX >= ADX_THRESHOLD ){
-					decision = new StrategyDecision(DecisionType.LONG_EXIT, data);
-					//decision.addDecision(DecisionType.SHORT_ENTRY);
-
-				}
+			if(sarTrend == TREND.DOWN && currentADX >= ADX_THRESHOLD ){
+				decision = new StrategyDecision(DecisionType.LONG_EXIT, data);
+			}
 				
 			
 		}
 		
+		
+		previousmDI = currentmDI;
+		previouspDI = currentpDI;
 		if (decision == null)
 			decision = new StrategyDecision(DecisionType.KEEP, data);
 		

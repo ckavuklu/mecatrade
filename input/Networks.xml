@@ -15,19 +15,27 @@
 
 				
 				<component name="_Kicker" class="com.meca.trade.components.Kicker"></component>
+				
+				<component name="_SimpleMovingAverage_SHORT"
+					class="com.meca.trade.components.SimpleMovingAverage">
+				</component>
+				<component name="_SimpleMovingAverage_LONG"
+					class="com.meca.trade.components.SimpleMovingAverage">
+				</component>
+				
+				<component name="_RSI"
+					class="com.meca.trade.components.RelativeStrengthIndex">
+				</component>
 
 				<component name="_ParabolicSAR"
 					class="com.meca.trade.components.ParabolicSAR">
 				</component>
 
-				<component name="_SAR_SIGNAL_THRESHOLD"
-					class="com.meca.trade.components.StaticParameter">
-				</component>
-	
-			 	<component name="_AVGDX_THRESHOLD"
-					class="com.meca.trade.components.StaticParameter">
+				<component name="_Stochastic"
+					class="com.meca.trade.components.StochasticOscillator">
 				</component>
 				
+			
 				<component name="_ATR"
 					class="com.meca.trade.components.AverageTrueRange">
 				</component>
@@ -44,6 +52,24 @@
 
 				<component name="_ActionManager"
 					class="com.meca.trade.components.ActionManager"></component>
+					
+				<component name="_StaticParameter_RSI_Weight"
+					class="com.meca.trade.components.StaticParameter"></component>
+				
+				<component name="_StaticParameter_Stochastic_Weight"
+					class="com.meca.trade.components.StaticParameter"></component>
+				
+				<component name="_StaticParameter_ADX_Weight"
+					class="com.meca.trade.components.StaticParameter"></component>
+				
+				<component name="_StaticParameter_SAR_Weight"
+					class="com.meca.trade.components.StaticParameter"></component>
+					
+				<component name="_StaticParameter_SMA_Weight"
+					class="com.meca.trade.components.StaticParameter"></component>
+					
+				<component name="_StaticParameter_Confidence_Level"
+					class="com.meca.trade.components.StaticParameter"></component>
 					
 			</components>
 
@@ -81,11 +107,32 @@
 				</initialize>
 				
 				<initialize component="_TradeMultiplexer" port="STRATEGY">
-					<parameter value="com.meca.trade.strategy.StrategySARADX" type="Strategy"></parameter>
+					<parameter value="com.meca.trade.strategy.StrategyALL" type="Strategy"></parameter>
 				</initialize>
+
+				<initialize component="_ATR" port="WINDOW">
+					<parameter value="1" type="Double"></parameter>
+				</initialize>
+
+				<initialize component="_ParabolicSAR" port="STEP">
+					<parameter value="0.02" type="Double"></parameter>
+				</initialize>
+
+				<initialize component="_ParabolicSAR" port="MAXSTEP">
+					<parameter value="0.2" type="Double"></parameter>
+				</initialize>
+				
+				<initialize component="_Stochastic" port="D_WINDOW">
+					<parameter value="3" type="Double"></parameter>
+				</initialize>
+				<initialize component="_Stochastic" port="K_WINDOW">
+					<parameter value="3" type="Double"></parameter>
+				</initialize>
+				
 			</initializations>
 
 			<connections>
+				
 				
 				<connect>
 					<from component="_DataFeeder" port="OUT" no="0" />
@@ -146,22 +193,68 @@
 					<from component="_QuotePrice_H" port="OUT" no="2" />
 					<to component="_ADX" port="HIGH" />
 				</connect>
-	
+				
+				<connect>
+					<from component="_QuotePrice_H" port="OUT" no="3" />
+					<to component="_Stochastic" port="HIGH" />
+				</connect>
+
+				<connect>
+					<from component="_QuotePrice_L" port="OUT" no="3" />
+					<to component="_Stochastic" port="LOW" />
+				</connect>
+				
+				
+				<connect>
+					<from component="_QuotePrice_L" port="OUT" no="4" />
+					<to component="_StaticParameter_RSI_Weight" port="DATA" />
+				</connect>
+				<connect>
+					<from component="_QuotePrice_L" port="OUT" no="5" />
+					<to component="_StaticParameter_Stochastic_Weight" port="DATA" />
+				</connect>
+				<connect>
+					<from component="_QuotePrice_L" port="OUT" no="6" />
+					<to component="_StaticParameter_ADX_Weight" port="DATA" />
+				</connect>
+				<connect>
+					<from component="_QuotePrice_L" port="OUT" no="7" />
+					<to component="_StaticParameter_SAR_Weight" port="DATA" />
+				</connect>
+				<connect>
+					<from component="_QuotePrice_L" port="OUT" no="8" />
+					<to component="_StaticParameter_SMA_Weight" port="DATA" />
+				</connect>
+				<connect>
+					<from component="_QuotePrice_L" port="OUT" no="9" />
+					<to component="_StaticParameter_Confidence_Level" port="DATA" />
+				</connect>
+					
 				<connect>
 					<from component="_QuotePrice_C" port="OUT" no="1" />
 					<to component="_ADX" port="CLOSE" />
 				</connect>
 
+		
 				<connect>
-					<from component="_QuotePrice_C" port="OUT" no="2" />
-					<to component="_SAR_SIGNAL_THRESHOLD" port="DATA" />
+					<from component="_QuotePrice_C" port="OUT" no="4" />
+					<to component="_SimpleMovingAverage_SHORT" port="DATA" />
+				</connect>
+				<connect>
+					<from component="_QuotePrice_C" port="OUT" no="5" />
+					<to component="_SimpleMovingAverage_LONG" port="DATA" />
+				</connect>
+		
+				<connect>
+					<from component="_QuotePrice_C" port="OUT" no="6" />
+					<to component="_RSI" port="DATA" />
 				</connect>
 				
 				<connect>
-					<from component="_QuotePrice_C" port="OUT" no="3" />
-					<to component="_AVGDX_THRESHOLD" port="DATA" />
+					<from component="_QuotePrice_C" port="OUT" no="7" />
+					<to component="_Stochastic" port="CLOSE" />
 				</connect>
-		
+				
 				<connect>
 					<from component="_ATR" port="ATR" no="0" />
 					<to component="_ADX" port="ATR" />
@@ -179,6 +272,12 @@
 					<display value="-v-0-s"/>
 				</connect>
 
+				<connect indicator="ADX">
+					<from component="_ADX" port="ADX" />
+					<to component="_TradeMultiplexer" port="IN" no="7" />
+					<display value="-p-2-s"/>
+				</connect>
+
 				<connect indicator="MDI">
 					<from component="_ADX" port="MDI" />
 					<to component="_TradeMultiplexer" port="IN" no="5" />
@@ -191,23 +290,71 @@
 					<display value="-p-2-d"/>
 				</connect>
 				
-				<connect indicator="ADX">
-					<from component="_ADX" port="ADX" />
-					<to component="_TradeMultiplexer" port="IN" no="7" />
-					<display value="-p-2-s"/>
+
+				
+				<connect indicator="SMASHORT">
+					<from component="_SimpleMovingAverage_SHORT" port="OUT" />
+					<to component="_TradeMultiplexer" port="IN" no="10" />
+					<display value="-v-1-s"/>
+				</connect>
+				<connect indicator="SMALONG">
+					<from component="_SimpleMovingAverage_LONG" port="OUT" />
+					<to component="_TradeMultiplexer" port="IN" no="11" />
+					<display value="-v-1-s"/>
 				</connect>
 				
+				<connect indicator="RSI">
+					<from component="_RSI" port="RSI" />
+					<to component="_TradeMultiplexer" port="IN" no="12" />
+					<display value="-p-1-s"/>
+				</connect>
 				
-				<connect indicator="SAR_SIGNAL_THRESHOLD">
-					<from component="_SAR_SIGNAL_THRESHOLD" port="OUT"/>
-					<to component="_TradeMultiplexer" port="IN" no="8" />
-					<display value="-p-0-s"/>
+				<connect indicator="DLINE">
+					<from component="_Stochastic" port="DLINE" />
+					<to component="_TradeMultiplexer" port="IN" no="13" />
+					<display value="-p-1-d"/>
 				</connect>
 
-				<connect indicator="ADX_THRESHOLD">
-					<from component="_AVGDX_THRESHOLD" port="OUT"/>
-					<to component="_TradeMultiplexer" port="IN" no="9" />
+				<connect indicator="KLINE">
+					<from component="_Stochastic" port="KLINE" />
+					<to component="_TradeMultiplexer" port="IN" no="14" />
+					<display value="-p-1-s"/>
+				</connect>
+				
+				<connect indicator="RSI_Weight">
+					<from component="_StaticParameter_RSI_Weight" port="OUT" />
+					<to component="_TradeMultiplexer" port="IN" no="15" />
 					<display value="-p-0-s"/>
+				</connect>
+				
+				<connect indicator="Stochastic_Weight">
+					<from component="_StaticParameter_Stochastic_Weight" port="OUT" />
+					<to component="_TradeMultiplexer" port="IN" no="16" />
+					<display value="-p-0-s"/>
+				</connect>
+				
+				<connect indicator="ADX_Weight">
+					<from component="_StaticParameter_ADX_Weight" port="OUT" />
+					<to component="_TradeMultiplexer" port="IN" no="17" />
+					<display value="-p-0-d"/>
+				</connect>
+				
+				
+				<connect indicator="SAR_Weight">
+					<from component="_StaticParameter_SAR_Weight" port="OUT" />
+					<to component="_TradeMultiplexer" port="IN" no="18" />
+					<display value="-p-0-d"/>
+				</connect>
+				
+				<connect indicator="SMA_Weight">
+					<from component="_StaticParameter_SMA_Weight" port="OUT" />
+					<to component="_TradeMultiplexer" port="IN" no="19" />
+					<display value="-p-0-d"/>
+				</connect>
+				<connect indicator="Confidence_Level">
+					<from component="_StaticParameter_Confidence_Level" port="OUT" />
+					<to component="_TradeMultiplexer" port="IN" no="20" />
+					<display value="-p-0-d"/>
 				</connect>
 				
 				
@@ -225,12 +372,17 @@
 			</connections>
 			
 			<indicators>
-				<indicator name="_ATR" default="1" optimized="$TradeNetwork-6_ATR" type="Double" port="WINDOW"/>
+				<indicator name="_SimpleMovingAverage_SHORT" default="9" optimized="$TradeNetwork-6_SimpleMovingAverage_SHORT" type="Double" port="WINDOW"/>
+				<indicator name="_SimpleMovingAverage_LONG" default="14" optimized="$TradeNetwork-6_SimpleMovingAverage_LONG" type="Double" port="WINDOW" />
+				<indicator name="_RSI" default="14" optimized="$TradeNetwork-6_RSI" type="Double" port="WINDOW"/>
+				<indicator name="_Stochastic" default="14" optimized="$TradeNetwork-6_Stochastic" type="Double" port="N_WINDOW"/>
 				<indicator name="_ADX" default="14" optimized="$TradeNetwork-6_ADX" type="Double" port="WINDOW" />
-				<indicator name="_ParabolicSAR" default="0.02" optimized="$TradeNetwork-6_ParabolicSAR" type="Double" port="STEP"/>
-				<indicator name="_ParabolicSAR" default="0.2" optimized="$TradeNetwork-6_ParabolicSAR" type="Double" port="MAXSTEP"/>
-				<indicator name="_SAR_SIGNAL_THRESHOLD" default="5" optimized="$TradeNetwork-6_SAR_SIGNAL_THRESHOLD" type="Double" port="IN"/>
-				<indicator name="_AVGDX_THRESHOLD" default="30" optimized="$TradeNetwork-6_AVGDX_THRESHOLD" type="Double" port="IN"/>
+				<indicator name="_StaticParameter_RSI_Weight" default="5" optimized="$TradeNetwork-6_StaticParameter_RSI_Weight" type="Double" port="IN"/>
+				<indicator name="_StaticParameter_ADX_Weight" default="5" optimized="$TradeNetwork-6_StaticParameter_ADX_Weight" type="Double" port="IN"/>
+				<indicator name="_StaticParameter_SAR_Weight" default="5" optimized="$TradeNetwork-6_StaticParameter_SAR_Weight" type="Double" port="IN"/>
+				<indicator name="_StaticParameter_SMA_Weight" default="5" optimized="$TradeNetwork-6_StaticParameter_SMA_Weight" type="Double" port="IN"/>
+				<indicator name="_StaticParameter_Stochastic_Weight" default="5" optimized="$TradeNetwork-6_StaticParameter_Stochastic_Weight" type="Double" port="IN"/>
+				<indicator name="_StaticParameter_Confidence_Level" default="2" optimized="$TradeNetwork-6_StaticParameter_Confidence_Level" type="Double" port="IN"/>
 			</indicators>
 
 			<trade-configuration>

@@ -1,12 +1,12 @@
 <optimization>
 
     <genetic-configuration>
-		<param name="ELITISM_K" type="Integer" value="2"></param>
-		<param name="POP_SIZE" type="Integer" value="40"></param>
+		<param name="ELITISM_K" type="Integer" value="5"></param>
+		<param name="POP_SIZE" type="Integer" value="500"></param>
 		<param name="MAX_ITER" type="Integer" value="10"></param>
-		<param name="MUTATION_RATE" type="Double" value="0.02"></param>
+		<param name="MUTATION_RATE" type="Double" value="0.05"></param>
 		<param name="CROSSOVER_RATE" type="Double" value="0.7"></param>
-		<param name="TOURNAMENT_SIZE" type="Integer" value="4"></param>
+		<param name="TOURNAMENT_SIZE" type="Integer" value="10"></param>
 		<param name="INDIVIDUALS_SIZE" type="Integer" value="2"></param>
 	</genetic-configuration>
 	
@@ -17,27 +17,38 @@
 	
 	<indicators>
 		<indicator network="TradeNetwork-6" name="_ADX" port="WINDOW">
-			<interval start="14"  end="14" type="Double"></interval>
+			<interval start="12"  end="16" type="Double"></interval>
 		</indicator>
-		<indicator network="TradeNetwork-6" name="_SAR_SIGNAL_THRESHOLD" port="IN">
-			<interval start="2"  end="8" type="Double"></interval>
-		</indicator>	
-		<indicator network="TradeNetwork-6" name="_AVGDX_THRESHOLD" port="IN">
-			<interval start="25"  end="35" type="Double"></interval>
+		<indicator network="TradeNetwork-6" name="_SimpleMovingAverage_SHORT" port="WINDOW">
+			<interval start="5"  end="15" type="Double"></interval>
 		</indicator>
-		
-	 
-		<indicator network="TradeNetwork-6"  name="_ParabolicSAR" port="STEP">
-			<interval start="0.02"  end="0.02" type="Double"></interval>
-		</indicator>	
-		<indicator network="TradeNetwork-6"  name="_ParabolicSAR" port="MAXSTEP">
-			<interval start="0.2"  end="0.2" type="Double"></interval>
-		</indicator>				
-		<indicator network="TradeNetwork-6"  name="_ATR" port="WINDOW">
-			<interval start="1"  end="1" type="Double"></interval>
+		<indicator network="TradeNetwork-6" name="_SimpleMovingAverage_LONG" port="WINDOW">
+			<interval start="20"  end="40" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-6" name="_RSI" port="WINDOW">
+			<interval start="10"  end="20" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-6" name="_Stochastic" port="N_WINDOW">
+			<interval start="10"  end="20" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-6" name="_StaticParameter_RSI_Weight" port="IN">
+			<interval start="0"  end="10" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-6" name="_StaticParameter_ADX_Weight" port="IN">
+			<interval start="0"  end="10" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-6" name="_StaticParameter_SAR_Weight" port="IN">
+			<interval start="0"  end="10" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-6" name="_StaticParameter_SMA_Weight" port="IN">
+			<interval start="0"  end="10" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-6" name="_StaticParameter_Stochastic_Weight" port="IN">
+			<interval start="0"  end="10" type="Double"></interval>
+		</indicator>
+		<indicator network="TradeNetwork-6" name="_StaticParameter_Confidence_Level" port="IN">
+			<interval start="0"  end="10" type="Double"></interval>
 		</indicator>
 	</indicators>
 		 	
-		 
-
 </optimization>

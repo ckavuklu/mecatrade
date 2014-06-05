@@ -10,13 +10,14 @@ import com.meca.trade.to.StrategyDecision;
 	public class StrategyParabolic  extends BaseStrategy{
 	
 	private final static Integer SAR_SIGNAL_THRESHOLD = 5;
-	private final static Integer ADX_THRESHOLD = 25;
+	private final static Integer ADX_THRESHOLD = 15;
 	
 	private final static Integer ADX_SIGNAL_ORDER = 150;
 		
 	Double currentSAR = 0d;
 	Integer sarSignalOrder = 0;
 	TREND sarTrend = TREND.NONTRENDING;
+	TREND adxTrend = TREND.NONTRENDING;
 	
 	
 	Double currentADX = 0d;
@@ -68,38 +69,33 @@ import com.meca.trade.to.StrategyDecision;
 		
 		if(!(previouspDI.isNaN() || previousmDI.isNaN()) && adxSignalOrder>=ADX_SIGNAL_ORDER){
 		
-			/*if(this.currentSAR >= data.getHigh()){
+			if(this.currentSAR >= data.getHigh()){
 				setTrend(TREND.DOWN);
 			}
 			
 			if(this.currentSAR <= data.getLow()) {
 				setTrend(TREND.UP);
-			}*/
+			}
 			
-			if(previouspDI < previousmDI && currentpDI > currentmDI && currentADX >= ADX_THRESHOLD){
-				decision = new StrategyDecision(DecisionType.LONG_ENTRY, data);
-				decision.addDecision(DecisionType.SHORT_EXIT);
+			if(previouspDI < previousmDI && currentpDI > currentmDI ){
+				adxTrend = TREND.UP;
+
 			} 
 			
-			if(previouspDI > previousmDI && currentpDI < currentmDI && currentADX >= ADX_THRESHOLD){
-				decision = new StrategyDecision(DecisionType.SHORT_ENTRY, data);
-				decision.addDecision(DecisionType.LONG_EXIT);
+			if(previouspDI > previousmDI && currentpDI < currentmDI ){
+				adxTrend = TREND.DOWN; 
+			}
+			
+			if(adxTrend == TREND.UP && sarTrend == TREND.UP && currentADX>=ADX_THRESHOLD){
+				decision = new StrategyDecision(DecisionType.SHORT_EXIT, data);
+				
 			}
 			
 			
-			/*
-			if(sarSignalOrder >= SAR_SIGNAL_THRESHOLD) {
-				if(sarTrend == TREND.UP){
-					if(currentADX >= ADX_THRESHOLD) {
-						decision = new StrategyDecision(DecisionType.LONG_ENTRY, data);
-					}
-				}
-				
-				if(sarTrend == TREND.DOWN){
-					decision = new StrategyDecision(DecisionType.LONG_EXIT, data);
-				}
-				
-			}*/
+			if(adxTrend == TREND.DOWN && sarTrend == TREND.DOWN && currentADX>=ADX_THRESHOLD){
+				decision = new StrategyDecision(DecisionType.SHORT_ENTRY, data);
+			}
+
 		}
 		
 		previouspDI  = currentpDI;
