@@ -175,10 +175,14 @@ public class NewOptimizer {
 		
 		Set<Entry<String, List<TradeNetwork>>> set = m_population.entrySet();
 
+		Integer count = 1;
+		
 		for (Entry<String, List<TradeNetwork>> e : set) {
 			for (TradeNetwork network : e.getValue()) {
-
+				
 				Double networkFitness = network.evaluate(false);
+				
+				System.out.println("  Executed Network# : " + (count++) + " Fitness : " + networkFitness);
 				
 				totalFitness.put(e.getKey(),
 						totalFitness.get(e.getKey()) + networkFitness);
@@ -511,7 +515,7 @@ public class NewOptimizer {
 				
 				count = 0;
 				
-				//System.out.println("ITERATION - " + iter);
+				System.out.println("ITER# : " + iter);
 				
 				HashMap<String, List<TradeNetwork>> newPop = new HashMap<String, List<TradeNetwork>>();
 
@@ -522,6 +526,9 @@ public class NewOptimizer {
 				
 				if (elitizm > 0) {
 					bestIndividuals = elitizm();
+					
+					printMankind(bestIndividuals);
+					
 					initializeAndAddIndividuals(bestIndividuals, newPop);
 					count += elitizm;
 				}

@@ -83,4 +83,10 @@ public final class Constants {
 		DOWN,
 		NONTRENDING
 	};
+	
+	public static enum STRENGTH{
+		STRONG,
+		NORMAL,
+		WEAK
+	};
 }

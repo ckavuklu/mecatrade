@@ -1,13 +1,14 @@
 package com.meca.trade.strategy;
 
 import com.jpmorrsn.fbp.engine.Packet;
+import com.meca.trade.to.Constants.STRENGTH;
 import com.meca.trade.to.Constants.TREND;
 import com.meca.trade.to.DecisionType;
 import com.meca.trade.to.PriceData;
 import com.meca.trade.to.StrategyDecision;
 
 	
-	public class StrategyALL  extends BaseStrategy{
+	public class StrategyREMALL  extends BaseStrategy{
 	
 		
 	Double currentSAR = Double.NaN;
@@ -15,9 +16,17 @@ import com.meca.trade.to.StrategyDecision;
 	Double previousLow = Double.NaN;
 	Double previousHigh = Double.NaN;
 	
+	TREND SARTrend = TREND.NONTRENDING;
+	TREND RSITrend = TREND.NONTRENDING;
+	TREND STOTrend = TREND.NONTRENDING;
+	TREND SMATrend = TREND.NONTRENDING;
+	TREND ADXTrend = TREND.NONTRENDING;
 	
-	TREND sarTrend = TREND.NONTRENDING;
-	
+	STRENGTH SARStrength = STRENGTH.NORMAL;
+	STRENGTH RSIStrength = STRENGTH.NORMAL;
+	STRENGTH STOStrength = STRENGTH.NORMAL;
+	STRENGTH SMAStrength = STRENGTH.NORMAL;
+	STRENGTH ADXStrength = STRENGTH.NORMAL;
 	
 	Double currentADX = 0d;
 	Double previouspDI = Double.NaN;
@@ -98,11 +107,13 @@ import com.meca.trade.to.StrategyDecision;
 		if (!(previousShortSMA.isNaN() || previousLongSMA.isNaN())) {
 			if (previousShortSMA < previousLongSMA
 					&& currentShortSMA > currentLongSMA) {
+				SMATrend = TREND.UP;
 				DECISION += SMAwght;
 				longEntryDecisionMakers += "SMA+";
 			}
 			if (previousShortSMA > previousLongSMA
 					&& currentShortSMA < currentLongSMA) {
+				SMATrend = TREND.DOWN;
 				DECISION -= SMAwght;
 				longExitDecisionMakers += "SMA+";
 
@@ -113,12 +124,14 @@ import com.meca.trade.to.StrategyDecision;
 				if (!(previouspDI.isNaN() || previousmDI.isNaN())) {
 					if (previouspDI < previousmDI
 							&& currentpDI > currentmDI) {
+						ADXTrend = TREND.UP;
 						DECISION += ADXwght;
 						longEntryDecisionMakers += "ADX+";
 
 					}
 					if (previouspDI > previousmDI
 							&& currentpDI < currentmDI) {
+						ADXTrend = TREND.DOWN;
 						DECISION -= ADXwght;
 						longExitDecisionMakers += "ADX+";
 
@@ -129,39 +142,50 @@ import com.meca.trade.to.StrategyDecision;
 		if (!(previousKLine.isNaN() || previousDLine.isNaN())) {
 			if (previousKLine < previousDLine && currentKLine > currentDLine
 					&& currentDLine <= stochasticOversoldValue ) {
+				STOTrend = TREND.UP;
 				DECISION += STOCHASTICwght;
 				longEntryDecisionMakers += "STO+";
+				
 
 			}
 			if (previousKLine > previousDLine && currentKLine < currentDLine
 					&& currentDLine >= stochasticOverboughtValue) {
+				STOTrend = TREND.DOWN;
 				DECISION -= STOCHASTICwght;
 				longExitDecisionMakers += "STO+";
 
 			}
+			
+			if(Math.abs(currentKLine-currentDLine)>5) STOStrength = STRENGTH.STRONG;
+			else STOStrength = STRENGTH.WEAK;
 		}
 		
 		
 		//RSI DECISION
 		if(currentRSI >= overboughtRSIValue){
+			RSITrend = TREND.DOWN;
 			DECISION -= RSIwght;
 			longEntryDecisionMakers += "RSI+";
 
 		}else if(currentRSI <= oversoldRSIValue){
+			RSITrend = TREND.UP;
 			DECISION += RSIwght;
 			longExitDecisionMakers += "RSI+";
 
-		} 
-		
+		} else RSITrend = TREND.NONTRENDING;
+
 		
 		//SAR DECISION
 		if (!previousSAR.isNaN()) {
-/*
-			if (currentSAR < data.getLow() && previousSAR > previousHigh)
+			if (currentSAR < data.getLow() && previousSAR > previousHigh) {
+				SARTrend = TREND.UP;
 				DECISION += SARwght;
-			else if (currentSAR > data.getHigh() && previousSAR < previousLow)
+			}
+			else if (currentSAR > data.getHigh() && previousSAR < previousLow){
+				SARTrend = TREND.DOWN;
 				DECISION -= SARwght;	
-	*/		
+			}
+			/*
 			if (currentSAR < data.getLow() && currentADX > 25) {
 					DECISION += SARwght;
 					longEntryDecisionMakers += "SAR+";
@@ -172,6 +196,7 @@ import com.meca.trade.to.StrategyDecision;
 					longExitDecisionMakers += "SAR+";
 
 				}
+			*/
 		}		
 		
 		DECISION = DECISION / 5;

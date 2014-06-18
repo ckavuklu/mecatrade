@@ -275,7 +275,7 @@
 				<connect indicator="ADX">
 					<from component="_ADX" port="ADX" />
 					<to component="_TradeMultiplexer" port="IN" no="7" />
-					<display value="-p-2-s"/>
+					<display value="-n-2-s"/>
 				</connect>
 
 				<connect indicator="MDI">
@@ -324,37 +324,37 @@
 				<connect indicator="RSI_Weight">
 					<from component="_StaticParameter_RSI_Weight" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="15" />
-					<display value="-p-0-s"/>
+					<display value="-n-0-s"/>
 				</connect>
 				
 				<connect indicator="Stochastic_Weight">
 					<from component="_StaticParameter_Stochastic_Weight" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="16" />
-					<display value="-p-0-s"/>
+					<display value="-n-0-s"/>
 				</connect>
 				
 				<connect indicator="ADX_Weight">
 					<from component="_StaticParameter_ADX_Weight" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="17" />
-					<display value="-p-0-d"/>
+					<display value="-n-0-d"/>
 				</connect>
 				
 				
 				<connect indicator="SAR_Weight">
 					<from component="_StaticParameter_SAR_Weight" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="18" />
-					<display value="-p-0-d"/>
+					<display value="-n-0-d"/>
 				</connect>
 				
 				<connect indicator="SMA_Weight">
 					<from component="_StaticParameter_SMA_Weight" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="19" />
-					<display value="-p-0-d"/>
+					<display value="-n-0-d"/>
 				</connect>
 				<connect indicator="Confidence_Level">
 					<from component="_StaticParameter_Confidence_Level" port="OUT" />
 					<to component="_TradeMultiplexer" port="IN" no="20" />
-					<display value="-p-0-d"/>
+					<display value="-n-0-d"/>
 				</connect>
 				
 				
@@ -372,18 +372,19 @@
 			</connections>
 			
 			<indicators>
-				<indicator name="_SimpleMovingAverage_SHORT" default="9" optimized="$TradeNetwork-6_SimpleMovingAverage_SHORT" type="Double" port="WINDOW"/>
-				<indicator name="_SimpleMovingAverage_LONG" default="14" optimized="$TradeNetwork-6_SimpleMovingAverage_LONG" type="Double" port="WINDOW" />
-				<indicator name="_RSI" default="14" optimized="$TradeNetwork-6_RSI" type="Double" port="WINDOW"/>
-				<indicator name="_Stochastic" default="14" optimized="$TradeNetwork-6_Stochastic" type="Double" port="N_WINDOW"/>
-				<indicator name="_ADX" default="14" optimized="$TradeNetwork-6_ADX" type="Double" port="WINDOW" />
-				<indicator name="_StaticParameter_RSI_Weight" default="5" optimized="$TradeNetwork-6_StaticParameter_RSI_Weight" type="Double" port="IN"/>
-				<indicator name="_StaticParameter_ADX_Weight" default="5" optimized="$TradeNetwork-6_StaticParameter_ADX_Weight" type="Double" port="IN"/>
+				<indicator name="_SimpleMovingAverage_SHORT" default="4" optimized="$TradeNetwork-6_SimpleMovingAverage_SHORT" type="Double" port="WINDOW"/>
+				<indicator name="_SimpleMovingAverage_LONG" default="38" optimized="$TradeNetwork-6_SimpleMovingAverage_LONG" type="Double" port="WINDOW" />
+				<indicator name="_RSI" default="13" optimized="$TradeNetwork-6_RSI" type="Double" port="WINDOW"/>
+				<indicator name="_Stochastic" default="12" optimized="$TradeNetwork-6_Stochastic" type="Double" port="N_WINDOW"/>
+				<indicator name="_ADX" default="13" optimized="$TradeNetwork-6_ADX" type="Double" port="WINDOW" />
+				<indicator name="_StaticParameter_RSI_Weight" default="9" optimized="$TradeNetwork-6_StaticParameter_RSI_Weight" type="Double" port="IN"/>
+				<indicator name="_StaticParameter_ADX_Weight" default="10" optimized="$TradeNetwork-6_StaticParameter_ADX_Weight" type="Double" port="IN"/>
 				<indicator name="_StaticParameter_SAR_Weight" default="5" optimized="$TradeNetwork-6_StaticParameter_SAR_Weight" type="Double" port="IN"/>
-				<indicator name="_StaticParameter_SMA_Weight" default="5" optimized="$TradeNetwork-6_StaticParameter_SMA_Weight" type="Double" port="IN"/>
-				<indicator name="_StaticParameter_Stochastic_Weight" default="5" optimized="$TradeNetwork-6_StaticParameter_Stochastic_Weight" type="Double" port="IN"/>
-				<indicator name="_StaticParameter_Confidence_Level" default="2" optimized="$TradeNetwork-6_StaticParameter_Confidence_Level" type="Double" port="IN"/>
+				<indicator name="_StaticParameter_SMA_Weight" default="8" optimized="$TradeNetwork-6_StaticParameter_SMA_Weight" type="Double" port="IN"/>
+				<indicator name="_StaticParameter_Stochastic_Weight" default="3" optimized="$TradeNetwork-6_StaticParameter_Stochastic_Weight" type="Double" port="IN"/>
+				<indicator name="_StaticParameter_Confidence_Level" default="3" optimized="$TradeNetwork-6_StaticParameter_Confidence_Level" type="Double" port="IN"/>
 			</indicators>
+			
 
 			<trade-configuration>
 				<param name="position-sizer" type="volatility-adjusted" value="0.01"></param>

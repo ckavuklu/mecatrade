@@ -11,11 +11,11 @@ public class TheArchitect {
 		
 		matrix.createRuntime();
 		
-		//matrix.optimize();
+		// matrix.optimize();
 	
-		 matrix.runNetworks();
+		matrix.runNetworks();
 		
-		// matrix.walkForwardAnalysis();
+		//matrix.walkForwardAnalysis();
 	}
 
 }

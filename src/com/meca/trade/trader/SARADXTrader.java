@@ -22,7 +22,7 @@ import com.meca.trade.to.VolatilityAdjustedPositionSizer;
 
 public class SARADXTrader extends BaseTrader {
 	
-	protected Integer maxPositionCount = 1;
+	protected Integer maxPositionCount = 5;
 	
 	public SARADXTrader(IPositionManager positionManager) {
 		super(positionManager);
